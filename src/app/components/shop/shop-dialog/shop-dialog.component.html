@@ -1,0 +1,54 @@
+<h1 mat-dialog-title>Create Shop</h1>
+<div mat-dialog-content>
+  <form [formGroup]="shopForm" class="shop-form">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name">
+      <mat-error *ngIf="shopForm.get('name')?.hasError('required')">Name is required</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Address Line 1</mat-label>
+      <input matInput formControlName="addressLine1">
+      <mat-error *ngIf="shopForm.get('addressLine1')?.hasError('required')">Address Line 1 is required</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Address Line 2</mat-label>
+      <input matInput formControlName="addressLine2">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>City</mat-label>
+      <input matInput formControlName="city">
+      <mat-error *ngIf="shopForm.get('city')?.hasError('required')">City is required</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>State</mat-label>
+      <input matInput formControlName="state">
+      <mat-error *ngIf="shopForm.get('state')?.hasError('required')">State is required</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Country</mat-label>
+      <input matInput formControlName="country">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Zipcode</mat-label>
+      <input matInput formControlName="zipcode">
+      <mat-error *ngIf="shopForm.get('zipcode')?.hasError('required')">Zipcode is required</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Mobile Number</mat-label>
+      <input matInput formControlName="mobileNumber">
+      <mat-error *ngIf="shopForm.get('mobileNumber')?.hasError('required')">Mobile Number is required</mat-error>
+      <mat-error *ngIf="shopForm.get('mobileNumber')?.hasError('pattern')">Mobile Number must be 10 digits</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email">
+      <mat-error *ngIf="shopForm.get('email')?.hasError('required')">Email is required</mat-error>
+      <mat-error *ngIf="shopForm.get('email')?.hasError('email')">Email must be valid</mat-error>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSave()" cdkFocusInitial>Save</button>
+</div>

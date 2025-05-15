@@ -1,0 +1,9 @@
+.shop-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.mat-form-field {
+  width: 100%;
+}

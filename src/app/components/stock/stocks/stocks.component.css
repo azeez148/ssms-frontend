@@ -1,0 +1,25 @@
+.size-chip-container {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .size-chip {
+    padding: 5px 10px;
+    background-color: #00796b;
+    color: white;
+    border-radius: 16px;
+    font-size: 14px;
+  }
+  
+  .out-of-stock {
+    background-color: #ff4d4d;  /* Red background */
+    color: white;  /* White text */
+    font-weight: bold;  /* Make text bold */
+  }
+
+  .negative-quantity {
+    color: red;
+    background-color: lightpink;
+  }
+  

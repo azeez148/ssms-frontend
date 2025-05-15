@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>Create Pricelist</h1>
+<div mat-dialog-content>
+  <form [formGroup]="pricelistForm">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name">
+      <mat-error *ngIf="pricelistForm.get('name')?.hasError('required')">Name is required</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <input matInput formControlName="description">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="pricelistForm.get('category')?.hasError('required')">Category is required</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Attribute</mat-label>
+    <pre>{{ attributes | json }}</pre>
+      <mat-select formControlName="attribute">
+        <mat-option *ngFor="let attribute of attributes" [value]="attribute.id">{{ attribute.value }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="pricelistForm.get('attribute')?.hasError('required')">Attribute is required</mat-error>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSave()" cdkFocusInitial>Save</button>
+</div>

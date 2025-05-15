@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>Select Product</h1>
+<div mat-dialog-content>
+  <form [formGroup]="productForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        <mat-option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Product Name</mat-label>
+      <input matInput formControlName="productName">
+    </mat-form-field>
+  </form>
+
+  <div *ngIf="filteredProducts.length > 0">
+    <mat-list>
+      <mat-list-item *ngFor="let product of filteredProducts" (click)="onSelectProduct(product)">
+        {{ product.name }} - {{ product.unitPrice | currency }}
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div *ngIf="filteredProducts.length === 0">
+    <p>No products found.</p>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+</div>

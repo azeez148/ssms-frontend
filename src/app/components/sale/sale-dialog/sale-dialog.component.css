@@ -1,0 +1,44 @@
+.sale-details {
+    margin-bottom: 10px; /* Increased margin at the bottom */
+    padding: 20px; /* Add some padding inside the container */
+}
+
+.mat-form-field {
+    width: 100%;
+    margin-left: 10px; /* Increased space between fields */
+}
+
+.sale-summary {
+    font-weight: bold;
+}
+
+
+mat-table {
+    width: 100%;
+}
+
+mat-paginator {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.mat-header-cell {
+    font-weight: bold;
+}
+
+mat-checkbox {
+    margin: 0;
+}
+
+input[type="number"] {
+    width: 80px;
+}
+
+.mat-paginator {
+    font-size: 14px;
+}
+
+.mat-form-field-sale {
+    margin-left: 10px;
+}

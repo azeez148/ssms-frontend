@@ -1,0 +1,53 @@
+<div class="header">
+  <h1>Attributes</h1>
+  <button mat-raised-button color="primary" (click)="createAttribute()">Create Attribute</button>
+  <button mat-raised-button color="accent" (click)="assignAttributeValue()">Assign Attribute Value</button>
+</div>
+
+<!-- Table 1: Attributes -->
+<h2>Attributes</h2>
+<table mat-table [dataSource]="attributeDataSource" class="mat-elevation-z8">
+  <!-- ID Column -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> ID </th>
+    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+  </ng-container>
+
+  <!-- Description Column -->
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef> Description </th>
+    <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+<!-- Table 2: Assigned Values -->
+<h2>Assigned Values</h2>
+<table mat-table [dataSource]="attributeValueDataSource" class="mat-elevation-z8">
+  <!-- Attribute ID Column -->
+  <ng-container matColumnDef="attributeId">
+    <th mat-header-cell *matHeaderCellDef> Attribute ID </th>
+    <td mat-cell *matCellDef="let element"> {{element.attributeId}} </td>
+  </ng-container>
+
+  <!-- Value Column -->
+  <ng-container matColumnDef="value">
+    <th mat-header-cell *matHeaderCellDef> Value </th>
+    <td mat-cell *matCellDef="let element"> {{element.value}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumnsAssignedValues"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumnsAssignedValues;"></tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

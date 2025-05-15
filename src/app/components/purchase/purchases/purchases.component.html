@@ -1,0 +1,60 @@
+<div class="header">
+    <h1>Purchases</h1>
+
+    <!-- Category Filter -->
+    <mat-form-field appearance="fill">
+      <mat-label>Category</mat-label>
+      <mat-select [(value)]="selectedCategoryId" (selectionChange)="onFilterChange()">
+        <mat-option value="">All Categories</mat-option>
+        <mat-option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Product Filter -->
+    <mat-form-field appearance="fill">
+      <mat-label>Filter by Product Type</mat-label>
+      <input matInput [(ngModel)]="productNameFilter" (input)="onFilterChange()" placeholder="Search by product name">
+    </mat-form-field>
+
+    <!-- Add New Purchase Button -->
+    <button mat-raised-button color="primary" (click)="openCreatePurchaseDialog()">Create New Purchase</button>
+</div>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <!-- ID Column -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> ID </th>
+    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+  </ng-container>
+
+  <!-- Vendor Name Column -->
+  <ng-container matColumnDef="vendorName">
+    <th mat-header-cell *matHeaderCellDef> Vendor </th>
+    <td mat-cell *matCellDef="let element"> {{element.vendorName}} </td>
+  </ng-container>
+
+  <!-- Total Quantity Column -->
+  <ng-container matColumnDef="totalQuantity">
+    <th mat-header-cell *matHeaderCellDef> Total Quantity </th>
+    <td mat-cell *matCellDef="let element"> {{element.totalQuantity}} </td>
+  </ng-container>
+
+  <!-- Total Price Column -->
+  <ng-container matColumnDef="totalPrice">
+    <th mat-header-cell *matHeaderCellDef> Total Price </th>
+    <td mat-cell *matCellDef="let element"> {{element.totalPrice}} </td>
+  </ng-container>
+
+  <!-- Date Column -->
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef> Date </th>
+    <td mat-cell *matCellDef="let element"> {{element.date}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

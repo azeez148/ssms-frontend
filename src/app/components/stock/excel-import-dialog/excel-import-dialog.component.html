@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Import Excel Data</h1>
+<div mat-dialog-content>
+  <form [formGroup]="importForm">
+    <input type="file" (change)="onFileChange($event)" required>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSave()" cdkFocusInitial>Save</button>
+</div>

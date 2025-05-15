@@ -1,0 +1,32 @@
+<h1 mat-dialog-title>Assign Attribute Value</h1>
+<div mat-dialog-content>
+  <form [formGroup]="assignForm">
+    <mat-form-field>
+      <mat-label>Select Attribute</mat-label>
+      <mat-select formControlName="attributeId">
+        <mat-option *ngFor="let attribute of attributes" [value]="attribute.id">
+          {{ attribute.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Enter Value</mat-label>
+      <input matInput formControlName="value" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Select Category</mat-label>
+      <mat-select formControlName="categoryId">
+        <mat-option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onAssign()" cdkFocusInitial>Assign</button>
+</div>

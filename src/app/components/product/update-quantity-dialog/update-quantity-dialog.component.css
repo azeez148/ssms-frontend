@@ -1,0 +1,11 @@
+.size-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .size-input {
+    flex: 1 1 30%; /* 3 items per row (roughly 30% width per item) */
+    min-width: 120px;
+  }
+  

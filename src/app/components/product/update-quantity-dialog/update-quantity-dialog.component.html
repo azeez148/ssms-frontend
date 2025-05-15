@@ -1,0 +1,43 @@
+<h1 mat-dialog-title>Update Product Quantity</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>Size Type</mat-label>
+    <mat-select [(ngModel)]="quantities.sizeType" (selectionChange)="onSizeTypeChange($event)">
+      <mat-option value="Normal">Normal</mat-option>
+      <mat-option value="Boot">Boot</mat-option>
+      <mat-option value="Football">Football</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="quantities.sizeType === 'Normal'">
+    <div *ngFor="let size of quantities.sizes">
+      <mat-form-field appearance="fill">
+        <mat-label>{{ size }} Quantity</mat-label>
+        <input matInput [(ngModel)]="quantities[size]" type="number" placeholder="Enter quantity">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="quantities.sizeType === 'Boot'">
+    <div *ngFor="let size of quantities.bootSizes">
+      <mat-form-field appearance="fill">
+        <mat-label>{{ size }} Quantity</mat-label>
+        <input matInput [(ngModel)]="quantities[size]" type="number" placeholder="Enter quantity">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="quantities.sizeType === 'Football'">
+    <div *ngFor="let size of quantities.footballSizes">
+      <mat-form-field appearance="fill">
+        <mat-label>{{ size }} Quantity</mat-label>
+        <input matInput [(ngModel)]="quantities[size]" type="number" placeholder="Enter quantity">
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSave()">Save</button>
+</div>
