@@ -21,3 +21,28 @@
     color: #ffffff;
     text-shadow: 0 1px 0 #528ecc;
 }
+
+nav {
+  display: flex;
+  background-color: #333;
+  padding: 10px;
+  align-items: center;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 20px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+nav a:hover {
+  background-color: #555;
+}
+
+.activebutton {
+  background-color: #0078d4;
+  color: #fff;
+}

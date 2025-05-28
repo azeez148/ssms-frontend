@@ -78,4 +78,9 @@ export class ProductService {
   updateWhatsappGroup(productId: number): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/update-whatsapp-group`, { productId });
   }
+
+    // New method to get product image as Blob.
+  getProductImage(productId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${productId}/image`, { responseType: 'blob' });
+  }
 }

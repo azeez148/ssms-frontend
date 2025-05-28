@@ -132,7 +132,15 @@ export class StocksComponent {
   downloadExcel(): void {
     // Convert dataSource.data to a worksheet.
     // You might want to process/extract only the fields you want to export.
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
+    
+    const dataToExport = this.dataSource.data.map(product => ({
+      ...product,
+      sizeMap: `{${this.getAvailableSizesWithQuantities(product.sizeMap).join(', ')}}`
+    }));
+
+    console.log('Data to export:', dataToExport); // Debugging line to check the data structure
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
+
 
     // Create a new workbook and append the worksheet.
     const wb: XLSX.WorkBook = XLSX.utils.book_new();

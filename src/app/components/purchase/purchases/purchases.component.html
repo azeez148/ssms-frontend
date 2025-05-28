@@ -20,7 +20,9 @@
 
     <!-- Add New Purchase Button -->
     <button mat-raised-button color="primary" (click)="openCreatePurchaseDialog()">Create New Purchase</button>
-</div>
+<!-- Export to Excel Button -->
+  <button mat-raised-button color="accent" (click)="exportExcel()">Export to Excel</button>
+  </div>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
   <!-- ID Column -->
@@ -52,6 +54,14 @@
     <th mat-header-cell *matHeaderCellDef> Date </th>
     <td mat-cell *matCellDef="let element"> {{element.date}} </td>
   </ng-container>
+
+  <!-- New View Details Column -->
+<ng-container matColumnDef="viewDetails">
+  <th mat-header-cell *matHeaderCellDef> View Details </th>
+  <td mat-cell *matCellDef="let element">
+    <button mat-button color="primary" (click)="viewDetails(element)">View Details</button>
+  </td>
+</ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

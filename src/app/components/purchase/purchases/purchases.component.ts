@@ -1,5 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 import { Category } from '../../category/data/category-model';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { CategoryService } from '../../category/services/category.service';
@@ -16,6 +18,7 @@ import { Purchase } from '../data/purchase-model';
 import { PurchaseDialogComponent } from '../purchase-dialog/purchase-dialog.component';
 import { PurchaseService } from '../services/purchase.service';
 import { Product } from '../../product/data/product-model';
+import { PurchaseDetailsDialogComponent } from '../purchase-details-dialog/purchase-details-dialog.component';
 
 @Component({
   selector: 'app-purchases',
@@ -34,7 +37,7 @@ import { Product } from '../../product/data/product-model';
   styleUrls: ['./purchases.component.css']
 })
 export class PurchasesComponent {
-  displayedColumns: string[] = ['id', 'vendorName', 'totalQuantity', 'totalPrice', 'date'];
+  displayedColumns: string[] = ['id', 'vendorName', 'totalQuantity', 'totalPrice', 'date', 'viewDetails'];
   dataSource = new MatTableDataSource<Purchase>([]);
 
   categories: Category[] = [];
@@ -90,4 +93,31 @@ export class PurchasesComponent {
       }
     });
   }
+
+  viewDetails(purchase: any): void {
+    this.dialog.open(PurchaseDetailsDialogComponent, {
+      width: '600px',
+      data: purchase
+    });
+  }
+exportExcel(): void {
+    // Convert dataSource.data to worksheet and workbook
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Purchases');
+
+    // Write workbook result as binary array
+    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    this.saveAsExcelFile(excelBuffer, 'purchases_data');
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE
+    });
+    saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+  }
+  
 }

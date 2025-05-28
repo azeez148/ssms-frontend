@@ -1,0 +1,43 @@
+<h1 mat-dialog-title>Sale Details</h1>
+<div mat-dialog-content>
+  <p><strong>ID:</strong> {{data.id}}</p>
+  <p><strong>Customer Name:</strong> {{data.customerName}}</p>
+  <p><strong>Address:</strong> {{data.customerAddress}}</p>
+  <p><strong>Mobile:</strong> {{data.customerMobile}}</p>
+  <p><strong>Date:</strong> {{data.date}}</p>
+  <p><strong>Total Quantity:</strong> {{data.totalQuantity}}</p>
+  <p><strong>Total Price:</strong> {{data.totalPrice}}</p>
+  
+  <h3>Sale Items</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Category</th>
+        <th>Size</th>
+        <th>Quantity</th>
+        <th>Sale Price</th>
+        <th>Total Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of data.saleItems">
+        <td>{{item.productName}}</td>
+        <td>{{item.productCategory}}</td>
+        <td>{{item.size}}</td>
+        <td>{{item.quantity}}</td>
+        <td>{{item.salePrice}}</td>
+        <td>{{item.totalPrice}}</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <p><strong>Payment Type:</strong> {{data.paymentType.name}}</p>
+  <p><strong>Reference Number:</strong> {{data.paymentReferenceNumber}}</p>
+  <p><strong>Delivery Type:</strong> {{data.deliveryType.name}}</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button color="primary" (click)="onUpdate()">Update</button>
+  <button mat-button color="warn" (click)="onDelete()">Delete</button>
+  <button mat-button (click)="onClose()">Close</button>
+</div>

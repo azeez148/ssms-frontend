@@ -8,6 +8,7 @@ export interface Product {
   sizeMap: { [key: string]: number }; // e.g., {"S": 10, "M": 5, "L": 3}
   unitPrice: number;
   sellingPrice: number;
+  imageUrl?: string; // Optional field for product image URL
 }
 
 // export const PRODUCT_DATA: Product[] = [
