@@ -1,21 +1,46 @@
-
-<nav>
-    <a routerLink="/" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Home</a> 
-    <a routerLink="/sale" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Sale</a>
-    
-    <a routerLink="/purchase" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Purchase</a>
-
-    <a routerLink="/stock" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Stock</a>
-
-    <a routerLink="/products" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Products</a>
-    <a routerLink="/categories" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Categories</a>
-    
-    <a routerLink="/attributes" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Attributes</a>
-    
-    <a routerLink="/shops" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Shops</a>
-    
-    <a routerLink="/pricelists" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Price Lists</a>
-
-    <a routerLink="/about" routerLinkActive="activebutton" ariaCurrentWhenActive="page">About</a> 
-    <a routerLink="/contact" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Contact</a>
-  </nav>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">SSMS Frontend</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/sale" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Sale</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/purchase" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Purchase</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/stock" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Stock</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/products" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/categories" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Categories</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/attributes" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Attributes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/shops" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Shops</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/pricelists" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Price Lists</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/about" routerLinkActive="activebutton" ariaCurrentWhenActive="page">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/contact" routerLinkActive="activebutton" ariaCurrentWhenActive="page">Contact</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
