@@ -22,19 +22,6 @@ export class CustomerHomeService {
     );
   }
 
-  // // getFilteredProducts(categoryId: number | null, productNameFilter: string): Observable<Product[]> {
-  // //   const payload = {
-  // //     categoryId: categoryId,
-  // //     productNameFilter: productNameFilter
-  // //   };
-  
-  // //   return this.http.post<Product[]>(`${this.apiUrl}/filterProducts`, payload).pipe(
-  // //     tap((products: Product[]) => {
-  // //       this.data = products;  // Update the internal products array with the filtered products
-  // //     })
-  // //   );
-  // }
-
     // New method to get product image as Blob.
   getProductImage(productId: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${productId}/image`, { responseType: 'blob' });

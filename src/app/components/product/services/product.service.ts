@@ -21,6 +21,14 @@ export class ProductService {
     );
   }
 
+  updateProduct(product: Product): Observable<Product> {
+    return this.http.post<Product>(`${this.apiUrl}/updateProduct`, product).pipe(
+      tap((updatedProduct: Product) => {
+        this.getProducts().subscribe();  // Call getProducts on tap
+      })
+    );
+  }
+
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}/all`).pipe(
       tap((products: Product[]) => {

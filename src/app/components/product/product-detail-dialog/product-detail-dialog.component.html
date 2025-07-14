@@ -1,0 +1,69 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h4>{{ data.product.name }}</h4>
+    </div>
+    <div class="card-body">
+      <!-- View Mode -->
+      <div *ngIf="!editMode">
+        <p><strong>Category:</strong> {{ data.product.category.name }}</p>
+        <p><strong>Unit Price:</strong> {{ data.product.unitPrice | currency }}</p>
+        <p><strong>Selling Price:</strong> {{ data.product.sellingPrice | currency }}</p>
+        <p><strong>Active:</strong> {{ data.product.isActive ? 'Yes' : 'No' }}</p>
+        <p><strong>Can be Listed:</strong> {{ data.product.canListed ? 'Yes' : 'No' }}</p>
+      </div>
+
+      <!-- Edit Mode -->
+      <div *ngIf="editMode">
+        <form [formGroup]="editForm">
+          <div class="form-group">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Category</mat-label>
+              <input matInput formControlName="category">
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Unit Price</mat-label>
+              <input matInput type="number" formControlName="unitPrice">
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Selling Price</mat-label>
+              <input matInput type="number" formControlName="sellingPrice">
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Active</mat-label>
+              <mat-select formControlName="isActive">
+                <mat-option [value]="true">Yes</mat-option>
+                <mat-option [value]="false">No</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Can be Listed</mat-label>
+              <mat-select formControlName="canListed">
+                <mat-option [value]="true">Yes</mat-option>
+                <mat-option [value]="false">No</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="card-footer text-right">
+      <div *ngIf="!editMode">
+        <button class="btn btn-primary" (click)="toggleEditMode()">Edit</button>
+        <button class="btn btn-secondary" (click)="onClose()">Close</button>
+      </div>
+      <div *ngIf="editMode">
+        <button class="btn btn-success" (click)="onUpdate()">Save</button>
+        <button class="btn btn-warning" (click)="toggleEditMode()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

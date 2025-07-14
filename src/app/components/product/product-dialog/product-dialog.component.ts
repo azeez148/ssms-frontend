@@ -9,12 +9,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-product-dialog',
   templateUrl: './product-dialog.component.html',
   styleUrls: ['./product-dialog.component.css'],
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule]
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatCheckboxModule]
 })
 export class ProductDialogComponent implements OnInit {
   productForm: FormGroup;
@@ -33,6 +34,7 @@ export class ProductDialogComponent implements OnInit {
       categoryId: ['', Validators.required],
       unitPrice: ['', [Validators.required, Validators.min(0)]],
       sellingPrice: ['', [Validators.required, Validators.min(0)]],
+      canListed: [true],
     });
   }
 

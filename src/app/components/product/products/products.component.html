@@ -52,6 +52,14 @@
     </td>
   </ng-container>
 
+  <!-- New View Details Column -->
+<ng-container matColumnDef="viewDetails">
+  <th mat-header-cell *matHeaderCellDef> View Details </th>
+  <td mat-cell *matCellDef="let element">
+    <button mat-button color="primary" (click)="viewDetails(element)">View Details</button>
+  </td>
+</ng-container>
+
   <!-- Header Row -->
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 

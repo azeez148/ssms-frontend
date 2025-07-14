@@ -8,4 +8,7 @@ export interface DashboardData {
     totalRevenue: number;
     totalPurchases: number;
     totalCost: number;
+    totalItemsInStock: number;
+    totalStockValue: number;
+    categoryItemCounts: any[];
 }

@@ -18,12 +18,12 @@
 
   <!-- Products Grid with Pagination -->
   <div class="row">
-    <div *ngFor="let product of filteredProducts | paginate: { itemsPerPage: 6, currentPage: p }" class="col-md-4 mb-4 d-flex align-items-stretch">
+    <div *ngFor="let product of filteredProducts | paginate: { itemsPerPage: 12, currentPage: p }" class="col-md-3 mb-4 d-flex align-items-stretch">
       <div class="card w-100">
         <img [src]="product.imageUrl" class="card-img-top" alt="{{ product.name }}">
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">{{ product.name }}</h5>
-          <p class="card-text">Category: {{ product.category }}</p>
+          <p class="card-text">Category: {{ product.category.name }}</p>
           <p class="card-text font-weight-bold">{{ product.sellingPrice | currency }}</p>
           <button class="btn btn-primary mt-auto" (click)="openBuyModal(product)">Buy</button>
         </div>

@@ -30,11 +30,23 @@ export class CustomerHomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.customerHomeService.getHomeData().subscribe(data => {
-      this.products = data.products;
+      this.products = data.products.filter(product => product.canListed === true);
+
+      // iterate over products and fetch images if needed
+      this.products.forEach(product => {
+        this.customerHomeService.getProductImage(product.id).subscribe(imageBlob => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            product.imageUrl = reader.result as string; // Assuming product.image is a string URL
+          };
+          reader.readAsDataURL(imageBlob);
+        });
+
       // Assuming product.category is of type Category, update as needed
       this.categories = Array.from(new Set(this.products.map(p => p.category)));
       this.applyFilters();
     });
+  });
   }
 
   applyFilters(): void {

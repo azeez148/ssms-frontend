@@ -19,7 +19,10 @@ export class HomeComponent implements OnInit {
     totalSales: 0,
     totalRevenue: 0,
     totalPurchases: 0,
-    totalCost: 0
+    totalCost: 0,
+    totalItemsInStock: 0,
+    totalStockValue: 0,
+    categoryItemCounts: []
   };
 
   constructor(private homeService: HomeService) { }
