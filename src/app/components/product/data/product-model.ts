@@ -9,13 +9,9 @@ export interface Product {
   unitPrice: number;
   sellingPrice: number;
   imageUrl?: string; // Optional field for product image URL
+  isActive: boolean;
+  canListed: boolean;
 }
-
-// export const PRODUCT_DATA: Product[] = [
-//   {id: 1, name: 'Product 1', description: 'Description 1', category: {id: 1, name: 'Category 1', description: 'Category Description 1'} },
-//   {id: 2, name: 'Product 2', description: 'Description 2', category: {id: 2, name: 'Category 2', description: 'Category Description 2'}},
-//   // Add more products as needed
-// ];
 
 export interface Quantities {
   size?: string | number;

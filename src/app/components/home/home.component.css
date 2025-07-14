@@ -1,0 +1,31 @@
+/* Optional: constrain container width */
+.container {
+  max-width: 1200px;
+}
+
+/* Maintain consistent spacing for cards */
+.card {
+  margin-bottom: 20px;
+}
+
+/* Enhance card header typography */
+.card-header {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Ensure table content is vertically centered */
+.table th, .table td {
+  vertical-align: middle;
+}
+
+/* Styling for the total details section */
+.row h5 {
+  margin-bottom: 5px;
+  font-size: 1.1rem;
+}
+
+.row p {
+  font-size: 1.2rem;
+  margin-bottom: 0;
+}
