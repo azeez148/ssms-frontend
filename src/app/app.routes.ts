@@ -10,6 +10,7 @@ import { PricelistsComponent } from './components/pricelist/pricelists/pricelist
 import { StocksComponent } from './components/stock/stocks/stocks.component';
 import { SalesComponent } from './components/sale/sales/sales.component';
 import { PurchasesComponent } from './components/purchase/purchases/purchases.component';
+import { CustomerHomeComponent } from './customer-home/customer-home.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -17,14 +18,13 @@ export const routes: Routes = [
     { path: 'stock', component: StocksComponent },
     { path: 'sale', component: SalesComponent },
     { path: 'purchase', component: PurchasesComponent },
-
     { path: 'products', component: ProductsComponent },
     { path: 'categories', component: CategoriesComponent },
     { path: 'attributes', component: AttributesComponent },
     { path: 'shops', component: ShopsComponent },
     { path: 'pricelists', component: PricelistsComponent },
-
     { path: 'about', component: AboutComponent },
     { path: 'contact', component: ContactComponent },
+    {path: 'customer-view', component: CustomerHomeComponent },
 
   ];

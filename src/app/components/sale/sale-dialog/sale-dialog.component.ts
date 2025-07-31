@@ -53,6 +53,7 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
     customerName: '',
     customerAddress: '',
     customerMobile: '',
+    customerEmail: '',
     date: '',  // Initialize as empty string
     saleItems: [],
     totalQuantity: 0,
@@ -91,28 +92,28 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
     this.filteredSaleItems = this.saleItems.slice(0, this.pageSize); // Set the initial page data
   }
 
-  convertProductsToSaleItems(): void {
-    this.saleItems = [];
-    this.data.forEach(product => {
-      const sizes = Object.keys(product.sizeMap);
-      sizes.forEach(size => {
-        const saleItem: SaleItem = {
-          productId: product.id,
-          productName: product.name,
-          productCategory: product.category.name,
-          size: size,
-          quantityAvailable: product.sizeMap[size],
-          quantity: 1, // Initially no quantity selected
-          salePrice: product.sellingPrice,
-          totalPrice: 0 // Initially set to 0
-        };
-        this.saleItems.push(saleItem);
-      });
-    });
+convertProductsToSaleItems(): void {
+  this.saleItems = [];
 
-    this.length = this.saleItems.length;  // Set the total number of items for pagination
-    this.filteredSaleItems = this.saleItems;
-  }
+  this.data.forEach(product => {
+    product.sizeMap.forEach(sizeEntry => {
+      const saleItem: SaleItem = {
+        productId: product.id,
+        productName: product.name,
+        productCategory: product.category.name,
+        size: sizeEntry.size,
+        quantityAvailable: sizeEntry.quantity,
+        quantity: 1,  // Default quantity selected
+        salePrice: product.sellingPrice,
+        totalPrice: 0  // Initially set to 0
+      };
+      this.saleItems.push(saleItem);
+    });
+  });
+
+  this.length = this.saleItems.length;
+  this.filteredSaleItems = this.saleItems;
+}
 
   loadPaymentTypes(): void {
     this.saleService.getPaymentTypes().subscribe((data: PaymentType[]) => {
@@ -160,6 +161,7 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
       customerName: '',
       customerAddress: '',
       customerMobile: '',
+      customerEmail: '',
       date: '', 
       saleItems: [],
       totalQuantity: 0,
