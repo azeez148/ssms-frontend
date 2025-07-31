@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { Vendor } from '../data/vendor.model';
 import { environment } from '../../../../environment';
 
@@ -9,16 +9,17 @@ import { environment } from '../../../../environment';
 })
 export class VendorService {
   private apiUrl = environment.apiUrl + '/vendors';
-  private vendors: Vendor[] = [
-    { id: 1, name: 'Vendor A', address: '789 Vendor St', mobile: '555-1111', email: 'vendor.a@example.com' },
-    { id: 2, name: 'Vendor B', address: '101 Vendor Ave', mobile: '555-2222', email: 'vendor.b@example.com' }
-  ];
+  private vendors: Vendor[] = [];
   private nextId = 3;
 
   constructor(private http: HttpClient) {}
 
   getVendors(): Observable<Vendor[]> {
-    return of(this.vendors);
+    return this.http.get<Vendor[]>(`${this.apiUrl}/all`).pipe(
+      tap((vendors: Vendor[]) => {
+        this.vendors = vendors;  // Store the fetched vendors
+      })
+    );
   }
 
   getVendor(id: number): Observable<Vendor> {
@@ -27,9 +28,11 @@ export class VendorService {
   }
 
   createVendor(vendor: Vendor): Observable<Vendor> {
-    vendor.id = this.nextId++;
-    this.vendors.push(vendor);
-    return of(vendor);
+    return this.http.post<Vendor>(`${this.apiUrl}/addVendor`, vendor).pipe(
+      tap((newVendor: Vendor) => {
+        this.vendors.push(newVendor);  // Add the new vendor to the local array
+      })
+    );
   }
 
   updateVendor(vendor: Vendor): Observable<Vendor> {

@@ -21,7 +21,7 @@
     <mat-label>Email</mat-label>
     <input matInput formControlName="email">
     <mat-error *ngIf="form.get('email')?.hasError('email')">Please enter a valid email address</mat-error>
-  </end-mat-form-field>
+  </mat-form-field>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onCancel()">Cancel</button>
