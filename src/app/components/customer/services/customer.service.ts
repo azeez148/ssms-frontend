@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { Customer } from '../data/customer.model';
 import { environment } from '../../../../environment';
 
@@ -9,18 +9,18 @@ import { environment } from '../../../../environment';
 })
 export class CustomerService {
   private apiUrl = environment.apiUrl + '/customers';
-  private customers: Customer[] = [
-    { id: 1, name: 'John Doe', address: '123 Main St', mobile: '555-1234', email: 'john.doe@example.com' },
-    { id: 2, name: 'Jane Smith', address: '456 Oak Ave', mobile: '555-5678', email: 'jane.smith@example.com' }
-  ];
+  private customers: Customer[] = [];
   private nextId = 3;
 
   constructor(private http: HttpClient) {}
 
   getCustomers(): Observable<Customer[]> {
-    // For now, return mock data. Replace with HTTP call later.
-    return of(this.customers);
-    // return this.http.get<Customer[]>(this.apiUrl);
+    return this.http.get<Customer[]>(`${this.apiUrl}/all`).pipe(
+      tap((customers: Customer[]) => {
+        this.customers = customers;  // Store the fetched customers
+      })
+    );
+    // return of(this.customers); // For mock data, uncomment this line
   }
 
   getCustomer(id: number): Observable<Customer> {
@@ -30,10 +30,14 @@ export class CustomerService {
   }
 
   createCustomer(customer: Customer): Observable<Customer> {
-    customer.id = this.nextId++;
-    this.customers.push(customer);
-    return of(customer);
-    // return this.http.post<Customer>(this.apiUrl, customer);
+    return this.http.post<Customer>(`${this.apiUrl}/addCustomer`, customer).pipe(
+      tap((newCustomer: Customer) => {
+        this.customers.push(newCustomer);  // Add the new customer to the local array
+      })
+    );
+    // customer.id = this.nextId++;
+    // this.customers.push(customer);
+    // return of(customer);
   }
 
   updateCustomer(customer: Customer): Observable<Customer> {

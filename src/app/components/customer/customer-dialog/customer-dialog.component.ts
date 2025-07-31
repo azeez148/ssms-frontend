@@ -24,7 +24,7 @@ import { MatDialogModule } from '@angular/material/dialog';
   ]
 })
 export class CustomerDialogComponent implements OnInit {
-  form: FormGroup;
+  form!: FormGroup;
   isEditMode: boolean;
 
   constructor(
