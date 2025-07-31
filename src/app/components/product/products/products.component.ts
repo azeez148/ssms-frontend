@@ -89,8 +89,10 @@ export class ProductsComponent implements OnInit {
 
   openUpdateWhatsappGroup(product: Product): void {
 
-    var sizes = Object.keys(product.sizeMap).map(size => `${size} (${product.sizeMap[size]})`).join(', ');
-    const message = encodeURIComponent(`New ${product.category.name} Added.
+const sizes = product.sizeMap
+  .map(item => `${item.size} (${item.quantity})`)
+  .join(', ');
+  const message = encodeURIComponent(`New ${product.category.name} Added.
   *${product.name}*
   Sizes Available: *${sizes}*.
   Rate: *₹${product.sellingPrice}*.

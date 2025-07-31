@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
-import { Shop, SHOP_DATA } from '../data/shop-model';
+import { Shop } from '../data/shop-model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environment';
 

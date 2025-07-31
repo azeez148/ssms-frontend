@@ -36,6 +36,7 @@ export interface Purchase {
   supplierName: string;      // Customer's name
   supplierAddress: string;   // Customer's address
   supplierMobile: string;    // Customer's mobile number
+  supplierEmail: string;     // Customer's email address
   date: string;              // The date when the sale was made
   purchaseItems: PurchaseItem[];     // List of products in the sale, each with quantity and total price
   totalQuantity: number;     // Total quantity of items sold across all products
@@ -43,6 +44,7 @@ export interface Purchase {
   paymentType: PaymentType;  // Payment type used for the sale
   paymentReferenceNumber: string;         // Payment reference number (e.g., transaction ID)
   deliveryType: DeliveryType; // Delivery type for the sale
+  shopIds: number[];          // List of shop IDs where the sale was made
 }
 
   

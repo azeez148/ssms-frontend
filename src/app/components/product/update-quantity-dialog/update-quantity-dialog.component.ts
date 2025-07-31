@@ -30,33 +30,45 @@ export class UpdateQuantityDialogComponent {
 
   // Initialize the quantities object based on the product category
   initializeQuantities(product: Product) {
-    // For Jersey and Shorts categories
-    if (product.category.name === 'Jersey' || product.category.name === 'Shorts' || product.category.name === 'Five Sleeve') {
-      this.quantities.sizeType = 'Normal';  // Size type (normal or other)
-      this.quantities.sizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];  // Sizes for jersey/shorts
-      this.quantities.sizes.forEach((size: string) => {  // Explicitly define the type of size as string
-        this.quantities[size] = product.sizeMap[size] || 0;  // Set initial values from existing sizeMap
-      });
-    }
-  
-    // For Boot category
-    if (product.category.name === 'Boot') {
-      this.quantities.sizeType = 'Boot';  // Boot specific size
-      this.quantities.bootSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];  // Sizes for boots
-      this.quantities.bootSizes.forEach((size: number) => {  // Explicitly define the type of size as number
-        this.quantities[size] = product.sizeMap[size] || 0;  // Set initial values from existing sizeMap
-      });
-    }
-  
-    // For Football category
-    if (product.category.name === 'Football') {
-      this.quantities.sizeType = 'Football';  // Football specific size
-      this.quantities.footballSizes = [3, 4, 5];  // Sizes for footballs
-      this.quantities.footballSizes.forEach((size: number) => {  // Explicitly define the type of size as number
-        this.quantities[size] = product.sizeMap[size] || 0;  // Set initial values from existing sizeMap
-      });
-    }
+  this.quantities = {}; // Reset quantities object
+
+  const getQuantity = (sizeToFind: string | number): number => {
+    const match = product.sizeMap.find(s => s.size === sizeToFind.toString());
+    return match ? match.quantity : 0;
+  };
+
+  // For Jersey, Shorts, and Five Sleeve
+  if (
+    product.category.name === 'Jersey' ||
+    product.category.name === 'Shorts' ||
+    product.category.name === 'Five Sleeve'
+  ) {
+    this.quantities.sizeType = 'Normal';
+    this.quantities.sizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+    this.quantities.sizes.forEach((size: string) => {
+      this.quantities[size] = getQuantity(size);
+    });
   }
+
+  // For Boot category
+  if (product.category.name === 'Boot') {
+    this.quantities.sizeType = 'Boot';
+    this.quantities.bootSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    this.quantities.bootSizes.forEach((size: number) => {
+      this.quantities[size] = getQuantity(size);
+    });
+  }
+
+  // For Football category
+  if (product.category.name === 'Football') {
+    this.quantities.sizeType = 'Football';
+    this.quantities.footballSizes = [3, 4, 5];
+    this.quantities.footballSizes.forEach((size: number) => {
+      this.quantities[size] = getQuantity(size);
+    });
+  }
+}
+
   
 
   onSave(): void {

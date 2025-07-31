@@ -53,13 +53,15 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
     supplierName: '',
     supplierAddress: '',
     supplierMobile: '',
+    supplierEmail: '', // Reset email
     date: '',  // Initialize as empty string
     purchaseItems: [],
     totalQuantity: 0,
     totalPrice: 0,
     paymentType: { id: 0, name: '', description: '' }, // Default to empty object
     paymentReferenceNumber: '',
-    deliveryType: { id: 0, name: '', description: '' } // Default to empty object
+    deliveryType: { id: 0, name: '', description: '' }, // Default to empty object
+    shopIds: [1]
   };
 
   pageSize = 5;
@@ -91,28 +93,28 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
     this.filteredPurchaseItems = this.purchaseItems.slice(0, this.pageSize); // Set the initial page data
   }
 
-  convertProductsToPurchaseItems(): void {
-    this.purchaseItems = [];
-    this.data.forEach(product => {
-      const sizes = Object.keys(product.sizeMap);
-      sizes.forEach(size => {
-        const purchaseItem: PurchaseItem = {
-          productId: product.id,
-          productName: product.name,
-          productCategory: product.category.name,
-          size: size,
-          quantityAvailable: product.sizeMap[size],
-          quantity: 1, // Initially no quantity selected
-          purchasePrice: product.sellingPrice,
-          totalPrice: 0 // Initially set to 0
-        };
-        this.purchaseItems.push(purchaseItem);
-      });
-    });
+convertProductsToPurchaseItems(): void {
+  this.purchaseItems = [];
 
-    this.length = this.purchaseItems.length;  // Set the total number of items for pagination
-    this.filteredPurchaseItems = this.purchaseItems;
-  }
+  this.data.forEach(product => {
+    product.sizeMap.forEach(sizeEntry => {
+      const purchaseItem: PurchaseItem = {
+        productId: product.id,
+        productName: product.name,
+        productCategory: product.category.name,
+        size: sizeEntry.size,
+        quantityAvailable: sizeEntry.quantity,
+        quantity: 1, // Default selected quantity
+        purchasePrice: product.sellingPrice,
+        totalPrice: 0 // Initially 0
+      };
+      this.purchaseItems.push(purchaseItem);
+    });
+  });
+
+  this.length = this.purchaseItems.length;
+  this.filteredPurchaseItems = this.purchaseItems;
+}
 
   loadPaymentTypes(): void {
     this.purchaseService.getPaymentTypes().subscribe((data: PaymentType[]) => {
@@ -160,13 +162,15 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
       supplierName: '',
       supplierAddress: '',
       supplierMobile: '',
+      supplierEmail: '', // Reset email
       date: '', 
       purchaseItems: [],
       totalQuantity: 0,
       totalPrice: 0,
       paymentType: { id: 0, name: '', description: '' },
       paymentReferenceNumber: '',
-      deliveryType: { id: 0, name: '', description: '' }
+      deliveryType: { id: 0, name: '', description: '' },
+      shopIds: []
     };
     this.dialogRef.close();
   }

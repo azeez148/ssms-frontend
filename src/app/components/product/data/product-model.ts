@@ -1,11 +1,16 @@
 import { Category } from "../../category/data/category-model";
 
+export interface ProductSize {
+  size: string;
+  quantity: number;
+}
+
 export interface Product {
   id: number;
   name: string;
   description: string;
   category: Category;
-  sizeMap: { [key: string]: number }; // e.g., {"S": 10, "M": 5, "L": 3}
+  sizeMap: ProductSize[];  // Changed from object to array
   unitPrice: number;
   sellingPrice: number;
   imageUrl?: string; // Optional field for product image URL
