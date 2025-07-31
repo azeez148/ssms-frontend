@@ -11,6 +11,8 @@ import { StocksComponent } from './components/stock/stocks/stocks.component';
 import { SalesComponent } from './components/sale/sales/sales.component';
 import { PurchasesComponent } from './components/purchase/purchases/purchases.component';
 import { CustomerHomeComponent } from './customer-home/customer-home.component';
+import { CustomersComponent } from './components/customer/customers/customers.component';
+import { VendorsComponent } from './components/vendor/vendors/vendors.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -25,6 +27,7 @@ export const routes: Routes = [
     { path: 'pricelists', component: PricelistsComponent },
     { path: 'about', component: AboutComponent },
     { path: 'contact', component: ContactComponent },
-    {path: 'customer-view', component: CustomerHomeComponent },
-
+    { path: 'customer-view', component: CustomerHomeComponent },
+    { path: 'customers', component: CustomersComponent },
+    { path: 'vendors', component: VendorsComponent },
   ];
