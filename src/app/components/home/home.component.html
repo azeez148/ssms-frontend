@@ -1,197 +1,129 @@
 <div class="container my-5">
   <h1 class="text-center mb-4">Dashboard</h1>
-<div class="row mb-4">
-    <div class="col-md-12">
+  <div class="row mb-4">
+      <div class="col-md-12">
+          <section>
+              <div class="card h-100">
+                  <div class="card-header bg-info text-white">
+                      Total Sales Details
+                  </div>
+                  <div class="card-body">
+                      <div class="row text-center">
+                          <div class="col-md-4">
+                              <h5>Total Sales Count</h5>
+                              <p>{{ dashboardData.total_sales.total_count }}</p>
+                          </div>
+                          <div class="col-md-4">
+                              <h5>Total Revenue</h5>
+                              <p>{{ dashboardData.total_sales.total_revenue | currency }}</p>
+                          </div>
+                          <div class="col-md-4">
+                              <h5>Total Items Sold</h5>
+                              <p>{{ dashboardData.total_sales.total_items_sold }}</p>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </section>
+      </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <section>
+        <div class="card h-100">
+          <div class="card-header bg-secondary text-white">
+            Total Products
+          </div>
+          <div class="card-body text-center">
+            <h5>{{ dashboardData.total_products }}</h5>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="col-md-6">
+      <section>
+        <div class="card h-100">
+          <div class="card-header bg-secondary text-white">
+            Total Categories
+          </div>
+          <div class="card-body text-center">
+            <h5>{{ dashboardData.total_categories }}</h5>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+    <!-- Recent Sales -->
+    <div class="row">
+      <div class="col-md-12 mb-4">
         <section>
-            <div class="card h-100">
-                <div class="card-header bg-info text-white">
-                    Total Sale/Purchase Details
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-md-4">
-                            <h5>Total Sales</h5>
-                            <p>{{ dashboardData.totalSales }}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <h5>Total Purchases</h5>
-                            <p>{{ dashboardData.totalPurchases }}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <h5>Total Revenue</h5>
-                            <p>{{ dashboardData.totalRevenue | currency }}</p>
-                        </div>
-                    </div>
-                </div>
+          <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+              Recent Sales
             </div>
+            <div class="card-body p-0">
+              <table class="table table-striped m-0">
+                <thead class="thead-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Address</th>
+                    <th>Mobile</th>
+                    <th>Date</th>
+                    <th>Total QTY</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let sale of dashboardData?.recent_sales">
+                    <td>{{ sale.id }}</td>
+                    <td>{{ sale.customer_name }}</td>
+                    <td>{{ sale.customer_address }}</td>
+                    <td>{{ sale.customer_mobile }}</td>
+                    <td>{{ sale.date | date:'shortDate' }}</td>
+                    <td>{{ sale.total_quantity }}</td>
+                    <td>{{ sale.total_price | currency }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
-    </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6">
-    <section>
-      <div class="card h-100">
-        <div class="card-header bg-secondary text-white">
-          Total Items In Stock
-        </div>
-        <div class="card-body text-center">
-          <h5>{{ dashboardData.totalItemsInStock }}</h5>
-        </div>
       </div>
-    </section>
-  </div>
-  <div class="col-md-6">
-    <section>
-      <div class="card h-100">
-        <div class="card-header bg-secondary text-white">
-          Total Stock Value
-        </div>
-        <div class="card-body text-center">
-          <h5>{{ dashboardData.totalStockValue | currency }}</h5>
-        </div>
-      </div>
-    </section>
-  </div>
-</div>
-
-  <!-- First Row: Recent 5 Sales and Recent 5 Purchases -->
-  <div class="row">
-    <!-- Recent 5 Sales -->
-    <div class="col-md-6 mb-4">
-      <section>
-        <div class="card h-100">
-          <div class="card-header bg-primary text-white">
-            Recent 5 Sales
-          </div>
-          <div class="card-body p-0">
-            <table class="table table-striped m-0">
-              <thead class="thead-light">
-                <tr>
-                  <th>ID</th>
-                  <th>Customer</th>
-                  <th>Address</th>
-                  <th>Mobile</th>
-                  <th>Date</th>
-                  <th>Total QTY</th>
-                  <th>Total Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let sale of dashboardData?.recentSales">
-                  <td>{{ sale.id }}</td>
-                  <td>{{ sale.customerName }}</td>
-                  <td>{{ sale.customerAddress }}</td>
-                  <td>{{ sale.customerMobile }}</td>
-                  <td>{{ sale.date | date:'shortDate' }}</td>
-                  <td>{{ sale.totalQuantity }}</td>
-                  <td>{{ sale.totalPrice | currency }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
     </div>
 
-    <!-- Recent 5 Purchases -->
-    <div class="col-md-6 mb-4">
-      <section>
-        <div class="card h-100">
-          <div class="card-header bg-success text-white">
-            Recent 5 Purchases
-          </div>
-          <div class="card-body p-0">
-            <table class="table table-striped m-0">
-              <thead class="thead-light">
-                <tr>
-                  <th>ID</th>
-                  <th>Supplier/Details</th>
-                  <th>Date</th>
-                  <th>Total QTY</th>
-                  <th>Total Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let purchase of dashboardData?.recentPurchases">
-                  <td>{{ purchase.id }}</td>
-                  <td>{{ purchase.details || 'N/A' }}</td>
-                  <td>{{ purchase.date | date:'shortDate' }}</td>
-                  <td>{{ purchase.totalQuantity }}</td>
-                  <td>{{ purchase.totalPrice | currency }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <!-- Second Row: Most Sold Items and Total Sale/Purchase Details -->
-  <div class="row">
     <!-- Most Sold Items -->
-    <div class="col-md-6 mb-4">
-      <section>
-        <div class="card h-100">
-          <div class="card-header bg-warning text-dark">
-            Most Sold Items
+    <div class="row">
+      <div class="col-md-12 mb-4">
+        <section>
+          <div class="card h-100">
+            <div class="card-header bg-warning text-dark">
+              Most Sold Items
+            </div>
+            <div class="card-body p-0">
+              <table class="table table-striped m-0">
+                <thead class="thead-light">
+                  <tr>
+                    <th>Item Name</th>
+                    <th>Category</th>
+                    <th>Sales Count</th>
+                    <th>Total Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of dashboardData?.most_sold_items | keyvalue">
+                    <td>{{ item.value.product_name }}</td>
+                    <td>{{ item.value.product_category }}</td>
+                    <td>{{ item.value.total_quantity }}</td>
+                    <td>{{ item.value.total_revenue | currency }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div class="card-body p-0">
-            <table class="table table-striped m-0">
-              <thead class="thead-light">
-                <tr>
-                  <th>Item Name</th>
-                  <th>Sales Count</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of dashboardData?.mostSoldItems | keyvalue">
-                  <td>{{ item.key }}</td>
-                  <td>{{ item.value }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </div>
-
-        <div class="col-md-6 mb-4">
-      <section>
-        <div class="card h-100">
-          <div class="card-header bg-warning text-dark">
-            Stock Item Count by Category
-          </div>
-          <div class="card-body p-0">
-            <table class="table table-striped m-0">
-              <thead class="thead-light">
-                <tr>
-                  <th>Category Name</th>
-                  <th>Count</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of dashboardData?.categoryItemCounts | keyvalue">
-                  <td>{{ item.key }}</td>
-                  <td>{{ item.value }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </div>
-
-
-  </div>
-
-  <!-- If you ever have an odd number of sections, wrap it in a row and center it -->
-  <!-- Example:
-  <div class="row">
-    <div class="col-md-6 mx-auto mb-4">
-      Your single centered card here...
+        </section>
+      </div>
     </div>
   </div>
-  -->
-</div>
