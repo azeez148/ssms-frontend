@@ -18,6 +18,11 @@
       <input matInput [(ngModel)]="productNameFilter" (input)="onFilterChange()" placeholder="Search by product name">
     </mat-form-field>
 
+    <mat-form-field appearance="fill">
+      <mat-label>Filter by Vendor Name</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search by vendor name">
+    </mat-form-field>
+
     <!-- Add New Purchase Button -->
     <button mat-raised-button color="primary" (click)="openCreatePurchaseDialog()">Create New Purchase</button>
 <!-- Export to Excel Button -->

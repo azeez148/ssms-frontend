@@ -3,6 +3,21 @@
   <button mat-raised-button color="primary" (click)="createProduct()">Create Product</button>
 </div>
 
+<div class="filter-container">
+  <mat-form-field appearance="fill">
+    <mat-label>Search by name</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Pizza">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Filter by category</mat-label>
+    <mat-select (selectionChange)="filterByCategory($event)">
+      <mat-option value="all">All Categories</mat-option>
+      <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
   <!-- ID Column -->
   <ng-container matColumnDef="id">

@@ -47,6 +47,8 @@ export class SalesComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  private allSales: Sale[] = [];
+
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
@@ -67,6 +69,7 @@ export class SalesComponent {
 
   loadSales(): void {
     this.saleService.getSales().subscribe(sales => {
+      this.allSales = sales;
       this.dataSource.data = sales;
       this.dataSource.paginator = this.paginator;
     });
@@ -74,7 +77,29 @@ export class SalesComponent {
 
   // Called when the category or product filter is changed
   onFilterChange(): void {
-    this.loadSales();  // Reload the sales based on the updated filters
+    let filteredSales = this.allSales;
+
+    if (this.selectedCategoryId) {
+      filteredSales = filteredSales.filter(s =>
+        s.saleItems.some(item => item.productCategory === this.categories.find(c => c.id === this.selectedCategoryId)?.name)
+      );
+    }
+
+    if (this.productNameFilter) {
+      filteredSales = filteredSales.filter(s =>
+        s.saleItems.some(item => item.productName.toLowerCase().includes(this.productNameFilter.toLowerCase()))
+      );
+    }
+
+    this.dataSource.data = filteredSales;
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Sale, filter: string) => {
+      return data.customerName.toLowerCase().includes(filter);
+    };
   }
 
   // Open dialog to create a new sale
