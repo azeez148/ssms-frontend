@@ -1,7 +1,12 @@
 <div class="sale-details">
     <mat-form-field appearance="fill" class="mat-form-field-sale">
       <mat-label>Customer Name</mat-label>
-      <input matInput [(ngModel)]="sale.customerName" name="customerName" required />
+      <input matInput [(ngModel)]="sale.customerName" name="customerName" required [formControl]="customerCtrl" [matAutocomplete]="auto" />
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCustomerSelected($event.option.value)">
+        <mat-option *ngFor="let customer of filteredCustomers | async" [value]="customer">
+          {{ customer.name }}
+        </mat-option>
+      </mat-autocomplete>
     </mat-form-field>
   
     <mat-form-field appearance="fill" class="mat-form-field-sale">

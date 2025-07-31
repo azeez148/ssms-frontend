@@ -14,7 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { Purchase } from '../data/purchase-model';
+import { Purchase, PurchaseItem } from '../data/purchase-model';
 import { PurchaseDialogComponent } from '../purchase-dialog/purchase-dialog.component';
 import { PurchaseService } from '../services/purchase.service';
 import { Product } from '../../product/data/product-model';
@@ -37,7 +37,7 @@ import { PurchaseDetailsDialogComponent } from '../purchase-details-dialog/purch
   styleUrls: ['./purchases.component.css']
 })
 export class PurchasesComponent {
-  displayedColumns: string[] = ['id', 'vendorName', 'totalQuantity', 'totalPrice', 'date', 'viewDetails'];
+  displayedColumns: string[] = ['id', 'supplierName', 'totalQuantity', 'totalPrice', 'date', 'viewDetails'];
   dataSource = new MatTableDataSource<Purchase>([]);
 
   categories: Category[] = [];
@@ -87,7 +87,33 @@ export class PurchasesComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.purchaseService.addPurchase(result).subscribe(newProduct => {
+    
+      const purchaseData = {
+      supplier_name: result.supplierName,
+      supplier_address: result.supplierAddress,
+      supplier_mobile: result.supplierMobile,
+      supplier_email: result.supplierEmail || '',  // Fallback if not provided
+      date: result.date,
+      total_quantity: result.totalQuantity,
+      total_price: result.totalPrice,
+      payment_type_id: result.paymentType.id,
+      payment_reference_number: result.paymentReferenceNumber,
+      delivery_type_id: result.deliveryType.id,
+      shop_ids: result.shopIds, // Assuming shopIds is an array of numbers
+      purchase_items: result.purchaseItems.map((item: PurchaseItem) => ({
+        product_id: item.productId,
+        product_name: item.productName,
+        product_category: item.productCategory,
+        size: item.size,
+        quantity_available: item.quantityAvailable,
+        quantity: item.quantity,
+        purchase_price: item.purchasePrice,
+        total_price: item.totalPrice
+      }))
+    };
+
+
+        this.purchaseService.addPurchase(purchaseData).subscribe(newProduct => {
           console.log(newProduct);
         });
       }

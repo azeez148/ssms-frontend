@@ -16,7 +16,12 @@ import { MatSort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
 import { SaleService } from '../services/sale.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { CustomerService } from '../../customer/services/customer.service';
+import { Customer } from '../../customer/data/customer.model';
+import { Observable, startWith, map } from 'rxjs';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-sale-dialog',
@@ -35,7 +40,9 @@ import { FormsModule } from '@angular/forms';
     MatPaginator,
     MatDatepickerModule,
     MatNativeDateModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule
   ],
   providers: [
     { provide: DateAdapter, useClass: NativeDateAdapter },
@@ -53,6 +60,7 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
     customerName: '',
     customerAddress: '',
     customerMobile: '',
+    customerEmail: '',
     date: '',  // Initialize as empty string
     saleItems: [],
     totalQuantity: 0,
@@ -71,12 +79,21 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  customerCtrl = new FormControl();
+  filteredCustomers: Observable<Customer[]>;
+  customers: Customer[] = [];
+
   constructor(
     public dialogRef: MatDialogRef<SaleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Product[],
-    private saleService: SaleService
+    private saleService: SaleService,
+    private customerService: CustomerService
   ) {
     this.convertProductsToSaleItems();
+    this.filteredCustomers = this.customerCtrl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterCustomers(value || ''))
+    );
   }
 
   ngOnInit() {
@@ -85,34 +102,53 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
 
     this.loadPaymentTypes();
     this.loadDeliveryTypes();
+    this.loadCustomers();
+  }
+
+  private _filterCustomers(value: string): Customer[] {
+    const filterValue = value.toLowerCase();
+    return this.customers.filter(customer => customer.name.toLowerCase().includes(filterValue));
+  }
+
+  onCustomerSelected(customer: Customer): void {
+    this.sale.customerName = customer.name;
+    this.sale.customerAddress = customer.address || '';
+    this.sale.customerMobile = customer.mobile;
+    this.sale.customerEmail = customer.email || '';
+  }
+
+  loadCustomers(): void {
+    this.customerService.getCustomers().subscribe(data => {
+      this.customers = data;
+    });
   }
 
   ngAfterViewInit(): void {
     this.filteredSaleItems = this.saleItems.slice(0, this.pageSize); // Set the initial page data
   }
 
-  convertProductsToSaleItems(): void {
-    this.saleItems = [];
-    this.data.forEach(product => {
-      const sizes = Object.keys(product.sizeMap);
-      sizes.forEach(size => {
-        const saleItem: SaleItem = {
-          productId: product.id,
-          productName: product.name,
-          productCategory: product.category.name,
-          size: size,
-          quantityAvailable: product.sizeMap[size],
-          quantity: 1, // Initially no quantity selected
-          salePrice: product.sellingPrice,
-          totalPrice: 0 // Initially set to 0
-        };
-        this.saleItems.push(saleItem);
-      });
-    });
+convertProductsToSaleItems(): void {
+  this.saleItems = [];
 
-    this.length = this.saleItems.length;  // Set the total number of items for pagination
-    this.filteredSaleItems = this.saleItems;
-  }
+  this.data.forEach(product => {
+    product.sizeMap.forEach(sizeEntry => {
+      const saleItem: SaleItem = {
+        productId: product.id,
+        productName: product.name,
+        productCategory: product.category.name,
+        size: sizeEntry.size,
+        quantityAvailable: sizeEntry.quantity,
+        quantity: 1,  // Default quantity selected
+        salePrice: product.sellingPrice,
+        totalPrice: 0  // Initially set to 0
+      };
+      this.saleItems.push(saleItem);
+    });
+  });
+
+  this.length = this.saleItems.length;
+  this.filteredSaleItems = this.saleItems;
+}
 
   loadPaymentTypes(): void {
     this.saleService.getPaymentTypes().subscribe((data: PaymentType[]) => {
@@ -160,6 +196,7 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
       customerName: '',
       customerAddress: '',
       customerMobile: '',
+      customerEmail: '',
       date: '', 
       saleItems: [],
       totalQuantity: 0,
