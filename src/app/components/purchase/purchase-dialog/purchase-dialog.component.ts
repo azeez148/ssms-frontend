@@ -16,7 +16,12 @@ import { MatSort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
 import { PurchaseService } from '../services/purchase.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { VendorService } from '../../vendor/services/vendor.service';
+import { Vendor } from '../../vendor/data/vendor.model';
+import { Observable, startWith, map } from 'rxjs';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-purchase-dialog',
@@ -35,7 +40,9 @@ import { FormsModule } from '@angular/forms';
     MatPaginator,
     MatDatepickerModule,
     MatNativeDateModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule
   ],
   providers: [
     { provide: DateAdapter, useClass: NativeDateAdapter },
@@ -73,12 +80,21 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  vendorCtrl = new FormControl();
+  filteredVendors: Observable<Vendor[]>;
+  vendors: Vendor[] = [];
+
   constructor(
     public dialogRef: MatDialogRef<PurchaseDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Product[],
-    private purchaseService: PurchaseService
+    private purchaseService: PurchaseService,
+    private vendorService: VendorService
   ) {
     this.convertProductsToPurchaseItems();
+    this.filteredVendors = this.vendorCtrl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterVendors(value || ''))
+    );
   }
 
   ngOnInit() {
@@ -87,6 +103,25 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
 
     this.loadPaymentTypes();
     this.loadDeliveryTypes();
+    this.loadVendors();
+  }
+
+  private _filterVendors(value: string): Vendor[] {
+    const filterValue = value.toLowerCase();
+    return this.vendors.filter(vendor => vendor.name.toLowerCase().includes(filterValue));
+  }
+
+  onVendorSelected(vendor: Vendor): void {
+    this.purchase.supplierName = vendor.name;
+    this.purchase.supplierAddress = vendor.address || '';
+    this.purchase.supplierMobile = vendor.mobile;
+    this.purchase.supplierEmail = vendor.email || '';
+  }
+
+  loadVendors(): void {
+    this.vendorService.getVendors().subscribe(data => {
+      this.vendors = data;
+    });
   }
 
   ngAfterViewInit(): void {
@@ -178,7 +213,7 @@ convertProductsToPurchaseItems(): void {
   onCreate(): void {
     // Validate that vendor name, mobile number, and purchase items are selected
     if (!this.purchase.supplierName || !this.purchase.supplierMobile || this.selectedPurchaseItems.length === 0) {
-      alert('Please fill in all mandatory fields: Customer Name, Mobile, and select at least one purchase item.');
+      alert('Please fill in all mandatory fields: Vendor Name, Mobile, and select at least one purchase item.');
       return; // Prevent creation if the fields are not filled
     }
 

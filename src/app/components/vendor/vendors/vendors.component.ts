@@ -1,12 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Vendor } from '../data/vendor.model';
 import { VendorService } from '../services/vendor.service';
 import { VendorDialogComponent } from '../vendor-dialog/vendor-dialog.component';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-vendors',
@@ -17,12 +20,17 @@ import { MatIconModule } from '@angular/material/icon';
     CommonModule,
     MatTableModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule
   ]
 })
 export class VendorsComponent implements OnInit {
   displayedColumns: string[] = ['id', 'name', 'address', 'mobile', 'email', 'actions'];
-  vendors: Vendor[] = [];
+  dataSource = new MatTableDataSource<Vendor>([]);
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private vendorService: VendorService, public dialog: MatDialog) {}
 
@@ -30,10 +38,19 @@ export class VendorsComponent implements OnInit {
     this.loadVendors();
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
   loadVendors(): void {
     this.vendorService.getVendors().subscribe(data => {
-      this.vendors = data;
+      this.dataSource.data = data;
     });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   openDialog(vendor?: Vendor): void {

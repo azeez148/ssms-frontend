@@ -47,6 +47,8 @@ export class PurchasesComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  private allPurchases: Purchase[] = [];
+
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
@@ -67,6 +69,7 @@ export class PurchasesComponent {
 
   loadPurchases(): void {
     this.purchaseService.getPurchases().subscribe(purchases => {
+      this.allPurchases = purchases;
       this.dataSource.data = purchases;
       this.dataSource.paginator = this.paginator;
     });
@@ -74,7 +77,29 @@ export class PurchasesComponent {
 
   // Called when the category or product filter is changed
   onFilterChange(): void {
-    this.loadPurchases();  // Reload the purchases based on the updated filters
+    let filteredPurchases = this.allPurchases;
+
+    if (this.selectedCategoryId) {
+      filteredPurchases = filteredPurchases.filter(p =>
+        p.purchaseItems.some(item => item.productCategory === this.categories.find(c => c.id === this.selectedCategoryId)?.name)
+      );
+    }
+
+    if (this.productNameFilter) {
+      filteredPurchases = filteredPurchases.filter(p =>
+        p.purchaseItems.some(item => item.productName.toLowerCase().includes(this.productNameFilter.toLowerCase()))
+      );
+    }
+
+    this.dataSource.data = filteredPurchases;
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Purchase, filter: string) => {
+      return data.supplierName.toLowerCase().includes(filter);
+    };
   }
 
   // Open dialog to create a new purchase

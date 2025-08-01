@@ -1,8 +1,15 @@
 <div class="container">
-  <h1>Customers</h1>
-  <button mat-raised-button color="primary" (click)="openDialog()">Add Customer</button>
+  <div class="header">
+    <h1>Customers</h1>
+    <button mat-raised-button color="primary" (click)="openDialog()">Add Customer</button>
+  </div>
 
-  <table mat-table [dataSource]="customers" class="mat-elevation-z8">
+  <mat-form-field appearance="fill">
+    <mat-label>Search by name</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. John Doe">
+  </mat-form-field>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
     <!-- ID Column -->
     <ng-container matColumnDef="id">
@@ -50,4 +57,5 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>

@@ -1,6 +1,9 @@
-<div class="header">
+<div class="container">
+  <div class="header">
     <h1>Sales</h1>
+  </div>
 
+  <div class="filter-container">
     <!-- Category Filter -->
     <mat-form-field appearance="fill">
       <mat-label>Category</mat-label>
@@ -16,6 +19,11 @@
     <mat-form-field appearance="fill">
       <mat-label>Filter by Product Type</mat-label>
       <input matInput [(ngModel)]="productNameFilter" (input)="onFilterChange()" placeholder="Search by product name">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Filter by Customer Name</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search by customer name">
     </mat-form-field>
 
     <!-- Add New Sale Button -->

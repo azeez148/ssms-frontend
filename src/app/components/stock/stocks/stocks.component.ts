@@ -63,6 +63,12 @@ export class StocksComponent {
     this.loadProducts();  // Reload the products based on new filters
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.productNameFilter = filterValue;
+    this.loadProducts();
+  }
+
 
   getAvailableSizesWithQuantities(sizeMap: { size: string; quantity: number }[]): string[] {
   const availableSizesWithQuantities: string[] = [];
