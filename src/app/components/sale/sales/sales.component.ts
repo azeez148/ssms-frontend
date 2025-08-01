@@ -118,6 +118,7 @@ export class SalesComponent {
           customer_address: result.customerAddress,
           customer_mobile: result.customerMobile,
           customer_email: result.customerEmail,
+          customer_id: result.customerId, // New field for customer ID
           date: result.date,
           total_quantity: result.totalQuantity,
           total_price: result.totalPrice,

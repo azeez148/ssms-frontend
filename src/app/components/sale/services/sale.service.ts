@@ -35,6 +35,8 @@ export class SaleService {
         customerAddress: sale.customer_address,
         customerMobile: sale.customer_mobile,
         customerEmail: sale.customer_email || '',  // Fallback if not provided
+        customerId: sale.customer_id, // New field for customer ID
+        shopId: sale.shop_id,  // Fallback to empty array if not provided
         date: sale.date,
         saleItems: (sale.sale_items || []).map((item: any): SaleItem => ({
           productId: item.product_id,

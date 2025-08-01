@@ -61,6 +61,8 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
     customerAddress: '',
     customerMobile: '',
     customerEmail: '',
+    customerId: 0, // Reset customer ID
+    shopId: 0, // Reset shop ID
     date: '',  // Initialize as empty string
     saleItems: [],
     totalQuantity: 0,
@@ -115,6 +117,7 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
     this.sale.customerAddress = customer.address || '';
     this.sale.customerMobile = customer.mobile;
     this.sale.customerEmail = customer.email || '';
+    this.sale.customerId = customer.id; // Set the customer ID
   }
 
   loadCustomers(): void {
@@ -197,6 +200,8 @@ convertProductsToSaleItems(): void {
       customerAddress: '',
       customerMobile: '',
       customerEmail: '',
+      customerId: 0, // Reset customer ID
+      shopId: 0, // Reset shop ID
       date: '', 
       saleItems: [],
       totalQuantity: 0,
