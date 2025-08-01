@@ -61,6 +61,7 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
     supplierAddress: '',
     supplierMobile: '',
     supplierEmail: '', // Reset email
+    supplierId: 0, // Reset vendor ID
     date: '',  // Initialize as empty string
     purchaseItems: [],
     totalQuantity: 0,
@@ -116,6 +117,7 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
     this.purchase.supplierAddress = vendor.address || '';
     this.purchase.supplierMobile = vendor.mobile;
     this.purchase.supplierEmail = vendor.email || '';
+    this.purchase.supplierId = vendor.id; // Set the supplier ID
   }
 
   loadVendors(): void {
@@ -198,6 +200,7 @@ convertProductsToPurchaseItems(): void {
       supplierAddress: '',
       supplierMobile: '',
       supplierEmail: '', // Reset email
+      supplierId: 0, // Reset vendor ID
       date: '', 
       purchaseItems: [],
       totalQuantity: 0,

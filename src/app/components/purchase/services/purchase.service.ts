@@ -31,12 +31,13 @@ export class PurchaseService {
       map((purchases: any[]): Purchase[] => {
         return purchases.map(purchase => ({
           id: purchase.id,
-          supplierName: purchase.supplier_name,
+          supplierName: purchase.vendor.name,
           paymentType: purchase.payment_type,
           deliveryType: purchase.delivery_type,
-          supplierAddress: purchase.supplier_address,
-          supplierMobile: purchase.supplier_mobile,
-          supplierEmail: purchase.supplier_email || '',  // Fallback if not provided
+          supplierAddress: purchase.vendor.address,
+          supplierMobile: purchase.vendor.mobile,
+          supplierEmail: purchase.vendor.email || '',  // Fallback if not provided
+          supplierId: purchase.vendor_id, // New field for supplier ID
           paymentReferenceNumber: purchase.payment_reference_number || '',
           shopIds: purchase.shop_ids || [],  // Fallback to empty array if not provided
           date: purchase.date,

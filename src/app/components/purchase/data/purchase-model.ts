@@ -45,6 +45,7 @@ export interface Purchase {
   paymentReferenceNumber: string;         // Payment reference number (e.g., transaction ID)
   deliveryType: DeliveryType; // Delivery type for the sale
   shopIds: number[];          // List of shop IDs where the sale was made
+  supplierId: number; // ID of the supplier making the purchase
 }
 
   

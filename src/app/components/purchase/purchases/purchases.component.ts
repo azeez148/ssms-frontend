@@ -23,13 +23,13 @@ import { PurchaseDetailsDialogComponent } from '../purchase-details-dialog/purch
 @Component({
   selector: 'app-purchases',
   imports: [
-    CommonModule, 
-    MatTableModule, 
-    MatPaginatorModule, 
-    MatButtonModule, 
-    MatFormFieldModule, 
-    MatSelectModule, 
-    MatInputModule, 
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
     FormsModule,
     MatDialogModule
   ],
@@ -54,7 +54,7 @@ export class PurchasesComponent {
     private categoryService: CategoryService,
     private dialog: MatDialog,
     private purchaseService: PurchaseService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe(categories => {
@@ -112,30 +112,31 @@ export class PurchasesComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-    
-      const purchaseData = {
-      supplier_name: result.supplierName,
-      supplier_address: result.supplierAddress,
-      supplier_mobile: result.supplierMobile,
-      supplier_email: result.supplierEmail || '',  // Fallback if not provided
-      date: result.date,
-      total_quantity: result.totalQuantity,
-      total_price: result.totalPrice,
-      payment_type_id: result.paymentType.id,
-      payment_reference_number: result.paymentReferenceNumber,
-      delivery_type_id: result.deliveryType.id,
-      shop_ids: result.shopIds, // Assuming shopIds is an array of numbers
-      purchase_items: result.purchaseItems.map((item: PurchaseItem) => ({
-        product_id: item.productId,
-        product_name: item.productName,
-        product_category: item.productCategory,
-        size: item.size,
-        quantity_available: item.quantityAvailable,
-        quantity: item.quantity,
-        purchase_price: item.purchasePrice,
-        total_price: item.totalPrice
-      }))
-    };
+
+        const purchaseData = {
+          supplier_name: result.supplierName,
+          supplier_address: result.supplierAddress,
+          supplier_mobile: result.supplierMobile,
+          supplier_email: result.supplierEmail || '',  // Fallback if not provided
+          vendor_id: result.supplierId || 0, // New field for supplier ID
+          date: result.date,
+          total_quantity: result.totalQuantity,
+          total_price: result.totalPrice,
+          payment_type_id: result.paymentType.id,
+          payment_reference_number: result.paymentReferenceNumber,
+          delivery_type_id: result.deliveryType.id,
+          shop_ids: result.shopIds, // Assuming shopIds is an array of numbers
+          purchase_items: result.purchaseItems.map((item: PurchaseItem) => ({
+            product_id: item.productId,
+            product_name: item.productName,
+            product_category: item.productCategory,
+            size: item.size,
+            quantity_available: item.quantityAvailable,
+            quantity: item.quantity,
+            purchase_price: item.purchasePrice,
+            total_price: item.totalPrice
+          }))
+        };
 
 
         this.purchaseService.addPurchase(purchaseData).subscribe(newProduct => {
@@ -151,7 +152,7 @@ export class PurchasesComponent {
       data: purchase
     });
   }
-exportExcel(): void {
+  exportExcel(): void {
     // Convert dataSource.data to worksheet and workbook
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -170,5 +171,5 @@ exportExcel(): void {
     });
     saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
   }
-  
+
 }

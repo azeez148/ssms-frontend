@@ -31,10 +31,10 @@ export class SaleService {
     map((sales: any[]): Sale[] => {
       return sales.map(sale => ({
         id: sale.id,
-        customerName: sale.customer_name,
-        customerAddress: sale.customer_address,
-        customerMobile: sale.customer_mobile,
-        customerEmail: sale.customer_email || '',  // Fallback if not provided
+        customerName: sale.customer.name,
+        customerAddress: sale.customer.address,
+        customerMobile: sale.customer.mobile,
+        customerEmail: sale.customer.email || '',  // Fallback if not provided
         customerId: sale.customer_id, // New field for customer ID
         shopId: sale.shop_id,  // Fallback to empty array if not provided
         date: sale.date,
