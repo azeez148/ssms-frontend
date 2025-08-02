@@ -85,4 +85,17 @@ describe('SaleDialogComponent', () => {
     component.applyFilter({ target: { value: 'test' } } as any);
     expect(component.paginator.firstPage).toHaveBeenCalled();
   });
+
+  it('should update pagination', () => {
+    component.filteredSaleItems = [
+      { productName: 'Apple', productCategory: 'Fruit' },
+      { productName: 'Banana', productCategory: 'Fruit' },
+      { productName: 'Carrot', productCategory: 'Vegetable' },
+    ] as any[];
+    component.pageIndex = 1;
+    component.pageSize = 1;
+    component.updatePagination();
+    expect(component.filteredSaleItems.length).toBe(1);
+    expect(component.filteredSaleItems[0].productName).toBe('Banana');
+  });
 });

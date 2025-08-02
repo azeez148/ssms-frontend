@@ -85,4 +85,17 @@ describe('PurchaseDialogComponent', () => {
     component.applyFilter({ target: { value: 'test' } } as any);
     expect(component.paginator.firstPage).toHaveBeenCalled();
   });
+
+  it('should update pagination', () => {
+    component.filteredPurchaseItems = [
+      { productName: 'Apple', productCategory: 'Fruit' },
+      { productName: 'Banana', productCategory: 'Fruit' },
+      { productName: 'Carrot', productCategory: 'Vegetable' },
+    ] as any[];
+    component.pageIndex = 1;
+    component.pageSize = 1;
+    component.updatePagination();
+    expect(component.filteredPurchaseItems.length).toBe(1);
+    expect(component.filteredPurchaseItems[0].productName).toBe('Banana');
+  });
 });
