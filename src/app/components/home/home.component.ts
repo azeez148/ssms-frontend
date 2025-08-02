@@ -59,7 +59,8 @@ export class HomeComponent implements OnInit {
   openSaleDialog(): void {
     this.productService.getProducts().subscribe(products => {
       const dialogRef = this.dialog.open(SaleDialogComponent, {
-        width: '80%',
+         maxWidth: '1000px',
+      height: '800px',
         data: products
       });
 
@@ -76,7 +77,8 @@ export class HomeComponent implements OnInit {
   openPurchaseDialog(): void {
     this.productService.getProducts().subscribe(products => {
       const dialogRef = this.dialog.open(PurchaseDialogComponent, {
-        width: '80%',
+        maxWidth: '1000px',
+      height: '800px',
         data: products
       });
 
