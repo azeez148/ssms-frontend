@@ -26,6 +26,36 @@
       <input matInput (keyup)="applyFilter($event)" placeholder="Search by customer name">
     </mat-form-field>
 
+    <!-- Date Filter -->
+    <mat-form-field appearance="fill">
+      <mat-label>Date Filter</mat-label>
+      <mat-select [(value)]="selectedDateFilter" (selectionChange)="onFilterChange()">
+        <mat-option value="all">All Time</mat-option>
+        <mat-option value="today">Today</mat-option>
+        <mat-option value="yesterday">Yesterday</mat-option>
+        <mat-option value="this_week">This Week</mat-option>
+        <mat-option value="this_month">This Month</mat-option>
+        <mat-option value="custom">Custom Range</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Custom Date Range -->
+    <div *ngIf="selectedDateFilter === 'custom'" class="custom-date-range">
+      <mat-form-field appearance="fill">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="customStartDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="customEndDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
     <!-- Add New Sale Button -->
     <button mat-raised-button color="primary" (click)="openCreateSaleDialog()">Create New Sale</button>
   <button mat-raised-button color="accent" (click)="exportExcel()">Export to Excel</button>

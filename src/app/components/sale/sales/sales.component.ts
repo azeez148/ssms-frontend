@@ -19,6 +19,8 @@ import { SaleDialogComponent } from '../sale-dialog/sale-dialog.component';
 import { SaleService } from '../services/sale.service';
 import { Product } from '../../product/data/product-model';
 import { SaleDetailDialogComponent } from '../sale-detail-dialog/sale-detail-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-sales',
@@ -31,7 +33,9 @@ import { SaleDetailDialogComponent } from '../sale-detail-dialog/sale-detail-dia
     MatSelectModule,
     MatInputModule,
     FormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   templateUrl: './sales.component.html',
   styleUrls: ['./sales.component.css']
@@ -44,6 +48,9 @@ export class SalesComponent {
   products: Product[] = [];
   selectedCategoryId: number | null = null;
   productNameFilter: string = '';
+  selectedDateFilter: string = 'all';
+  customStartDate: Date | null = null;
+  customEndDate: Date | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -91,6 +98,47 @@ export class SalesComponent {
       );
     }
 
+    this.applyDateFilter(filteredSales);
+  }
+
+  applyDateFilter(filteredSales: Sale[]): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    switch (this.selectedDateFilter) {
+      case 'today':
+        filteredSales = filteredSales.filter(s => new Date(s.date).setHours(0, 0, 0, 0) === today.getTime());
+        break;
+      case 'yesterday':
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        filteredSales = filteredSales.filter(s => new Date(s.date).setHours(0, 0, 0, 0) === yesterday.getTime());
+        break;
+      case 'this_week':
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay());
+        filteredSales = filteredSales.filter(s => new Date(s.date) >= startOfWeek);
+        break;
+      case 'this_month':
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        filteredSales = filteredSales.filter(s => new Date(s.date) >= startOfMonth);
+        break;
+      case 'custom':
+        if (this.customStartDate && this.customEndDate) {
+          const startDate = new Date(this.customStartDate);
+          startDate.setHours(0, 0, 0, 0);
+          const endDate = new Date(this.customEndDate);
+          endDate.setHours(23, 59, 59, 999);
+          filteredSales = filteredSales.filter(s => {
+            const saleDate = new Date(s.date);
+            return saleDate >= startDate && saleDate <= endDate;
+          });
+        }
+        break;
+      default:
+        // No date filter
+        break;
+    }
     this.dataSource.data = filteredSales;
   }
 
