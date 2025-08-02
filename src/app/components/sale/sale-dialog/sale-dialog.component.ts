@@ -262,6 +262,9 @@ convertProductsToSaleItems(): void {
     }
 
     this.filteredSaleItems = filteredItems;
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
     this.updatePagination();
   }
 
