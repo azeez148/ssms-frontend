@@ -23,6 +23,12 @@ export class HomeComponent implements OnInit {
     total_categories: 0,
     most_sold_items: {},
     recent_sales: [],
+    total_purchases: {
+      total_count: 0,
+      total_cost: 0,
+      total_items_purchased: 0,
+    },
+    recent_purchases: [],
   };
 
   constructor(private homeService: HomeService) { }
