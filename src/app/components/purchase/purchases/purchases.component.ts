@@ -19,6 +19,8 @@ import { PurchaseDialogComponent } from '../purchase-dialog/purchase-dialog.comp
 import { PurchaseService } from '../services/purchase.service';
 import { Product } from '../../product/data/product-model';
 import { PurchaseDetailsDialogComponent } from '../purchase-details-dialog/purchase-details-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-purchases',
@@ -31,7 +33,9 @@ import { PurchaseDetailsDialogComponent } from '../purchase-details-dialog/purch
     MatSelectModule,
     MatInputModule,
     FormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   templateUrl: './purchases.component.html',
   styleUrls: ['./purchases.component.css']
@@ -44,6 +48,9 @@ export class PurchasesComponent {
   products: Product[] = [];
   selectedCategoryId: number | null = null;
   productNameFilter: string = '';
+  selectedDateFilter: string = 'all';
+  customStartDate: Date | null = null;
+  customEndDate: Date | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -91,6 +98,47 @@ export class PurchasesComponent {
       );
     }
 
+    this.applyDateFilter(filteredPurchases);
+  }
+
+  applyDateFilter(filteredPurchases: Purchase[]): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    switch (this.selectedDateFilter) {
+      case 'today':
+        filteredPurchases = filteredPurchases.filter(p => new Date(p.date).setHours(0, 0, 0, 0) === today.getTime());
+        break;
+      case 'yesterday':
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        filteredPurchases = filteredPurchases.filter(p => new Date(p.date).setHours(0, 0, 0, 0) === yesterday.getTime());
+        break;
+      case 'this_week':
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay());
+        filteredPurchases = filteredPurchases.filter(p => new Date(p.date) >= startOfWeek);
+        break;
+      case 'this_month':
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        filteredPurchases = filteredPurchases.filter(p => new Date(p.date) >= startOfMonth);
+        break;
+      case 'custom':
+        if (this.customStartDate && this.customEndDate) {
+          const startDate = new Date(this.customStartDate);
+          startDate.setHours(0, 0, 0, 0);
+          const endDate = new Date(this.customEndDate);
+          endDate.setHours(23, 59, 59, 999);
+          filteredPurchases = filteredPurchases.filter(p => {
+            const purchaseDate = new Date(p.date);
+            return purchaseDate >= startDate && purchaseDate <= endDate;
+          });
+        }
+        break;
+      default:
+        // No date filter
+        break;
+    }
     this.dataSource.data = filteredPurchases;
   }
 
