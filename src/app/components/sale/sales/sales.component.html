@@ -3,6 +3,16 @@
     <h1>Sales</h1>
   </div>
 
+  <!-- Today's Sale Summary -->
+  <div class="summary-container">
+    <h2>Today's Sale Summary</h2>
+    <div class="summary-details">
+      <p><strong>Total Sales:</strong> {{ todaysSaleSummary.total_count }}</p>
+      <p><strong>Total Revenue:</strong> {{ todaysSaleSummary.total_revenue | currency:'INR' }}</p>
+      <p><strong>Total Items Sold:</strong> {{ todaysSaleSummary.total_items_sold }}</p>
+    </div>
+  </div>
+
   <div class="filter-container">
     <!-- Category Filter -->
     <mat-form-field appearance="fill">
