@@ -22,6 +22,8 @@ import { CustomerService } from '../../customer/services/customer.service';
 import { Customer } from '../../customer/data/customer.model';
 import { Observable, startWith, map } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { Category } from '../../category/data/category-model';
+import { CategoryService } from '../../category/services/category.service';
 
 @Component({
   selector: 'app-sale-dialog',
@@ -54,6 +56,9 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
   saleItems: SaleItem[] = [];
   filteredSaleItems: SaleItem[] = [];
   selectedSaleItems: SaleItem[] = [];
+  categories: Category[] = [];
+  searchTerm: string = '';
+  selectedCategory: string = 'all';
 
   sale: Sale = {
     id: 0,
@@ -89,7 +94,8 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
     public dialogRef: MatDialogRef<SaleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Product[],
     private saleService: SaleService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private categoryService: CategoryService
   ) {
     this.convertProductsToSaleItems();
     this.filteredCustomers = this.customerCtrl.valueChanges.pipe(
@@ -105,6 +111,13 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
     this.loadPaymentTypes();
     this.loadDeliveryTypes();
     this.loadCustomers();
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe(data => {
+      this.categories = data;
+    });
   }
 
   private _filterCustomers(value: string): Customer[] {
@@ -227,11 +240,28 @@ convertProductsToSaleItems(): void {
     this.dialogRef.close(this.sale);
   }
 
-  applyFilter(event: KeyboardEvent): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.filteredSaleItems = this.saleItems.filter(saleItem => 
-      saleItem.productName.toLowerCase().includes(filterValue.trim().toLowerCase())
-    );
+  applyFilter(event: any): void {
+    if (event instanceof KeyboardEvent) {
+      this.searchTerm = (event.target as HTMLInputElement).value;
+    } else {
+      this.selectedCategory = event.value;
+    }
+
+    let filteredItems = this.saleItems;
+
+    if (this.searchTerm) {
+      filteredItems = filteredItems.filter(item =>
+        item.productName.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+
+    if (this.selectedCategory !== 'all') {
+      filteredItems = filteredItems.filter(item =>
+        item.productCategory === this.selectedCategory
+      );
+    }
+
+    this.filteredSaleItems = filteredItems;
     this.updatePagination();
   }
 

@@ -62,6 +62,22 @@
   
 <!-- Product Table -->
 <div class="table-container">
+    <div class="filter-container">
+        <mat-form-field appearance="fill">
+          <mat-label>Search Products</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Search by name">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Filter by Category</mat-label>
+          <mat-select (selectionChange)="applyFilter($event)">
+            <mat-option [value]="'all'">All Categories</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category.name">
+              {{ category.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     <table mat-table [dataSource]="filteredSaleItems" class="mat-elevation-z8">
       <ng-container matColumnDef="selectAll">
         <th mat-header-cell *matHeaderCellDef>

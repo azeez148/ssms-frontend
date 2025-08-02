@@ -22,6 +22,8 @@ import { VendorService } from '../../vendor/services/vendor.service';
 import { Vendor } from '../../vendor/data/vendor.model';
 import { Observable, startWith, map } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { Category } from '../../category/data/category-model';
+import { CategoryService } from '../../category/services/category.service';
 
 @Component({
   selector: 'app-purchase-dialog',
@@ -54,6 +56,9 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
   purchaseItems: PurchaseItem[] = [];
   filteredPurchaseItems: PurchaseItem[] = [];
   selectedPurchaseItems: PurchaseItem[] = [];
+  categories: Category[] = [];
+  searchTerm: string = '';
+  selectedCategory: string = 'all';
 
   purchase: Purchase = {
     id: 0,
@@ -89,7 +94,8 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
     public dialogRef: MatDialogRef<PurchaseDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Product[],
     private purchaseService: PurchaseService,
-    private vendorService: VendorService
+    private vendorService: VendorService,
+    private categoryService: CategoryService
   ) {
     this.convertProductsToPurchaseItems();
     this.filteredVendors = this.vendorCtrl.valueChanges.pipe(
@@ -105,6 +111,13 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
     this.loadPaymentTypes();
     this.loadDeliveryTypes();
     this.loadVendors();
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe(data => {
+      this.categories = data;
+    });
   }
 
   private _filterVendors(value: string): Vendor[] {
@@ -227,11 +240,28 @@ convertProductsToPurchaseItems(): void {
     this.dialogRef.close(this.purchase);
   }
 
-  applyFilter(event: KeyboardEvent): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.filteredPurchaseItems = this.purchaseItems.filter(purchaseItem => 
-      purchaseItem.productName.toLowerCase().includes(filterValue.trim().toLowerCase())
-    );
+  applyFilter(event: any): void {
+    if (event instanceof KeyboardEvent) {
+      this.searchTerm = (event.target as HTMLInputElement).value;
+    } else {
+      this.selectedCategory = event.value;
+    }
+
+    let filteredItems = this.purchaseItems;
+
+    if (this.searchTerm) {
+      filteredItems = filteredItems.filter(item =>
+        item.productName.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+
+    if (this.selectedCategory !== 'all') {
+      filteredItems = filteredItems.filter(item =>
+        item.productCategory === this.selectedCategory
+      );
+    }
+
+    this.filteredPurchaseItems = filteredItems;
     this.updatePagination();
   }
 
