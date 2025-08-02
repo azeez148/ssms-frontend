@@ -56,6 +56,12 @@ export class SalesComponent {
 
   private allSales: Sale[] = [];
 
+  todaysSaleSummary = {
+    total_count: 0,
+    total_revenue: 0,
+    total_items_sold: 0,
+  };
+
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
@@ -79,7 +85,23 @@ export class SalesComponent {
       this.allSales = sales;
       this.dataSource.data = sales;
       this.dataSource.paginator = this.paginator;
+      this.calculateTodaysSaleSummary();
     });
+  }
+
+  calculateTodaysSaleSummary(): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todaysSales = this.allSales.filter(s => {
+      const saleDate = new Date(s.date);
+      saleDate.setHours(0, 0, 0, 0);
+      return saleDate.getTime() === today.getTime();
+    });
+
+    this.todaysSaleSummary.total_count = todaysSales.length;
+    this.todaysSaleSummary.total_revenue = todaysSales.reduce((acc, sale) => acc + sale.totalPrice, 0);
+    this.todaysSaleSummary.total_items_sold = todaysSales.reduce((acc, sale) => acc + sale.totalQuantity, 0);
   }
 
   // Called when the category or product filter is changed

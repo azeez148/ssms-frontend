@@ -56,6 +56,12 @@ export class PurchasesComponent {
 
   private allPurchases: Purchase[] = [];
 
+  todaysPurchaseSummary = {
+    total_count: 0,
+    total_cost: 0,
+    total_items_purchased: 0,
+  };
+
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
@@ -79,7 +85,23 @@ export class PurchasesComponent {
       this.allPurchases = purchases;
       this.dataSource.data = purchases;
       this.dataSource.paginator = this.paginator;
+      this.calculateTodaysPurchaseSummary();
     });
+  }
+
+  calculateTodaysPurchaseSummary(): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todaysPurchases = this.allPurchases.filter(p => {
+      const purchaseDate = new Date(p.date);
+      purchaseDate.setHours(0, 0, 0, 0);
+      return purchaseDate.getTime() === today.getTime();
+    });
+
+    this.todaysPurchaseSummary.total_count = todaysPurchases.length;
+    this.todaysPurchaseSummary.total_cost = todaysPurchases.reduce((acc, purchase) => acc + purchase.totalPrice, 0);
+    this.todaysPurchaseSummary.total_items_purchased = todaysPurchases.reduce((acc, purchase) => acc + purchase.totalQuantity, 0);
   }
 
   // Called when the category or product filter is changed
