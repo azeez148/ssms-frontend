@@ -79,4 +79,10 @@ describe('PurchaseDialogComponent', () => {
     expect(component.filteredPurchaseItems.length).toBe(1);
     expect(component.filteredPurchaseItems[0].productName).toBe('Apple');
   });
+
+  it('should reset paginator on filter', () => {
+    spyOn(component.paginator, 'firstPage');
+    component.applyFilter({ target: { value: 'test' } } as any);
+    expect(component.paginator.firstPage).toHaveBeenCalled();
+  });
 });

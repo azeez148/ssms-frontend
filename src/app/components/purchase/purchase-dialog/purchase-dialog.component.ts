@@ -262,6 +262,9 @@ convertProductsToPurchaseItems(): void {
     }
 
     this.filteredPurchaseItems = filteredItems;
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
     this.updatePagination();
   }
 
