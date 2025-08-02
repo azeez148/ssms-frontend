@@ -79,9 +79,9 @@
                 <tbody>
                   <tr *ngFor="let sale of dashboardData?.recent_sales">
                     <td>{{ sale.id }}</td>
-                    <td>{{ sale.customer_name }}</td>
-                    <td>{{ sale.customer_address }}</td>
-                    <td>{{ sale.customer_mobile }}</td>
+                    <td>{{ sale.customer.name }}</td>
+                    <td>{{ sale.customer.address }}</td>
+                    <td>{{ sale.customer.mobile }}</td>
                     <td>{{ sale.date | date:'shortDate' }}</td>
                     <td>{{ sale.total_quantity }}</td>
                     <td>{{ sale.total_price | currency }}</td>
@@ -126,4 +126,72 @@
         </section>
       </div>
     </div>
+
+  <!-- Total Purchases -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+        <section>
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    Total Purchases Details
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h5>Total Purchases Count</h5>
+                            <p>{{ dashboardData.total_purchases.total_count }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Total Cost</h5>
+                            <p>{{ dashboardData.total_purchases.total_cost | currency }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Total Items Purchased</h5>
+                            <p>{{ dashboardData.total_purchases.total_items_purchased }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
   </div>
+
+  <!-- Recent Purchases -->
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <section>
+        <div class="card h-100">
+          <div class="card-header bg-dark text-white">
+            Recent Purchases
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-striped m-0">
+              <thead class="thead-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Vendor</th>
+                  <th>Address</th>
+                  <th>Mobile</th>
+                  <th>Date</th>
+                  <th>Total QTY</th>
+                  <th>Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let purchase of dashboardData?.recent_purchases">
+                  <td>{{ purchase.id }}</td>
+                  <td>{{ purchase.vendor.name }}</td>
+                  <td>{{ purchase.vendor.address }}</td>
+                  <td>{{ purchase.vendor.mobile }}</td>
+                  <td>{{ purchase.date | date:'shortDate' }}</td>
+                  <td>{{ purchase.total_quantity }}</td>
+                  <td>{{ purchase.total_price | currency }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
