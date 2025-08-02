@@ -298,6 +298,8 @@ convertProductsToPurchaseItems(): void {
   }
 
   updatePagination(): void {
-    this.filteredPurchaseItems = this.purchaseItems.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.filteredPurchaseItems = this.filteredPurchaseItems.slice(startIndex, endIndex);
   }
 }
