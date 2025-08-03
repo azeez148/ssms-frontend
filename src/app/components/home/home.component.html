@@ -4,6 +4,57 @@
     <button mat-raised-button color="accent" (click)="openPurchaseDialog()">Quick Purchase</button>
   </div>
   <h1 class="text-center mb-4">Dashboard</h1>
+
+  <!-- Today's Summaries -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header bg-info text-white">
+          Today's Sale Summary
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-md-4">
+              <h5>Total Sales</h5>
+              <p>{{ todaysSaleSummary.total_count }}</p>
+            </div>
+            <div class="col-md-4">
+              <h5>Total Revenue</h5>
+              <p>{{ todaysSaleSummary.total_revenue | currency:'INR' }}</p>
+            </div>
+            <div class="col-md-4">
+              <h5>Total Items Sold</h5>
+              <p>{{ todaysSaleSummary.total_items_sold }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header bg-success text-white">
+          Today's Purchase Summary
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-md-4">
+              <h5>Total Purchases</h5>
+              <p>{{ todaysPurchaseSummary.total_count }}</p>
+            </div>
+            <div class="col-md-4">
+              <h5>Total Cost</h5>
+              <p>{{ todaysPurchaseSummary.total_cost | currency:'INR' }}</p>
+            </div>
+            <div class="col-md-4">
+              <h5>Total Items Purchased</h5>
+              <p>{{ todaysPurchaseSummary.total_items_purchased }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="row mb-4">
       <div class="col-md-12">
           <section>
