@@ -1,0 +1,19 @@
+.container {
+  padding: 20px;
+}
+
+.winner-selection {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+.winner {
+  background-color: #c8e6c9; /* A light green color */
+  font-weight: bold;
+}
