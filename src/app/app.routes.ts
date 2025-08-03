@@ -13,6 +13,8 @@ import { PurchasesComponent } from './components/purchase/purchases/purchases.co
 import { CustomerHomeComponent } from './customer-home/customer-home.component';
 import { CustomersComponent } from './components/customer/customers/customers.component';
 import { VendorsComponent } from './components/vendor/vendors/vendors.component';
+import { EventsOffersListComponent } from './components/events-offers/events-offers-list/events-offers-list.component';
+import { EventParticipantsComponent } from './components/events-offers/event-participants/event-participants.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -30,4 +32,6 @@ export const routes: Routes = [
     { path: 'customer-view', component: CustomerHomeComponent },
     { path: 'customers', component: CustomersComponent },
     { path: 'vendors', component: VendorsComponent },
+    { path: 'events-offers', component: EventsOffersListComponent, data: { prerender: false } },
+    { path: 'events-offers/:id/participants', component: EventParticipantsComponent, data: { prerender: false } },
   ];

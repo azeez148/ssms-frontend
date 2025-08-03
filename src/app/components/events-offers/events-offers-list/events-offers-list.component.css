@@ -1,0 +1,27 @@
+.container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.mat-cell, .mat-header-cell {
+  padding: 8px;
+}
+
+.mat-icon-button {
+  margin-right: 8px;
+}
