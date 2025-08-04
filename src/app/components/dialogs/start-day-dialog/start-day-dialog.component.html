@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>Start Day</h1>
+<div mat-dialog-content [formGroup]="form">
+  <p>Enter the opening balance for today.</p>
+  <mat-form-field appearance="fill">
+    <mat-label>Opening Balance</mat-label>
+    <input matInput formControlName="openingBalance" type="number" placeholder="Enter amount">
+    <mat-error *ngIf="form.controls['openingBalance'].hasError('required')">
+      Opening balance is required.
+    </mat-error>
+    <mat-error *ngIf="form.controls['openingBalance'].hasError('pattern')">
+      Please enter a valid number.
+    </mat-error>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onStart()" [disabled]="!form.valid">Start Day</button>
+</div>

@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>End of Day Summary</h1>
+<div mat-dialog-content>
+  <p><strong>Opening Balance:</strong> {{ data.openingBalance | currency:'INR' }}</p>
+  <p><strong>Total Sales Revenue:</strong> {{ data.totalSales | currency:'INR' }}</p>
+  <p><strong>Total Purchase Cost:</strong> {{ data.totalPurchases | currency:'INR' }}</p>
+  <hr>
+  <p><strong>Closing Balance:</strong> {{ data.closingBalance | currency:'INR' }}</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onConfirm()">Confirm & Send Notifications</button>
+</div>
