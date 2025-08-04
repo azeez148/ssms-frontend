@@ -12,10 +12,10 @@ import { KeyValuePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Sale } from '../sale/data/sale-model';
 import { Purchase } from '../purchase/data/purchase-model';
-import { DayService } from 'src/app/services/day.service';
 import { StartDayDialogComponent } from '../dialogs/start-day-dialog/start-day-dialog.component';
 import { EndDayDialogComponent } from '../dialogs/end-day-dialog/end-day-dialog.component';
 import { Subscription } from 'rxjs';
+import { DayService } from '../../services/day.service';
 
 @Component({
   selector: 'app-home',

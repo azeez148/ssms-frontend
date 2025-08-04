@@ -21,8 +21,8 @@ import { Product } from '../../product/data/product-model';
 import { SaleDetailDialogComponent } from '../sale-detail-dialog/sale-detail-dialog.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { DayService } from 'src/app/services/day.service';
 import { Subscription } from 'rxjs';
+import { DayService } from '../../../services/day.service';
 
 @Component({
   selector: 'app-sales',
