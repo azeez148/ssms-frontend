@@ -40,7 +40,8 @@ import { Subscription } from 'rxjs';
     MatNativeDateModule
   ],
   templateUrl: './sales.component.html',
-  styleUrls: ['./sales.component.css']
+  styleUrls: ['./sales.component.css'],
+  providers: [DayService]
 })
 export class SalesComponent {
   private dayStartedSubscription: Subscription;
