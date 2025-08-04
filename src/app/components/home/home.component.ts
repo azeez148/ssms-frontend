@@ -12,6 +12,10 @@ import { KeyValuePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Sale } from '../sale/data/sale-model';
 import { Purchase } from '../purchase/data/purchase-model';
+import { DayService } from 'src/app/services/day.service';
+import { StartDayDialogComponent } from '../dialogs/start-day-dialog/start-day-dialog.component';
+import { EndDayDialogComponent } from '../dialogs/end-day-dialog/end-day-dialog.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +25,11 @@ import { Purchase } from '../purchase/data/purchase-model';
   standalone: true,
 })
 export class HomeComponent implements OnInit {
+
+  private dayStartedSubscription: Subscription;
+  private openingBalanceSubscription: Subscription;
+  isDayStarted = false;
+  openingBalance = 0;
 
   dashboardData: DashboardData = {
     total_sales: {
@@ -57,13 +66,26 @@ export class HomeComponent implements OnInit {
     private productService: ProductService,
     private saleService: SaleService,
     private purchaseService: PurchaseService,
-    public dialog: MatDialog
-  ) { }
+    public dialog: MatDialog,
+    private dayService: DayService
+  ) {
+    this.dayStartedSubscription = this.dayService.dayStarted$.subscribe((started: boolean) => {
+      this.isDayStarted = started;
+    });
+    this.openingBalanceSubscription = this.dayService.openingBalance$.subscribe((balance: number) => {
+      this.openingBalance = balance;
+    });
+  }
 
   ngOnInit(): void {
     this.loadDashboardData();
     this.loadSalesAndCalculateSummary();
     this.loadPurchasesAndCalculateSummary();
+  }
+
+  ngOnDestroy(): void {
+    this.dayStartedSubscription.unsubscribe();
+    this.openingBalanceSubscription.unsubscribe();
   }
 
   loadDashboardData(): void {
@@ -145,6 +167,43 @@ export class HomeComponent implements OnInit {
           });
         }
       });
+    });
+  }
+
+  openStartDayDialog(): void {
+    const dialogRef = this.dialog.open(StartDayDialogComponent, {
+      width: '400px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const openingBalance = parseFloat(result);
+        this.dayService.startDay(openingBalance);
+      }
+    });
+  }
+
+  openEndDayDialog(): void {
+    const summary = {
+      openingBalance: this.openingBalance,
+      totalSales: this.todaysSaleSummary.total_revenue,
+      totalPurchases: this.todaysPurchaseSummary.total_cost,
+      closingBalance: this.openingBalance + this.todaysSaleSummary.total_revenue - this.todaysPurchaseSummary.total_cost
+    };
+
+    const dialogRef = this.dialog.open(EndDayDialogComponent, {
+      width: '400px',
+      data: summary
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.dayService.endDay(summary).subscribe({
+          next: () => console.log('End of day summary sent successfully.'),
+          error: (err: any) => console.error('Error sending end of day summary:', err)
+        });
+      }
     });
   }
 }

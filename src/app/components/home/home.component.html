@@ -1,5 +1,7 @@
 <div class="container my-5">
   <div class="d-flex justify-content-end mb-3">
+    <button mat-raised-button color="primary" (click)="openStartDayDialog()" [disabled]="isDayStarted" class="mr-2">Start Day</button>
+    <button mat-raised-button color="warn" (click)="openEndDayDialog()" [disabled]="!isDayStarted" class="mr-2">End Day</button>
     <button mat-raised-button color="primary" (click)="openSaleDialog()" class="mr-2">Quick Sale</button>
     <button mat-raised-button color="accent" (click)="openPurchaseDialog()">Quick Purchase</button>
   </div>
