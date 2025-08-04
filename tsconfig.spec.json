@@ -8,6 +8,9 @@
       "jasmine"
     ]
   },
+  "files": [
+    "src/app/services/day.service.ts"
+  ],
   "include": [
     "src/**/*.spec.ts",
     "src/**/*.d.ts",
