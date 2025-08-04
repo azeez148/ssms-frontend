@@ -105,9 +105,9 @@ export class ProductsComponent implements OnInit {
       data: { product }
     });
 
-    dialogRef.afterClosed().subscribe(selectedImages => {
-      if (selectedImages && selectedImages.length > 0) {
-        this.productService.uploadProductImages(product.id, selectedImages).subscribe(response => {
+    dialogRef.afterClosed().subscribe(selectedImage => {
+      if (selectedImage) {
+        this.productService.uploadProductImages(product.id, selectedImage).subscribe(response => {
           console.log('Product images updated successfully', response);
         });
       }

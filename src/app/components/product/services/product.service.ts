@@ -90,13 +90,11 @@ getFilteredProducts(categoryId: number | null, productNameFilter: string): Obser
 }
 
   // Upload multiple product images to the server
-  uploadProductImages(productId: number, images: File[]): Observable<any> {
+  uploadProductImages(productId: number, image: File): Observable<any> {
     const formData = new FormData();
 
     // Append each image file to the formData
-    images.forEach(image => {
-      formData.append('images', image, image.name);
-    });
+    formData.append('image', image, image.name);
 
     // POST request to upload the images with a tap to refresh the products
     return this.http.post<any>(`${this.apiUrl}/upload-images?product_id=${productId}`, formData).pipe(

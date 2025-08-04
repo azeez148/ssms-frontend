@@ -17,7 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 })
 export class UpdateImageDialogComponent {
   imageForm: FormGroup;
-  selectedImages: File[] = [];  // Array to store multiple images
+  selectedImage: File | null = null;  // Stores a single image
 
   constructor(
     private fb: FormBuilder,
@@ -25,22 +25,22 @@ export class UpdateImageDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.imageForm = this.fb.group({
-      images: [null]  // Form control for image inputs
+      image: [null]  // Form control for a single image
     });
   }
 
-  // Handle file change event to accept multiple images
+  // Handle file change event to accept a single image
   onImageChange(event: any): void {
-    const files = event.target.files;
-    if (files) {
-      this.selectedImages = Array.from(files);  // Convert file list to array
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedImage = file;  // Store the single file
     }
   }
 
-  // Save the selected images
+  // Save the selected image
   onSave(): void {
-    if (this.selectedImages.length > 0) {
-      this.dialogRef.close(this.selectedImages);  // Close dialog and pass images back to the parent
+    if (this.selectedImage) {
+      this.dialogRef.close(this.selectedImage);  // Close dialog and pass the single image back
     }
   }
 
