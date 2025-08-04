@@ -67,7 +67,7 @@
     </div>
 
     <!-- Add New Sale Button -->
-    <button mat-raised-button color="primary" (click)="openCreateSaleDialog()" [disabled]="!isDayStarted">Create New Sale</button>
+    <button mat-raised-button color="primary" (click)="openCreateSaleDialog()" [disabled]="!(isDayStarted$ | async)">Create New Sale</button>
   <button mat-raised-button color="accent" (click)="exportExcel()">Export to Excel</button>
 
   </div>
