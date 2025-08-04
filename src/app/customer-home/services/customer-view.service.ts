@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, of, tap, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Product } from '../../components/product/data/product-model';
 import { environment } from '../../../environment';
@@ -16,14 +16,18 @@ export class CustomerHomeService {
 
   getHomeData(): Observable<CustomerHome> {
     return this.http.get<CustomerHome>(`${this.apiUrl}/all`).pipe(
+      map((data: CustomerHome) => {
+        // Prepend the base URL to each product's imageUrl
+        data.products.forEach(product => {
+          if (product.imageUrl) {
+            product.imageUrl = `${environment.apiUrl}${product.imageUrl}`;
+          }
+        });
+        return data;
+      }),
       tap((data: CustomerHome) => {
         this.data = data;
       })
     );
-  }
-
-    // New method to get product image as Blob.
-  getProductImage(productId: number): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${productId}/image`, { responseType: 'blob' });
   }
 }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from '../components/product/data/product-model';
 import { Category } from '../components/category/data/category-model';
-import { ProductService } from '../components/product/services/product.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -9,16 +8,21 @@ import { CustomerHomeService } from './services/customer-view.service';
 
 @Component({
   selector: 'app-customer-home',
-  imports: [FormsModule, CommonModule, NgxPaginationModule],
   templateUrl: './customer-home.component.html',
-  styleUrl: './customer-home.component.css'
+  styleUrls: ['./customer-home.component.css'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    CommonModule,
+    NgxPaginationModule,
+  ],
 })
 export class CustomerHomeComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   categories: Category[] = [];
   searchName: string = '';
-  selectedCategory: Category | string = '';
+  selectedCategory: string = ''; // Changed to string to handle category name
   p: number = 1; // current page for pagination
 
   // Property to store the product selected for purchase
@@ -32,28 +36,24 @@ export class CustomerHomeComponent implements OnInit {
     this.customerHomeService.getHomeData().subscribe(data => {
       this.products = data.products.filter(product => product.canListed === true);
 
-      // iterate over products and fetch images if needed
+      // Extract unique categories from the products
+      const categoryMap = new Map<number, Category>();
       this.products.forEach(product => {
-        this.customerHomeService.getProductImage(product.id).subscribe(imageBlob => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            product.imageUrl = reader.result as string; // Assuming product.image is a string URL
-          };
-          reader.readAsDataURL(imageBlob);
-        });
+        if (product.category) {
+          categoryMap.set(product.category.id, product.category);
+        }
+      });
+      this.categories = Array.from(categoryMap.values());
 
-      // Assuming product.category is of type Category, update as needed
-      this.categories = Array.from(new Set(this.products.map(p => p.category)));
       this.applyFilters();
     });
-  });
   }
 
   applyFilters(): void {
     this.filteredProducts = this.products.filter(product => {
       const matchName = product.name.toLowerCase().includes(this.searchName.toLowerCase());
       const matchCategory = this.selectedCategory
-        ? product.category === (typeof this.selectedCategory === 'string' ? this.selectedCategory : this.selectedCategory)
+        ? product.category.name === this.selectedCategory
         : true;
       return matchName && matchCategory;
     });
