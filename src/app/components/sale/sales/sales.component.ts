@@ -21,8 +21,10 @@ import { Product } from '../../product/data/product-model';
 import { SaleDetailDialogComponent } from '../sale-detail-dialog/sale-detail-dialog.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { DayService } from 'src/app/services/day.service';
-import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import { selectDayStarted } from 'src/app/store/selectors/day.selectors';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-sales',
@@ -40,12 +42,10 @@ import { Subscription } from 'rxjs';
     MatNativeDateModule
   ],
   templateUrl: './sales.component.html',
-  styleUrls: ['./sales.component.css'],
-  providers: [DayService]
+  styleUrls: ['./sales.component.css']
 })
 export class SalesComponent {
-  private dayStartedSubscription: Subscription;
-  isDayStarted = false;
+  isDayStarted$: Observable<boolean>;
 
   displayedColumns: string[] = ['id', 'customerName', 'totalQuantity', 'totalPrice', 'date', 'viewDetails', 'printReceipt', 'sendReceiptViaWhatsApp'];
   dataSource = new MatTableDataSource<Sale>([]);
@@ -73,11 +73,9 @@ export class SalesComponent {
     private categoryService: CategoryService,
     private dialog: MatDialog,
     private saleService: SaleService,
-    private dayService: DayService
+    private store: Store<AppState>
   ) {
-    this.dayStartedSubscription = this.dayService.dayStarted$.subscribe((started: boolean) => {
-      this.isDayStarted = started;
-    });
+    this.isDayStarted$ = this.store.select(selectDayStarted);
   }
 
   ngOnInit(): void {
@@ -89,10 +87,6 @@ export class SalesComponent {
       this.products = products;
     });
     this.loadSales(); // Load all sales initially
-  }
-
-  ngOnDestroy(): void {
-    this.dayStartedSubscription.unsubscribe();
   }
 
   loadSales(): void {
