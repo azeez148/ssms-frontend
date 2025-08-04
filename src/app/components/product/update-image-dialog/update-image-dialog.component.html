@@ -1,18 +1,16 @@
-<h1 mat-dialog-title>Update Product Images</h1>
+<h1 mat-dialog-title>Update Product Image</h1>
 <div mat-dialog-content>
   <!-- Form for file input without mat-form-field -->
   <form [formGroup]="imageForm">
     <div>
       <!-- Removed mat-form-field and matInput -->
-      <input type="file" (change)="onImageChange($event)" accept="image/*" multiple>
+      <input type="file" (change)="onImageChange($event)" accept="image/*">
     </div>
     
-    <!-- Display selected image names -->
-    <div *ngIf="selectedImages.length > 0">
-      <p><strong>Selected Images:</strong></p>
-      <ul>
-        <li *ngFor="let image of selectedImages">{{ image.name }}</li>
-      </ul>
+    <!-- Display selected image name -->
+    <div *ngIf="selectedImage">
+      <p><strong>Selected Image:</strong></p>
+      <p>{{ selectedImage.name }}</p>
     </div>
   </form>
 </div>
