@@ -12,10 +12,13 @@ import { KeyValuePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Sale } from '../sale/data/sale-model';
 import { Purchase } from '../purchase/data/purchase-model';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import * as DayActions from 'src/app/store/actions/day.actions';
+import { selectDayStarted, selectOpeningBalance } from 'src/app/store/selectors/day.selectors';
 import { StartDayDialogComponent } from '../dialogs/start-day-dialog/start-day-dialog.component';
 import { EndDayDialogComponent } from '../dialogs/end-day-dialog/end-day-dialog.component';
-import { Subscription } from 'rxjs';
-import { DayService } from '../../services/day.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -26,10 +29,8 @@ import { DayService } from '../../services/day.service';
 })
 export class HomeComponent implements OnInit {
 
-  private dayStartedSubscription: Subscription;
-  private openingBalanceSubscription: Subscription;
-  isDayStarted = false;
-  openingBalance = 0;
+  isDayStarted$: Observable<boolean>;
+  openingBalance$: Observable<number>;
 
   dashboardData: DashboardData = {
     total_sales: {
@@ -67,25 +68,16 @@ export class HomeComponent implements OnInit {
     private saleService: SaleService,
     private purchaseService: PurchaseService,
     public dialog: MatDialog,
-    private dayService: DayService
+    private store: Store<AppState>
   ) {
-    this.dayStartedSubscription = this.dayService.dayStarted$.subscribe((started: boolean) => {
-      this.isDayStarted = started;
-    });
-    this.openingBalanceSubscription = this.dayService.openingBalance$.subscribe((balance: number) => {
-      this.openingBalance = balance;
-    });
+    this.isDayStarted$ = this.store.select(selectDayStarted);
+    this.openingBalance$ = this.store.select(selectOpeningBalance);
   }
 
   ngOnInit(): void {
     this.loadDashboardData();
     this.loadSalesAndCalculateSummary();
     this.loadPurchasesAndCalculateSummary();
-  }
-
-  ngOnDestroy(): void {
-    this.dayStartedSubscription.unsubscribe();
-    this.openingBalanceSubscription.unsubscribe();
   }
 
   loadDashboardData(): void {
@@ -179,31 +171,32 @@ export class HomeComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const openingBalance = parseFloat(result);
-        this.dayService.startDay(openingBalance);
+        this.store.dispatch(DayActions.startDay({ openingBalance }));
       }
     });
   }
 
   openEndDayDialog(): void {
-    const summary = {
-      openingBalance: this.openingBalance,
-      totalSales: this.todaysSaleSummary.total_revenue,
-      totalPurchases: this.todaysPurchaseSummary.total_cost,
-      closingBalance: this.openingBalance + this.todaysSaleSummary.total_revenue - this.todaysPurchaseSummary.total_cost
-    };
+    this.openingBalance$.subscribe(openingBalance => {
+      const summary = {
+        openingBalance: openingBalance,
+        totalSales: this.todaysSaleSummary.total_revenue,
+        totalPurchases: this.todaysPurchaseSummary.total_cost,
+        closingBalance: openingBalance + this.todaysSaleSummary.total_revenue - this.todaysPurchaseSummary.total_cost
+      };
 
-    const dialogRef = this.dialog.open(EndDayDialogComponent, {
-      width: '400px',
-      data: summary
-    });
+      const dialogRef = this.dialog.open(EndDayDialogComponent, {
+        width: '400px',
+        data: summary
+      });
 
-    dialogRef.afterClosed().subscribe((result: boolean) => {
-      if (result) {
-        this.dayService.endDay(summary).subscribe({
-          next: () => console.log('End of day summary sent successfully.'),
-          error: (err: any) => console.error('Error sending end of day summary:', err)
-        });
-      }
+      dialogRef.afterClosed().subscribe((result: boolean) => {
+        if (result) {
+          this.store.dispatch(DayActions.endDay());
+          // Here you would typically have an effect to handle the API call
+          // For now, we just dispatch the action
+        }
+      });
     });
   }
 }
