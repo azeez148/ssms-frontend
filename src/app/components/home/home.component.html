@@ -1,9 +1,8 @@
 <div class="container my-5">
   <div class="d-flex justify-content-end mb-3">
-    <button mat-raised-button color="primary" (click)="openStartDayDialog()" [disabled]="(isDayStarted$ | async)" class="mr-2">Start Day</button>
-    <button mat-raised-button color="warn" (click)="openEndDayDialog()" [disabled]="!(isDayStarted$ | async)" class="mr-2">End Day</button>
     <button mat-raised-button color="primary" (click)="openSaleDialog()" class="mr-2">Quick Sale</button>
-    <button mat-raised-button color="accent" (click)="openPurchaseDialog()">Quick Purchase</button>
+    <button mat-raised-button color="accent" (click)="openPurchaseDialog()" class="mr-2">Quick Purchase</button>
+    <button mat-raised-button color="warn" (click)="openDayManagement()">Day Management</button>
   </div>
   <h1 class="text-center mb-4">Dashboard</h1>
 

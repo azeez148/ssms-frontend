@@ -12,13 +12,7 @@ import { KeyValuePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Sale } from '../sale/data/sale-model';
 import { Purchase } from '../purchase/data/purchase-model';
-import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/store/app.state';
-import * as DayActions from 'src/app/store/actions/day.actions';
-import { selectDayStarted, selectOpeningBalance } from 'src/app/store/selectors/day.selectors';
-import { StartDayDialogComponent } from '../dialogs/start-day-dialog/start-day-dialog.component';
-import { EndDayDialogComponent } from '../dialogs/end-day-dialog/end-day-dialog.component';
-import { Observable } from 'rxjs';
+import { DayManagementComponent } from '../day-management/day-management.component';
 
 @Component({
   selector: 'app-home',
@@ -28,9 +22,6 @@ import { Observable } from 'rxjs';
   standalone: true,
 })
 export class HomeComponent implements OnInit {
-
-  isDayStarted$: Observable<boolean>;
-  openingBalance$: Observable<number>;
 
   dashboardData: DashboardData = {
     total_sales: {
@@ -67,11 +58,8 @@ export class HomeComponent implements OnInit {
     private productService: ProductService,
     private saleService: SaleService,
     private purchaseService: PurchaseService,
-    public dialog: MatDialog,
-    private store: Store<AppState>
+    public dialog: MatDialog
   ) {
-    this.isDayStarted$ = this.store.select(selectDayStarted);
-    this.openingBalance$ = this.store.select(selectOpeningBalance);
   }
 
   ngOnInit(): void {
@@ -162,41 +150,9 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  openStartDayDialog(): void {
-    const dialogRef = this.dialog.open(StartDayDialogComponent, {
-      width: '400px',
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const openingBalance = parseFloat(result);
-        this.store.dispatch(DayActions.startDay({ openingBalance }));
-      }
-    });
-  }
-
-  openEndDayDialog(): void {
-    this.openingBalance$.subscribe(openingBalance => {
-      const summary = {
-        openingBalance: openingBalance,
-        totalSales: this.todaysSaleSummary.total_revenue,
-        totalPurchases: this.todaysPurchaseSummary.total_cost,
-        closingBalance: openingBalance + this.todaysSaleSummary.total_revenue - this.todaysPurchaseSummary.total_cost
-      };
-
-      const dialogRef = this.dialog.open(EndDayDialogComponent, {
-        width: '400px',
-        data: summary
-      });
-
-      dialogRef.afterClosed().subscribe((result: boolean) => {
-        if (result) {
-          this.store.dispatch(DayActions.endDay());
-          // Here you would typically have an effect to handle the API call
-          // For now, we just dispatch the action
-        }
-      });
+  openDayManagement(): void {
+    const dialogRef = this.dialog.open(DayManagementComponent, {
+      width: '80%'
     });
   }
 }
