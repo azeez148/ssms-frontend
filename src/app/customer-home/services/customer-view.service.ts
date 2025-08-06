@@ -36,7 +36,7 @@ export class CustomerHomeService {
             product.imageUrl = `${environment.apiUrl}/${product.imageUrl}`;
           }
           else {
-          product.imageUrl = 'assets/images/notfound.png';
+          product.imageUrl = 'notfound.png';
           }
         });
         return data;
