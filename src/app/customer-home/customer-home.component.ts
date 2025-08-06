@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CustomerHomeService } from './services/customer-view.service';
+import { environment } from 'src/environment';
 
 @Component({
   selector: 'app-customer-home',
@@ -38,7 +39,7 @@ export class CustomerHomeComponent implements OnInit {
 
       // Extract unique categories from the products
       const categoryMap = new Map<number, Category>();
-      this.products.forEach(product => {
+      this.products.forEach(product => {        
         if (product.category) {
           categoryMap.set(product.category.id, product.category);
         }

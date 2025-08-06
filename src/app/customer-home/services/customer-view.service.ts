@@ -17,10 +17,26 @@ export class CustomerHomeService {
   getHomeData(): Observable<CustomerHome> {
     return this.http.get<CustomerHome>(`${this.apiUrl}/all`).pipe(
       map((data: CustomerHome) => {
+        // convert the underscore keys to camelCase
+        data.products = data.products.map((product: any) => ({
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          category: product.category,
+          sizeMap: product.size_map,
+          unitPrice: product.unit_price,
+          sellingPrice: product.selling_price,
+          imageUrl: product.image_url || '',
+          isActive: product.is_active,
+          canListed: product.can_listed
+        }));
         // Prepend the base URL to each product's imageUrl
         data.products.forEach(product => {
           if (product.imageUrl) {
-            product.imageUrl = `${environment.apiUrl}${product.imageUrl}`;
+            product.imageUrl = `${environment.apiUrl}/${product.imageUrl}`;
+          }
+          else {
+          product.imageUrl = 'assets/images/notfound.png';
           }
         });
         return data;
