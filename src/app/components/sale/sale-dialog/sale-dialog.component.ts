@@ -16,7 +16,14 @@ import { MatSort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
 import { SaleService } from '../services/sale.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { CustomerService } from '../../customer/services/customer.service';
+import { Customer } from '../../customer/data/customer.model';
+import { Observable, startWith, map } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { Category } from '../../category/data/category-model';
+import { CategoryService } from '../../category/services/category.service';
 
 @Component({
   selector: 'app-sale-dialog',
@@ -35,7 +42,9 @@ import { FormsModule } from '@angular/forms';
     MatPaginator,
     MatDatepickerModule,
     MatNativeDateModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule
   ],
   providers: [
     { provide: DateAdapter, useClass: NativeDateAdapter },
@@ -47,12 +56,18 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
   saleItems: SaleItem[] = [];
   filteredSaleItems: SaleItem[] = [];
   selectedSaleItems: SaleItem[] = [];
+  categories: Category[] = [];
+  searchTerm: string = '';
+  selectedCategory: string = 'all';
 
   sale: Sale = {
     id: 0,
     customerName: '',
     customerAddress: '',
     customerMobile: '',
+    customerEmail: '',
+    customerId: 0, // Reset customer ID
+    shopId: 0, // Reset shop ID
     date: '',  // Initialize as empty string
     saleItems: [],
     totalQuantity: 0,
@@ -71,12 +86,22 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  customerCtrl = new FormControl();
+  filteredCustomers: Observable<Customer[]>;
+  customers: Customer[] = [];
+
   constructor(
     public dialogRef: MatDialogRef<SaleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Product[],
-    private saleService: SaleService
+    private saleService: SaleService,
+    private customerService: CustomerService,
+    private categoryService: CategoryService
   ) {
     this.convertProductsToSaleItems();
+    this.filteredCustomers = this.customerCtrl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterCustomers(value || ''))
+    );
   }
 
   ngOnInit() {
@@ -85,34 +110,61 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
 
     this.loadPaymentTypes();
     this.loadDeliveryTypes();
+    this.loadCustomers();
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe(data => {
+      this.categories = data;
+    });
+  }
+
+  private _filterCustomers(value: string): Customer[] {
+    const filterValue = value.toLowerCase();
+    return this.customers.filter(customer => customer.name.toLowerCase().includes(filterValue));
+  }
+
+  onCustomerSelected(customer: Customer): void {
+    this.sale.customerName = customer.name;
+    this.sale.customerAddress = customer.address || '';
+    this.sale.customerMobile = customer.mobile;
+    this.sale.customerEmail = customer.email || '';
+    this.sale.customerId = customer.id; // Set the customer ID
+  }
+
+  loadCustomers(): void {
+    this.customerService.getCustomers().subscribe(data => {
+      this.customers = data;
+    });
   }
 
   ngAfterViewInit(): void {
     this.filteredSaleItems = this.saleItems.slice(0, this.pageSize); // Set the initial page data
   }
 
-  convertProductsToSaleItems(): void {
-    this.saleItems = [];
-    this.data.forEach(product => {
-      const sizes = Object.keys(product.sizeMap);
-      sizes.forEach(size => {
-        const saleItem: SaleItem = {
-          productId: product.id,
-          productName: product.name,
-          productCategory: product.category.name,
-          size: size,
-          quantityAvailable: product.sizeMap[size],
-          quantity: 1, // Initially no quantity selected
-          salePrice: product.sellingPrice,
-          totalPrice: 0 // Initially set to 0
-        };
-        this.saleItems.push(saleItem);
-      });
-    });
+convertProductsToSaleItems(): void {
+  this.saleItems = [];
 
-    this.length = this.saleItems.length;  // Set the total number of items for pagination
-    this.filteredSaleItems = this.saleItems;
-  }
+  this.data.forEach(product => {
+    product.sizeMap.forEach(sizeEntry => {
+      const saleItem: SaleItem = {
+        productId: product.id,
+        productName: product.name,
+        productCategory: product.category.name,
+        size: sizeEntry.size,
+        quantityAvailable: sizeEntry.quantity,
+        quantity: 1,  // Default quantity selected
+        salePrice: product.sellingPrice,
+        totalPrice: 0  // Initially set to 0
+      };
+      this.saleItems.push(saleItem);
+    });
+  });
+
+  this.length = this.saleItems.length;
+  this.filteredSaleItems = this.saleItems;
+}
 
   loadPaymentTypes(): void {
     this.saleService.getPaymentTypes().subscribe((data: PaymentType[]) => {
@@ -160,6 +212,9 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
       customerName: '',
       customerAddress: '',
       customerMobile: '',
+      customerEmail: '',
+      customerId: 0, // Reset customer ID
+      shopId: 0, // Reset shop ID
       date: '', 
       saleItems: [],
       totalQuantity: 0,
@@ -185,11 +240,31 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
     this.dialogRef.close(this.sale);
   }
 
-  applyFilter(event: KeyboardEvent): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.filteredSaleItems = this.saleItems.filter(saleItem => 
-      saleItem.productName.toLowerCase().includes(filterValue.trim().toLowerCase())
-    );
+  applyFilter(event: any): void {
+    if (event instanceof KeyboardEvent) {
+      this.searchTerm = (event.target as HTMLInputElement).value;
+    } else {
+      this.selectedCategory = event.value;
+    }
+
+    let filteredItems = this.saleItems;
+
+    if (this.searchTerm) {
+      filteredItems = filteredItems.filter(item =>
+        item.productName.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+
+    if (this.selectedCategory !== 'all') {
+      filteredItems = filteredItems.filter(item =>
+        item.productCategory === this.selectedCategory
+      );
+    }
+
+    this.filteredSaleItems = filteredItems;
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
     this.updatePagination();
   }
 
@@ -223,6 +298,8 @@ export class SaleDialogComponent implements OnInit, AfterViewInit {
   }
 
   updatePagination(): void {
-    this.filteredSaleItems = this.saleItems.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.filteredSaleItems = this.filteredSaleItems.slice(startIndex, endIndex);
   }
 }

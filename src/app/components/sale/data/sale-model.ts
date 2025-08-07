@@ -36,6 +36,7 @@ export interface Sale {
   customerName: string;      // Customer's name
   customerAddress: string;   // Customer's address
   customerMobile: string;    // Customer's mobile number
+  customerEmail: string;     // Customer's email address
   date: string;              // The date when the sale was made
   saleItems: SaleItem[];     // List of products in the sale, each with quantity and total price
   totalQuantity: number;     // Total quantity of items sold across all products
@@ -43,6 +44,8 @@ export interface Sale {
   paymentType: PaymentType;  // Payment type used for the sale
   paymentReferenceNumber: string;         // Payment reference number (e.g., transaction ID)
   deliveryType: DeliveryType; // Delivery type for the sale
+  customerId: number; // ID of the customer making the purchase
+  shopId: number; // ID of the shop where the sale was made
 }
 
   

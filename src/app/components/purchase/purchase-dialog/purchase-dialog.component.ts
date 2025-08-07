@@ -16,7 +16,14 @@ import { MatSort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
 import { PurchaseService } from '../services/purchase.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { VendorService } from '../../vendor/services/vendor.service';
+import { Vendor } from '../../vendor/data/vendor.model';
+import { Observable, startWith, map } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { Category } from '../../category/data/category-model';
+import { CategoryService } from '../../category/services/category.service';
 
 @Component({
   selector: 'app-purchase-dialog',
@@ -35,7 +42,9 @@ import { FormsModule } from '@angular/forms';
     MatPaginator,
     MatDatepickerModule,
     MatNativeDateModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule
   ],
   providers: [
     { provide: DateAdapter, useClass: NativeDateAdapter },
@@ -47,19 +56,25 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
   purchaseItems: PurchaseItem[] = [];
   filteredPurchaseItems: PurchaseItem[] = [];
   selectedPurchaseItems: PurchaseItem[] = [];
+  categories: Category[] = [];
+  searchTerm: string = '';
+  selectedCategory: string = 'all';
 
   purchase: Purchase = {
     id: 0,
     supplierName: '',
     supplierAddress: '',
     supplierMobile: '',
+    supplierEmail: '', // Reset email
+    supplierId: 0, // Reset vendor ID
     date: '',  // Initialize as empty string
     purchaseItems: [],
     totalQuantity: 0,
     totalPrice: 0,
     paymentType: { id: 0, name: '', description: '' }, // Default to empty object
     paymentReferenceNumber: '',
-    deliveryType: { id: 0, name: '', description: '' } // Default to empty object
+    deliveryType: { id: 0, name: '', description: '' }, // Default to empty object
+    shopIds: [1]
   };
 
   pageSize = 5;
@@ -71,12 +86,22 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  vendorCtrl = new FormControl();
+  filteredVendors: Observable<Vendor[]>;
+  vendors: Vendor[] = [];
+
   constructor(
     public dialogRef: MatDialogRef<PurchaseDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Product[],
-    private purchaseService: PurchaseService
+    private purchaseService: PurchaseService,
+    private vendorService: VendorService,
+    private categoryService: CategoryService
   ) {
     this.convertProductsToPurchaseItems();
+    this.filteredVendors = this.vendorCtrl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterVendors(value || ''))
+    );
   }
 
   ngOnInit() {
@@ -85,34 +110,61 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
 
     this.loadPaymentTypes();
     this.loadDeliveryTypes();
+    this.loadVendors();
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe(data => {
+      this.categories = data;
+    });
+  }
+
+  private _filterVendors(value: string): Vendor[] {
+    const filterValue = value.toLowerCase();
+    return this.vendors.filter(vendor => vendor.name.toLowerCase().includes(filterValue));
+  }
+
+  onVendorSelected(vendor: Vendor): void {
+    this.purchase.supplierName = vendor.name;
+    this.purchase.supplierAddress = vendor.address || '';
+    this.purchase.supplierMobile = vendor.mobile;
+    this.purchase.supplierEmail = vendor.email || '';
+    this.purchase.supplierId = vendor.id; // Set the supplier ID
+  }
+
+  loadVendors(): void {
+    this.vendorService.getVendors().subscribe(data => {
+      this.vendors = data;
+    });
   }
 
   ngAfterViewInit(): void {
     this.filteredPurchaseItems = this.purchaseItems.slice(0, this.pageSize); // Set the initial page data
   }
 
-  convertProductsToPurchaseItems(): void {
-    this.purchaseItems = [];
-    this.data.forEach(product => {
-      const sizes = Object.keys(product.sizeMap);
-      sizes.forEach(size => {
-        const purchaseItem: PurchaseItem = {
-          productId: product.id,
-          productName: product.name,
-          productCategory: product.category.name,
-          size: size,
-          quantityAvailable: product.sizeMap[size],
-          quantity: 1, // Initially no quantity selected
-          purchasePrice: product.sellingPrice,
-          totalPrice: 0 // Initially set to 0
-        };
-        this.purchaseItems.push(purchaseItem);
-      });
-    });
+convertProductsToPurchaseItems(): void {
+  this.purchaseItems = [];
 
-    this.length = this.purchaseItems.length;  // Set the total number of items for pagination
-    this.filteredPurchaseItems = this.purchaseItems;
-  }
+  this.data.forEach(product => {
+    product.sizeMap.forEach(sizeEntry => {
+      const purchaseItem: PurchaseItem = {
+        productId: product.id,
+        productName: product.name,
+        productCategory: product.category.name,
+        size: sizeEntry.size,
+        quantityAvailable: sizeEntry.quantity,
+        quantity: 1, // Default selected quantity
+        purchasePrice: product.sellingPrice,
+        totalPrice: 0 // Initially 0
+      };
+      this.purchaseItems.push(purchaseItem);
+    });
+  });
+
+  this.length = this.purchaseItems.length;
+  this.filteredPurchaseItems = this.purchaseItems;
+}
 
   loadPaymentTypes(): void {
     this.purchaseService.getPaymentTypes().subscribe((data: PaymentType[]) => {
@@ -160,13 +212,16 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
       supplierName: '',
       supplierAddress: '',
       supplierMobile: '',
+      supplierEmail: '', // Reset email
+      supplierId: 0, // Reset vendor ID
       date: '', 
       purchaseItems: [],
       totalQuantity: 0,
       totalPrice: 0,
       paymentType: { id: 0, name: '', description: '' },
       paymentReferenceNumber: '',
-      deliveryType: { id: 0, name: '', description: '' }
+      deliveryType: { id: 0, name: '', description: '' },
+      shopIds: []
     };
     this.dialogRef.close();
   }
@@ -174,7 +229,7 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
   onCreate(): void {
     // Validate that vendor name, mobile number, and purchase items are selected
     if (!this.purchase.supplierName || !this.purchase.supplierMobile || this.selectedPurchaseItems.length === 0) {
-      alert('Please fill in all mandatory fields: Customer Name, Mobile, and select at least one purchase item.');
+      alert('Please fill in all mandatory fields: Vendor Name, Mobile, and select at least one purchase item.');
       return; // Prevent creation if the fields are not filled
     }
 
@@ -185,11 +240,31 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
     this.dialogRef.close(this.purchase);
   }
 
-  applyFilter(event: KeyboardEvent): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.filteredPurchaseItems = this.purchaseItems.filter(purchaseItem => 
-      purchaseItem.productName.toLowerCase().includes(filterValue.trim().toLowerCase())
-    );
+  applyFilter(event: any): void {
+    if (event instanceof KeyboardEvent) {
+      this.searchTerm = (event.target as HTMLInputElement).value;
+    } else {
+      this.selectedCategory = event.value;
+    }
+
+    let filteredItems = this.purchaseItems;
+
+    if (this.searchTerm) {
+      filteredItems = filteredItems.filter(item =>
+        item.productName.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+
+    if (this.selectedCategory !== 'all') {
+      filteredItems = filteredItems.filter(item =>
+        item.productCategory === this.selectedCategory
+      );
+    }
+
+    this.filteredPurchaseItems = filteredItems;
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
     this.updatePagination();
   }
 
@@ -223,6 +298,8 @@ export class PurchaseDialogComponent implements OnInit, AfterViewInit {
   }
 
   updatePagination(): void {
-    this.filteredPurchaseItems = this.purchaseItems.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.filteredPurchaseItems = this.filteredPurchaseItems.slice(startIndex, endIndex);
   }
 }

@@ -14,29 +14,39 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { Sale } from '../data/sale-model';
+import { Sale, SaleItem } from '../data/sale-model';
 import { SaleDialogComponent } from '../sale-dialog/sale-dialog.component';
 import { SaleService } from '../services/sale.service';
 import { Product } from '../../product/data/product-model';
 import { SaleDetailDialogComponent } from '../sale-detail-dialog/sale-detail-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import { selectDayStarted } from 'src/app/store/selectors/day.selectors';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-sales',
   imports: [
-    CommonModule, 
-    MatTableModule, 
-    MatPaginatorModule, 
-    MatButtonModule, 
-    MatFormFieldModule, 
-    MatSelectModule, 
-    MatInputModule, 
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
     FormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   templateUrl: './sales.component.html',
   styleUrls: ['./sales.component.css']
 })
 export class SalesComponent {
+  isDayStarted$: Observable<boolean>;
+
   displayedColumns: string[] = ['id', 'customerName', 'totalQuantity', 'totalPrice', 'date', 'viewDetails', 'printReceipt', 'sendReceiptViaWhatsApp'];
   dataSource = new MatTableDataSource<Sale>([]);
 
@@ -44,15 +54,29 @@ export class SalesComponent {
   products: Product[] = [];
   selectedCategoryId: number | null = null;
   productNameFilter: string = '';
+  selectedDateFilter: string = 'all';
+  customStartDate: Date | null = null;
+  customEndDate: Date | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  private allSales: Sale[] = [];
+
+  todaysSaleSummary = {
+    total_count: 0,
+    total_revenue: 0,
+    total_items_sold: 0,
+  };
 
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
     private dialog: MatDialog,
-    private saleService: SaleService
-  ) {}
+    private saleService: SaleService,
+    private store: Store<AppState>
+  ) {
+    this.isDayStarted$ = this.store.select(selectDayStarted);
+  }
 
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe(categories => {
@@ -67,14 +91,94 @@ export class SalesComponent {
 
   loadSales(): void {
     this.saleService.getSales().subscribe(sales => {
+      this.allSales = sales;
       this.dataSource.data = sales;
       this.dataSource.paginator = this.paginator;
+      this.calculateTodaysSaleSummary();
     });
+  }
+
+  calculateTodaysSaleSummary(): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todaysSales = this.allSales.filter(s => {
+      const saleDate = new Date(s.date);
+      saleDate.setHours(0, 0, 0, 0);
+      return saleDate.getTime() === today.getTime();
+    });
+
+    this.todaysSaleSummary.total_count = todaysSales.length;
+    this.todaysSaleSummary.total_revenue = todaysSales.reduce((acc, sale) => acc + sale.totalPrice, 0);
+    this.todaysSaleSummary.total_items_sold = todaysSales.reduce((acc, sale) => acc + sale.totalQuantity, 0);
   }
 
   // Called when the category or product filter is changed
   onFilterChange(): void {
-    this.loadSales();  // Reload the sales based on the updated filters
+    let filteredSales = this.allSales;
+
+    if (this.selectedCategoryId) {
+      filteredSales = filteredSales.filter(s =>
+        s.saleItems.some(item => item.productCategory === this.categories.find(c => c.id === this.selectedCategoryId)?.name)
+      );
+    }
+
+    if (this.productNameFilter) {
+      filteredSales = filteredSales.filter(s =>
+        s.saleItems.some(item => item.productName.toLowerCase().includes(this.productNameFilter.toLowerCase()))
+      );
+    }
+
+    this.applyDateFilter(filteredSales);
+  }
+
+  applyDateFilter(filteredSales: Sale[]): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    switch (this.selectedDateFilter) {
+      case 'today':
+        filteredSales = filteredSales.filter(s => new Date(s.date).setHours(0, 0, 0, 0) === today.getTime());
+        break;
+      case 'yesterday':
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        filteredSales = filteredSales.filter(s => new Date(s.date).setHours(0, 0, 0, 0) === yesterday.getTime());
+        break;
+      case 'this_week':
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay());
+        filteredSales = filteredSales.filter(s => new Date(s.date) >= startOfWeek);
+        break;
+      case 'this_month':
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        filteredSales = filteredSales.filter(s => new Date(s.date) >= startOfMonth);
+        break;
+      case 'custom':
+        if (this.customStartDate && this.customEndDate) {
+          const startDate = new Date(this.customStartDate);
+          startDate.setHours(0, 0, 0, 0);
+          const endDate = new Date(this.customEndDate);
+          endDate.setHours(23, 59, 59, 999);
+          filteredSales = filteredSales.filter(s => {
+            const saleDate = new Date(s.date);
+            return saleDate >= startDate && saleDate <= endDate;
+          });
+        }
+        break;
+      default:
+        // No date filter
+        break;
+    }
+    this.dataSource.data = filteredSales;
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Sale, filter: string) => {
+      return data.customerName.toLowerCase().includes(filter);
+    };
   }
 
   // Open dialog to create a new sale
@@ -87,7 +191,33 @@ export class SalesComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.saleService.addSale(result).subscribe(newProduct => {
+        // CONVERT TO underscore case for API compatibility
+        const saleData = {
+          customer_name: result.customerName,
+          customer_address: result.customerAddress,
+          customer_mobile: result.customerMobile,
+          customer_email: result.customerEmail,
+          customer_id: result.customerId || 0, // New field for customer ID
+          date: result.date,
+          total_quantity: result.totalQuantity,
+          total_price: result.totalPrice,
+          payment_type_id: result.paymentType.id,
+          payment_reference_number: result.paymentReferenceNumber,
+          delivery_type_id: result.deliveryType.id,
+          shop_id: 1, // Assuming shop_id is not used in this context
+          sale_items: result.saleItems.map((item: SaleItem) => ({
+            product_id: item.productId,
+            product_name: item.productName,
+            product_category: item.productCategory,
+            size: item.size,
+            quantity_available: item.quantityAvailable,
+            quantity: item.quantity,
+            sale_price: item.salePrice,
+            total_price: item.totalPrice
+          }))
+        };
+
+        this.saleService.addSale(saleData).subscribe(newProduct => {
           console.log(newProduct);
         });
       }
@@ -103,27 +233,27 @@ export class SalesComponent {
   }
 
   exportExcel(): void {
-      // Convert dataSource.data to worksheet and workbook
-      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
-      const wb: XLSX.WorkBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Sales');
-  
-      // Write workbook result as binary array
-      const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-      this.saveAsExcelFile(excelBuffer, 'sales_data');
-    }
-  
-    private saveAsExcelFile(buffer: any, fileName: string): void {
-      const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-      const EXCEL_EXTENSION = '.xlsx';
-      const data: Blob = new Blob([buffer], {
-        type: EXCEL_TYPE
-      });
-      saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
-    }
+    // Convert dataSource.data to worksheet and workbook
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sales');
 
-    printReceipt(sale: Sale): void {
-      const saleItemsHTML = sale.saleItems.map(item => `
+    // Write workbook result as binary array
+    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    this.saveAsExcelFile(excelBuffer, 'sales_data');
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE
+    });
+    saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+  }
+
+  printReceipt(sale: Sale): void {
+    const saleItemsHTML = sale.saleItems.map(item => `
       <tr>
         <td>${item.productName}</td>
         <td>${item.productCategory}</td>
@@ -134,7 +264,7 @@ export class SalesComponent {
       </tr>
       `).join('');
 
-      const receiptHTML = `
+    const receiptHTML = `
       <html>
         <head>
         <title>Receipt</title>
@@ -212,36 +342,36 @@ export class SalesComponent {
         </body>
       </html>
       `;
-      const printWindow = window.open('', '_blank', 'width=600,height=600');
-      if (printWindow) {
+    const printWindow = window.open('', '_blank', 'width=600,height=600');
+    if (printWindow) {
       printWindow.document.write(receiptHTML);
       printWindow.document.close();
       printWindow.focus();
       printWindow.print();
-      }
     }
+  }
 
-    sendReceiptViaWhatsApp(sale: Sale): void {
-      // Create a plain text version of the sale receipt for WhatsApp
-      let message = `Sale Receipt\n\n`;
-      message += `Date: ${sale.date}\n`;
-      message += `Order ID: ${sale.id}\n`;
-      message += `Customer Name: ${sale.customerName}\n`;
-      message += `Address: ${sale.customerAddress}\n`;
-      message += `Mobile: ${sale.customerMobile}\n`;
-      message += `Total Quantity: ${sale.totalQuantity}\n`;
-      message += `Total Price: ${sale.totalPrice}\n`;
-      message += `Payment Type: ${sale.paymentType.name}\n`;
-      message += `Reference Number: ${sale.paymentReferenceNumber}\n`;
-      message += `Delivery Type: ${sale.deliveryType.name}\n\n`;
-      message += `Sale Items:\n`;
-    
-      sale.saleItems.forEach(item => {
+  sendReceiptViaWhatsApp(sale: Sale): void {
+    // Create a plain text version of the sale receipt for WhatsApp
+    let message = `Sale Receipt\n\n`;
+    message += `Date: ${sale.date}\n`;
+    message += `Order ID: ${sale.id}\n`;
+    message += `Customer Name: ${sale.customerName}\n`;
+    message += `Address: ${sale.customerAddress}\n`;
+    message += `Mobile: ${sale.customerMobile}\n`;
+    message += `Total Quantity: ${sale.totalQuantity}\n`;
+    message += `Total Price: ${sale.totalPrice}\n`;
+    message += `Payment Type: ${sale.paymentType.name}\n`;
+    message += `Reference Number: ${sale.paymentReferenceNumber}\n`;
+    message += `Delivery Type: ${sale.deliveryType.name}\n\n`;
+    message += `Sale Items:\n`;
+
+    sale.saleItems.forEach(item => {
       message += `- ${item.productName} | Category: ${item.productCategory} | Size: ${item.size} | Qty: ${item.quantity} | Price: ${item.salePrice} | Total: ${item.totalPrice}\n`;
-      });
-    
-      const encodedMessage = encodeURIComponent(message);
-      const url = `https://api.whatsapp.com/send?phone=${sale.customerMobile}&text=${encodedMessage}`;
-      window.open(url, '_blank');
-    }
+    });
+
+    const encodedMessage = encodeURIComponent(message);
+    const url = `https://api.whatsapp.com/send?phone=${sale.customerMobile}&text=${encodedMessage}`;
+    window.open(url, '_blank');
+  }
 }

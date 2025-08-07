@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, tap } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 import { Product } from '../data/product-model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environment';
@@ -31,7 +31,20 @@ export class ProductService {
 
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}/all`).pipe(
-      tap((products: Product[]) => {
+    map((products: any[]) => {
+      return products.map(product => ({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        category: product.category,
+        sizeMap: product.size_map,
+        unitPrice: product.unit_price,
+        sellingPrice: product.selling_price,
+        imageUrl: product.image_url || '',
+        isActive: product.is_active,
+        canListed: product.can_listed
+      }));
+    }),tap((products: Product[]) => {
         this.products = products;
       })
     );
@@ -39,8 +52,8 @@ export class ProductService {
 
   updateProductQuantity(productId: string, sizeMap: any): Observable<Product> {
     const payload = {
-      productId: productId,
-      sizeMap: sizeMap  // Send the sizeMap as part of the request payload
+      product_id: productId,
+      size_map: sizeMap  // Send the sizeMap as part of the request payload
     };
     return this.http.post<Product>(`${this.apiUrl}/updateSizeMap`, payload).pipe(
       tap((newProduct: Product) => {
@@ -49,33 +62,42 @@ export class ProductService {
     );
   }
 
-  getFilteredProducts(categoryId: number | null, productNameFilter: string): Observable<Product[]> {
-    const payload = {
-      categoryId: categoryId,
-      productNameFilter: productNameFilter
-    };
-  
-    return this.http.post<Product[]>(`${this.apiUrl}/filterProducts`, payload).pipe(
-      tap((products: Product[]) => {
-        this.products = products;  // Update the internal products array with the filtered products
-      })
-    );
-  }
+getFilteredProducts(categoryId: number | null, productNameFilter: string): Observable<Product[]> {
+  const payload = {
+    categoryId: categoryId,
+    productNameFilter: productNameFilter
+  };
+
+  return this.http.post<any[]>(`${this.apiUrl}/filterProducts`, payload).pipe(
+    map((products: any[]) => {
+      return products.map(product => ({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        category: product.category,
+        sizeMap: product.size_map,
+        unitPrice: product.unit_price,
+        sellingPrice: product.selling_price,
+        imageUrl: product.image_url || '',
+        isActive: product.is_active,
+        canListed: product.can_listed
+      }));
+    }),
+    tap((products: Product[]) => {
+      this.products = products;
+    })
+  );
+}
 
   // Upload multiple product images to the server
-  uploadProductImages(productId: number, images: File[]): Observable<any> {
+  uploadProductImages(productId: number, image: File): Observable<any> {
     const formData = new FormData();
-    
-    // Append productId to the formData payload
-    formData.append('productId', productId.toString());
 
     // Append each image file to the formData
-    images.forEach(image => {
-      formData.append('images', image, image.name);
-    });
+    formData.append('image', image, image.name);
 
     // POST request to upload the images with a tap to refresh the products
-    return this.http.post<any>(`${this.apiUrl}/upload-images`, formData).pipe(
+    return this.http.post<any>(`${this.apiUrl}/upload-images?product_id=${productId}`, formData).pipe(
       tap(() => {
         this.getProducts().subscribe();
       })

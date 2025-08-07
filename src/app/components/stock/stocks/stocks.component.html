@@ -1,10 +1,31 @@
-<!-- Add this button above your table -->
-<button mat-raised-button color="primary" (click)="openExcelImportDialog()">
-  Import Excel Data
-</button>
-<button mat-raised-button color="accent" (click)="downloadExcel()">
-  Download Excel
-</button>
+<div class="container">
+  <div class="header">
+    <h1>Stocks</h1>
+    <div>
+      <button mat-raised-button color="primary" (click)="openExcelImportDialog()">
+        Import Excel Data
+      </button>
+      <button mat-raised-button color="accent" (click)="downloadExcel()">
+        Download Excel
+      </button>
+    </div>
+  </div>
+
+<div class="filter-container">
+  <mat-form-field appearance="fill">
+    <mat-label>Search by name</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Pizza">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Filter by category</mat-label>
+    <mat-select (selectionChange)="onFilterChange()" [(ngModel)]="selectedCategoryId">
+      <mat-option value="">All Categories</mat-option>
+      <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <!-- ID Column -->
     <ng-container matColumnDef="id">

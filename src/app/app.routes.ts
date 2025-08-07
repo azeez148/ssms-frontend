@@ -11,6 +11,11 @@ import { StocksComponent } from './components/stock/stocks/stocks.component';
 import { SalesComponent } from './components/sale/sales/sales.component';
 import { PurchasesComponent } from './components/purchase/purchases/purchases.component';
 import { CustomerHomeComponent } from './customer-home/customer-home.component';
+import { CustomersComponent } from './components/customer/customers/customers.component';
+import { VendorsComponent } from './components/vendor/vendors/vendors.component';
+import { EventsOffersListComponent } from './components/events-offers/events-offers-list/events-offers-list.component';
+import { EventParticipantsComponent } from './components/events-offers/event-participants/event-participants.component';
+import { SystemConfigurationComponent } from './components/system-configuration/system-configuration.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -23,8 +28,12 @@ export const routes: Routes = [
     { path: 'attributes', component: AttributesComponent },
     { path: 'shops', component: ShopsComponent },
     { path: 'pricelists', component: PricelistsComponent },
+    { path: 'system-configuration', component: SystemConfigurationComponent },
     { path: 'about', component: AboutComponent },
     { path: 'contact', component: ContactComponent },
-    {path: 'customer-view', component: CustomerHomeComponent },
-
+    { path: 'customer-view', component: CustomerHomeComponent },
+    { path: 'customers', component: CustomersComponent },
+    { path: 'vendors', component: VendorsComponent },
+    { path: 'events-offers', component: EventsOffersListComponent, data: { prerender: false } },
+    { path: 'events-offers/:id/participants', component: EventParticipantsComponent, data: { prerender: false } },
   ];

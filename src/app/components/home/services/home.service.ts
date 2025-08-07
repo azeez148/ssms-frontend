@@ -10,16 +10,21 @@ import { DashboardData } from '../data/dashboard.model';
 export class HomeService {
   private apiUrl = environment.apiUrl + '/dashboard'; // Your API base URL for purchases
   private dashboardData: DashboardData = {
-    recentSales: [],
-    recentPurchases: [],
-    mostSoldItems: [],
-    totalSales: 0,
-    totalRevenue: 0,
-    totalPurchases: 0,
-    totalCost: 0,
-    totalItemsInStock: 0,
-    totalStockValue: 0,
-    categoryItemCounts: []
+    total_sales: {
+      total_count: 0,
+      total_revenue: 0,
+      total_items_sold: 0,
+    },
+    total_products: 0,
+    total_categories: 0,
+    most_sold_items: {},
+    recent_sales: [],
+    total_purchases: {
+      total_count: 0,
+      total_cost: 0,
+      total_items_purchased: 0,
+    },
+    recent_purchases: [],
   };
 
 

@@ -1,7 +1,12 @@
 <div class="sale-details">
     <mat-form-field appearance="fill" class="mat-form-field-sale">
       <mat-label>Customer Name</mat-label>
-      <input matInput [(ngModel)]="sale.customerName" name="customerName" required />
+      <input matInput [(ngModel)]="sale.customerName" name="customerName" required [formControl]="customerCtrl" [matAutocomplete]="auto" />
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCustomerSelected($event.option.value)">
+        <mat-option *ngFor="let customer of filteredCustomers | async" [value]="customer">
+          {{ customer.name }}
+        </mat-option>
+      </mat-autocomplete>
     </mat-form-field>
   
     <mat-form-field appearance="fill" class="mat-form-field-sale">
@@ -57,6 +62,22 @@
   
 <!-- Product Table -->
 <div class="table-container">
+    <div class="filter-container">
+        <mat-form-field appearance="fill">
+          <mat-label>Search Products</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Search by name">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Filter by Category</mat-label>
+          <mat-select (selectionChange)="applyFilter($event)">
+            <mat-option [value]="'all'">All Categories</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category.name">
+              {{ category.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     <table mat-table [dataSource]="filteredSaleItems" class="mat-elevation-z8">
       <ng-container matColumnDef="selectAll">
         <th mat-header-cell *matHeaderCellDef>

@@ -10,10 +10,15 @@ import { CommonModule } from '@angular/common';
 import { UpdateQuantityDialogComponent } from '../update-quantity-dialog/update-quantity-dialog.component'; // Create this component
 import { UpdateImageDialogComponent } from '../update-image-dialog/update-image-dialog.component';
 import { ProductDetailDialogComponent } from '../product-detail-dialog/product-detail-dialog.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { Category } from '../../category/data/category-model';
+import { CategoryService } from '../../category/services/category.service';
 
 @Component({
   selector: 'app-products',
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatButtonModule],
+  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css'
 })
@@ -24,13 +29,35 @@ export class ProductsComponent implements OnInit {
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
 
-  constructor(public dialog: MatDialog, private productService: ProductService) { }
+  categories: Category[] = [];
+  private allProducts: Product[] = [];
+
+  constructor(public dialog: MatDialog, private productService: ProductService, private categoryService: CategoryService) { }
 
   ngOnInit() {
     this.productService.getProducts().subscribe(products => {
+      this.allProducts = products;
       this.dataSource.data = products;
       this.dataSource.paginator = this.paginator;
     });
+
+    this.categoryService.getCategories().subscribe(categories => {
+      this.categories = categories;
+    });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  filterByCategory(event: any) {
+    const categoryId = event.value;
+    if (categoryId === 'all') {
+      this.dataSource.data = this.allProducts;
+    } else {
+      this.dataSource.data = this.allProducts.filter(p => p.category.id === categoryId);
+    }
   }
 
   createProduct(): void {
@@ -78,9 +105,9 @@ export class ProductsComponent implements OnInit {
       data: { product }
     });
 
-    dialogRef.afterClosed().subscribe(selectedImages => {
-      if (selectedImages && selectedImages.length > 0) {
-        this.productService.uploadProductImages(product.id, selectedImages).subscribe(response => {
+    dialogRef.afterClosed().subscribe(selectedImage => {
+      if (selectedImage) {
+        this.productService.uploadProductImages(product.id, selectedImage).subscribe(response => {
           console.log('Product images updated successfully', response);
         });
       }
@@ -89,8 +116,10 @@ export class ProductsComponent implements OnInit {
 
   openUpdateWhatsappGroup(product: Product): void {
 
-    var sizes = Object.keys(product.sizeMap).map(size => `${size} (${product.sizeMap[size]})`).join(', ');
-    const message = encodeURIComponent(`New ${product.category.name} Added.
+const sizes = product.sizeMap
+  .map(item => `${item.size} (${item.quantity})`)
+  .join(', ');
+  const message = encodeURIComponent(`New ${product.category.name} Added.
   *${product.name}*
   Sizes Available: *${sizes}*.
   Rate: *₹${product.sellingPrice}*.

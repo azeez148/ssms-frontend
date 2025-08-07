@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, tap } from 'rxjs';
-import { DeliveryType, PaymentType, Sale } from '../data/sale-model';  // Adjust the path to your sale-model
+import { map, Observable, of, tap } from 'rxjs';
+import { DeliveryType, PaymentType, Sale, SaleItem } from '../data/sale-model';  // Adjust the path to your sale-model
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environment';
 
@@ -17,7 +17,7 @@ export class SaleService {
   constructor(private http: HttpClient) {}
 
   // Add a new sale
-  addSale(sale: Sale): Observable<Sale> {
+  addSale(sale: any): Observable<Sale> {
     return this.http.post<Sale>(`${this.apiUrl}/addSale`, sale).pipe(
       tap((newSale: Sale) => {
         this.getSales().subscribe();  // Reload the sales list after adding
@@ -27,12 +27,40 @@ export class SaleService {
 
   // Get all sales (no filters)
   getSales(): Observable<Sale[]> {
-    return this.http.get<Sale[]>(`${this.apiUrl}/all`).pipe(
-      tap((sales: Sale[]) => {
-        this.sales = sales;  // Store the fetched sales
-      })
-    );
-  }
+  return this.http.get<Sale[]>(`${this.apiUrl}/all`).pipe(
+    map((sales: any[]): Sale[] => {
+      return sales.map(sale => ({
+        id: sale.id,
+        customerName: sale.customer.name,
+        customerAddress: sale.customer.address,
+        customerMobile: sale.customer.mobile,
+        customerEmail: sale.customer.email || '',  // Fallback if not provided
+        customerId: sale.customer_id, // New field for customer ID
+        shopId: sale.shop_id,  // Fallback to empty array if not provided
+        date: sale.date,
+        saleItems: (sale.sale_items || []).map((item: any): SaleItem => ({
+          productId: item.product_id,
+          productName: item.product_name,
+          productCategory: item.product_category,
+          size: item.size,
+          quantityAvailable: item.quantity_available,
+          quantity: item.quantity,
+          salePrice: item.sale_price,
+          totalPrice: item.total_price
+        })),
+        totalQuantity: sale.total_quantity,
+        totalPrice: sale.total_price,
+        paymentType: sale.payment_type ?? { id: 0, name: '', description: '' },
+        paymentReferenceNumber: sale.payment_reference_number ?? '',
+        deliveryType: sale.delivery_type ?? { id: 0, name: '', description: '' }
+      }));
+    }),
+    tap((sales: Sale[]) => {
+      this.sales = sales;
+    })
+  );
+}
+
 
   // Get filtered sales based on category and product name
   getFilteredSales(categoryId: number | null, productNameFilter: string): Observable<Sale[]> {

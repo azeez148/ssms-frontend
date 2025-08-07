@@ -1,0 +1,61 @@
+<div class="container my-5">
+  <h1 class="text-center mb-4">Day Management</h1>
+
+  <div *ngIf="!dayStarted">
+    <h2>Start Day</h2>
+    <form [formGroup]="startDayForm" (ngSubmit)="onStartDay()">
+      <mat-form-field appearance="fill">
+        <mat-label>Opening Balance</mat-label>
+        <input matInput formControlName="openingBalance" type="number" placeholder="Enter amount">
+        <mat-error *ngIf="startDayForm.controls['openingBalance'].hasError('required')">
+          Opening balance is required.
+        </mat-error>
+        <mat-error *ngIf="startDayForm.controls['openingBalance'].hasError('pattern')">
+          Please enter a valid number.
+        </mat-error>
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!startDayForm.valid">Start Day</button>
+    </form>
+  </div>
+
+  <div *ngIf="dayStarted">
+    <h2>Add Expense</h2>
+    <form [formGroup]="expenseForm" (ngSubmit)="onAddExpense()">
+      <mat-form-field appearance="fill">
+        <mat-label>Description</mat-label>
+        <input matInput formControlName="description" placeholder="Enter description">
+        <mat-error *ngIf="expenseForm.controls['description'].hasError('required')">
+          Description is required.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Amount</mat-label>
+        <input matInput formControlName="amount" type="number" placeholder="Enter amount">
+        <mat-error *ngIf="expenseForm.controls['amount'].hasError('required')">
+          Amount is required.
+        </mat-error>
+        <mat-error *ngIf="expenseForm.controls['amount'].hasError('pattern')">
+          Please enter a valid number.
+        </mat-error>
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!expenseForm.valid">Add Expense</button>
+    </form>
+
+    <h2>Today's Expenses</h2>
+    <ul>
+      <li *ngFor="let expense of expenses">{{ expense.description }}: {{ expense.amount | currency:'INR' }}</li>
+    </ul>
+
+    <button mat-raised-button color="warn" (click)="onEndDay()">End Day</button>
+  </div>
+
+  <div *ngIf="daySummary">
+    <h2>End of Day Summary</h2>
+    <p><strong>Opening Balance:</strong> {{ daySummary.openingBalance | currency:'INR' }}</p>
+    <p><strong>Total Sales Revenue:</strong> {{ daySummary.totalSales | currency:'INR' }}</p>
+    <p><strong>Total Purchase Cost:</strong> {{ daySummary.totalPurchases | currency:'INR' }}</p>
+    <p><strong>Total Expenses:</strong> {{ daySummary.totalExpenses | currency:'INR' }}</p>
+    <hr>
+    <p><strong>Closing Balance:</strong> {{ daySummary.closingBalance | currency:'INR' }}</p>
+  </div>
+</div>

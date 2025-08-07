@@ -63,6 +63,34 @@ export class StocksComponent {
     this.loadProducts();  // Reload the products based on new filters
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.productNameFilter = filterValue;
+    this.loadProducts();
+  }
+
+
+  getAvailableSizesWithQuantities(sizeMap: { size: string; quantity: number }[]): string[] {
+  const availableSizesWithQuantities: string[] = [];
+  let isOutOfStock = true;
+
+  for (const entry of sizeMap) {
+    const { size, quantity } = entry;
+    if (quantity > 0) {
+      availableSizesWithQuantities.push(`${size}:${quantity}`);
+      isOutOfStock = false;
+    } else if (quantity < 0) {
+      availableSizesWithQuantities.push(`${size}:${quantity}`); // show negative
+    }
+  }
+
+  if (isOutOfStock) {
+    availableSizesWithQuantities.push('Out of Stock');
+  }
+
+  return availableSizesWithQuantities;
+}
+
   // Function to return sizes and their quantities with non-zero quantity
   // getAvailableSizesWithQuantities(sizeMap: any): string[] {
   //   const availableSizesWithQuantities: string[] = [];
@@ -84,28 +112,28 @@ export class StocksComponent {
   //   return availableSizesWithQuantities;
   // }
 
-  getAvailableSizesWithQuantities(sizeMap: any): string[] {
-    const availableSizesWithQuantities: string[] = [];
-    let isOutOfStock = true;
+  // getAvailableSizesWithQuantities(sizeMap: any): string[] {
+  //   const availableSizesWithQuantities: string[] = [];
+  //   let isOutOfStock = true;
   
-    // Iterate over sizeMap to check if there's any size with a quantity greater than 0 or less than 0
-    for (const size in sizeMap) {
-      const quantity = sizeMap[size];
-      if (quantity > 0) {
-        availableSizesWithQuantities.push(`${size}:${quantity}`);
-        isOutOfStock = false;  // At least one size has stock, so it's not out of stock
-      } else if (quantity < 0) {
-        availableSizesWithQuantities.push(`${size}:${quantity}`); // Display negative quantities
-      }
-    }
+  //   // Iterate over sizeMap to check if there's any size with a quantity greater than 0 or less than 0
+  //   for (const size in sizeMap) {
+  //     const quantity = sizeMap[size];
+  //     if (quantity > 0) {
+  //       availableSizesWithQuantities.push(`${size}:${quantity}`);
+  //       isOutOfStock = false;  // At least one size has stock, so it's not out of stock
+  //     } else if (quantity < 0) {
+  //       availableSizesWithQuantities.push(`${size}:${quantity}`); // Display negative quantities
+  //     }
+  //   }
   
-    // If all sizes have 0 quantity, return "Out of Stock"
-    if (isOutOfStock) {
-      availableSizesWithQuantities.push('Out of Stock');
-    }
+  //   // If all sizes have 0 quantity, return "Out of Stock"
+  //   if (isOutOfStock) {
+  //     availableSizesWithQuantities.push('Out of Stock');
+  //   }
   
-    return availableSizesWithQuantities;
-  }
+  //   return availableSizesWithQuantities;
+  // }
   
   openExcelImportDialog(): void {
     const dialogRef = this.dialog.open(ExcelImportDialogComponent, {

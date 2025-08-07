@@ -1,7 +1,13 @@
-<div class="header">
-  <h1>Categories</h1>
-  <button mat-raised-button color="primary" (click)="createCategory()">Create Category</button>
-</div>
+<div class="container">
+  <div class="header">
+    <h1>Categories</h1>
+    <button mat-raised-button color="primary" (click)="createCategory()">Create Category</button>
+  </div>
+
+<mat-form-field appearance="fill">
+  <mat-label>Search by name</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. T-Shirts">
+</mat-form-field>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
   <!-- ID Column -->

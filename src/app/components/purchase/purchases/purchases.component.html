@@ -1,6 +1,19 @@
-<div class="header">
+<div class="container">
+  <div class="header">
     <h1>Purchases</h1>
+  </div>
 
+  <!-- Today's Purchase Summary -->
+  <div class="summary-container">
+    <h2>Today's Purchase Summary</h2>
+    <div class="summary-details">
+      <p><strong>Total Purchases:</strong> {{ todaysPurchaseSummary.total_count }}</p>
+      <p><strong>Total Cost:</strong> {{ todaysPurchaseSummary.total_cost | currency:'INR' }}</p>
+      <p><strong>Total Items Purchased:</strong> {{ todaysPurchaseSummary.total_items_purchased }}</p>
+    </div>
+  </div>
+
+  <div class="filter-container">
     <!-- Category Filter -->
     <mat-form-field appearance="fill">
       <mat-label>Category</mat-label>
@@ -18,6 +31,41 @@
       <input matInput [(ngModel)]="productNameFilter" (input)="onFilterChange()" placeholder="Search by product name">
     </mat-form-field>
 
+    <mat-form-field appearance="fill">
+      <mat-label>Filter by Vendor Name</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search by vendor name">
+    </mat-form-field>
+
+    <!-- Date Filter -->
+    <mat-form-field appearance="fill">
+      <mat-label>Date Filter</mat-label>
+      <mat-select [(value)]="selectedDateFilter" (selectionChange)="onFilterChange()">
+        <mat-option value="all">All Time</mat-option>
+        <mat-option value="today">Today</mat-option>
+        <mat-option value="yesterday">Yesterday</mat-option>
+        <mat-option value="this_week">This Week</mat-option>
+        <mat-option value="this_month">This Month</mat-option>
+        <mat-option value="custom">Custom Range</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Custom Date Range -->
+    <div *ngIf="selectedDateFilter === 'custom'" class="custom-date-range">
+      <mat-form-field appearance="fill">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="customStartDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="customEndDate" (dateChange)="onFilterChange()">
+        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
     <!-- Add New Purchase Button -->
     <button mat-raised-button color="primary" (click)="openCreatePurchaseDialog()">Create New Purchase</button>
 <!-- Export to Excel Button -->
@@ -32,9 +80,9 @@
   </ng-container>
 
   <!-- Vendor Name Column -->
-  <ng-container matColumnDef="vendorName">
+  <ng-container matColumnDef="supplierName">
     <th mat-header-cell *matHeaderCellDef> Vendor </th>
-    <td mat-cell *matCellDef="let element"> {{element.vendorName}} </td>
+    <td mat-cell *matCellDef="let element"> {{element.supplierName}} </td>
   </ng-container>
 
   <!-- Total Quantity Column -->

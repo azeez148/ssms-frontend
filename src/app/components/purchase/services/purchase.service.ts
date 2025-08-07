@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, tap } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 import { DeliveryType, PaymentType, Purchase } from '../data/purchase-model';  // Adjust the path to your purchase-model
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environment';
@@ -17,7 +17,7 @@ export class PurchaseService {
   constructor(private http: HttpClient) {}
 
   // Add a new purchase
-  addPurchase(purchase: Purchase): Observable<Purchase> {
+  addPurchase(purchase: any): Observable<Purchase> {
     return this.http.post<Purchase>(`${this.apiUrl}/addPurchase`, purchase).pipe(
       tap((newPurchase: Purchase) => {
         this.getPurchases().subscribe();  // Reload the purchases list after adding
@@ -28,6 +28,33 @@ export class PurchaseService {
   // Get all purchases (no filters)
   getPurchases(): Observable<Purchase[]> {
     return this.http.get<Purchase[]>(`${this.apiUrl}/all`).pipe(
+      map((purchases: any[]): Purchase[] => {
+        return purchases.map(purchase => ({
+          id: purchase.id,
+          supplierName: purchase.vendor.name,
+          paymentType: purchase.payment_type,
+          deliveryType: purchase.delivery_type,
+          supplierAddress: purchase.vendor.address,
+          supplierMobile: purchase.vendor.mobile,
+          supplierEmail: purchase.vendor.email || '',  // Fallback if not provided
+          supplierId: purchase.vendor_id, // New field for supplier ID
+          paymentReferenceNumber: purchase.payment_reference_number || '',
+          shopIds: purchase.shop_ids || [],  // Fallback to empty array if not provided
+          date: purchase.date,
+          totalQuantity: purchase.total_quantity,
+          totalPrice: purchase.total_price,
+          purchaseItems: (purchase.purchase_items || []).map((item: any) => ({
+            productId: item.product_id,
+            productName: item.product_name,
+            productCategory: item.product_category,
+            size: item.size,
+            quantityAvailable: item.quantity_available,
+            quantity: item.quantity,
+            purchasePrice: item.purchase_price,
+            totalPrice: item.total_price
+          }))
+        }));
+      }),
       tap((purchases: Purchase[]) => {
         this.purchases = purchases;  // Store the fetched purchases
       })
