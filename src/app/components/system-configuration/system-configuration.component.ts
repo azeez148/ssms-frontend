@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SystemConfigurationService } from './services/system-configuration.service';
 
 @Component({
   selector: 'app-system-configuration',
@@ -10,7 +11,7 @@ import { CommonModule } from '@angular/common';
 })
 export class SystemConfigurationComponent {
 
-  constructor() { }
+  constructor(private systemConfigurationService: SystemConfigurationService) { }
 
   backupData(): void {
     console.log('Backup data method called');
@@ -24,6 +25,11 @@ export class SystemConfigurationComponent {
 
   resetData(): void {
     console.log('Reset data method called');
-    alert('Reset data functionality is not yet implemented.');
+    // alert('Reset data functionality is not yet implemented.');
+    if (confirm('Are you sure you want to reset the data? This action cannot be undone.')) {
+      // Call the reset data service method here
+      console.log('Data reset confirmed');
+      this.systemConfigurationService.resetData()
+    }
   }
 }

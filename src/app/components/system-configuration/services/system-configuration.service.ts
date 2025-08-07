@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
+import { environment } from 'src/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SystemConfigurationService {
-
-  private baseUrl = '/api/system'; // Replace with your actual API base URL
+  private apiUrl = environment.apiUrl + '/system';  // Ensure this is set correctly
 
   constructor(private http: HttpClient) { }
 
@@ -30,10 +30,12 @@ export class SystemConfigurationService {
   }
 
   resetData(): Observable<any> {
-    // Placeholder for reset data logic
-    console.log('Reset data service method called');
-    // In a real application, you would make an HTTP request to the backend
-    // return this.http.post(`${this.baseUrl}/reset`, {});
-    return of({ message: 'Data reset successfully' });
-  }
+  console.log('Reset data service method called');
+
+  return this.http.post<any>(`${this.apiUrl}/reset-db`, {}).pipe(
+    tap(() => {
+      console.log('Data reset successfully');
+    })
+  );
+}
 }
