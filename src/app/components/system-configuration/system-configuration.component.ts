@@ -14,22 +14,48 @@ export class SystemConfigurationComponent {
   constructor(private systemConfigurationService: SystemConfigurationService) { }
 
   backupData(): void {
-    console.log('Backup data method called');
-    alert('Backup data functionality is not yet implemented.');
+    const passkey = prompt('Enter passkey to backup data:');
+    if (passkey) {
+      this.systemConfigurationService.backupData(passkey).subscribe({
+        next: (response) => alert(response.message),
+        error: (error) => alert(`Error: ${error.message}`),
+      });
+    }
   }
 
   restoreData(): void {
-    console.log('Restore data method called');
-    alert('Restore data functionality is not yet implemented.');
+    const passkey = prompt('Enter passkey to restore data:');
+    if (passkey) {
+      // TODO: Implement file selection
+      alert('File selection is not yet implemented.');
+      // const fileInput = document.createElement('input');
+      // fileInput.type = 'file';
+      // fileInput.onchange = (e: any) => {
+      //   const file = e.target.files[0];
+      //   this.systemConfigurationService.restoreData(file, passkey).subscribe({
+      //     next: (response) => alert(response.message),
+      //     error: (error) => alert(`Error: ${error.message}`),
+      //   });
+      // };
+      // fileInput.click();
+    }
   }
 
   resetData(): void {
-    console.log('Reset data method called');
-    // alert('Reset data functionality is not yet implemented.');
-    if (confirm('Are you sure you want to reset the data? This action cannot be undone.')) {
-      // Call the reset data service method here
-      console.log('Data reset confirmed');
-      this.systemConfigurationService.resetData()
+    const passkey = prompt('Enter passkey to reset data:');
+    if (passkey) {
+      if (confirm('Are you sure you want to reset the data? This action cannot be undone.')) {
+        this.systemConfigurationService.resetData(passkey).subscribe({
+          next: (response) => {
+            console.log(response);
+            alert(response.message);
+          },
+          error: (error) => {
+            console.error(error);
+            alert(`Error: ${error.message}`);
+          },
+        });
+      }
     }
   }
 }
