@@ -1,0 +1,28 @@
+<div class="container mt-4">
+  <h2>System Configuration</h2>
+  <p>Manage your system data with the options below.</p>
+  <hr>
+
+  <div class="card">
+    <div class="card-header">
+      Data Management
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Backup and Restore</h5>
+      <p class="card-text">Backup your current data or restore it from a previous backup.</p>
+      <button class="btn btn-primary mr-2" (click)="backupData()">Backup Data</button>
+      <button class="btn btn-secondary" (click)="restoreData()">Restore Data</button>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-header">
+      System Reset
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Reset Data</h5>
+      <p class="card-text">This will wipe all existing data. This action cannot be undone.</p>
+      <button class="btn btn-danger" (click)="resetData()">Reset Data</button>
+    </div>
+  </div>
+</div>

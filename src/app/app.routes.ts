@@ -15,6 +15,7 @@ import { CustomersComponent } from './components/customer/customers/customers.co
 import { VendorsComponent } from './components/vendor/vendors/vendors.component';
 import { EventsOffersListComponent } from './components/events-offers/events-offers-list/events-offers-list.component';
 import { EventParticipantsComponent } from './components/events-offers/event-participants/event-participants.component';
+import { SystemConfigurationComponent } from './components/system-configuration/system-configuration.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -27,6 +28,7 @@ export const routes: Routes = [
     { path: 'attributes', component: AttributesComponent },
     { path: 'shops', component: ShopsComponent },
     { path: 'pricelists', component: PricelistsComponent },
+    { path: 'system-configuration', component: SystemConfigurationComponent },
     { path: 'about', component: AboutComponent },
     { path: 'contact', component: ContactComponent },
     { path: 'customer-view', component: CustomerHomeComponent },
