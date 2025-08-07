@@ -17,7 +17,7 @@
     <!-- Category Filter -->
     <mat-form-field appearance="fill">
       <mat-label>Category</mat-label>
-      <mat-select [(value)]="selectedCategoryId" (selectionChange)="onFilterChange()">
+    <mat-select [(ngModel)]="selectedCategoryId" (selectionChange)="onFilterChange()">
         <mat-option value="">All Categories</mat-option>
         <mat-option *ngFor="let category of categories" [value]="category.id">
           {{ category.name }}
