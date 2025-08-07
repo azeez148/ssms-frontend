@@ -10,6 +10,7 @@ export interface Product {
   name: string;
   description: string;
   category: Category;
+  categoryId: number; // Added to match the backend structure
   sizeMap: ProductSize[];  // Changed from object to array
   unitPrice: number;
   sellingPrice: number;

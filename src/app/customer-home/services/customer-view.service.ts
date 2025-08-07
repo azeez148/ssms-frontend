@@ -23,6 +23,7 @@ export class CustomerHomeService {
           name: product.name,
           description: product.description,
           category: product.category,
+          categoryId: product.category_id, // Ensure categoryId is included
           sizeMap: product.size_map,
           unitPrice: product.unit_price,
           sellingPrice: product.selling_price,

@@ -51,12 +51,11 @@ export class ProductsComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  filterByCategory(event: any) {
-    const categoryId = event.value;
+  filterByCategory(categoryId: any) {
     if (categoryId === 'all') {
       this.dataSource.data = this.allProducts;
     } else {
-      this.dataSource.data = this.allProducts.filter(p => p.category.id === categoryId);
+      this.dataSource.data = this.allProducts.filter(p => p.categoryId === categoryId);
     }
   }
 

@@ -42,7 +42,8 @@ export class ProductService {
         sellingPrice: product.selling_price,
         imageUrl: product.image_url || '',
         isActive: product.is_active,
-        canListed: product.can_listed
+        canListed: product.can_listed,
+        categoryId: product.category_id
       }));
     }),tap((products: Product[]) => {
         this.products = products;
@@ -75,6 +76,7 @@ getFilteredProducts(categoryId: number | null, productNameFilter: string): Obser
         name: product.name,
         description: product.description,
         category: product.category,
+        categoryId: product.category_id, // Ensure categoryId is included
         sizeMap: product.size_map,
         unitPrice: product.unit_price,
         sellingPrice: product.selling_price,
