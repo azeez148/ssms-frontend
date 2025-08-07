@@ -33,6 +33,8 @@ export class StocksComponent {
   categories: Category[] = [];
   selectedCategoryId: number | null = null;
   productNameFilter: string = '';
+  private allProducts: Product[] = [];
+
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -55,18 +57,21 @@ export class StocksComponent {
     this.productService.getFilteredProducts(this.selectedCategoryId, this.productNameFilter).subscribe(products => {
       this.dataSource.data = products;
       this.dataSource.paginator = this.paginator;
+      this.allProducts = products;
     });
-  }
-
-  // This method will be called when the category is changed or the product filter is applied
-  onFilterChange(): void {
-    this.loadProducts();  // Reload the products based on new filters
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.productNameFilter = filterValue;
-    this.loadProducts();
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+  
+  filterByCategory(categoryId: any) {
+    if (categoryId === 'all') {
+      this.dataSource.data = this.allProducts;
+    } else {
+      this.dataSource.data = this.allProducts.filter(p => p.categoryId === categoryId);
+    }
   }
 
 

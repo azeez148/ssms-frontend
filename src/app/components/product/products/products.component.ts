@@ -55,7 +55,7 @@ export class ProductsComponent implements OnInit {
     if (categoryId === 'all') {
       this.dataSource.data = this.allProducts;
     } else {
-      this.dataSource.data = this.allProducts.filter(p => p.category.id === categoryId);
+      this.dataSource.data = this.allProducts.filter(p => p.categoryId === categoryId);
     }
   }
 

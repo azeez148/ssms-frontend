@@ -38,10 +38,27 @@ export class CustomerHomeComponent implements OnInit {
       this.products = data.products.filter(product => product.canListed === true);
 
       // Extract unique categories from the products
-      const categoryMap = new Map<number, Category>();
-      this.products.forEach(product => {        
-        if (product.category) {
-          categoryMap.set(product.category.id, product.category);
+const categoryMap = new Map<string, Category>();
+      // this.products.forEach(product => {        
+      //   if (product.category) {
+      //     categoryMap.set(product.category.id, product.category);
+      //   }
+      // });
+
+
+      this.products.forEach(product => {
+        const category = product.category;
+        if (category && category.name) {
+          // Use category name as the unique key
+          if (!categoryMap.has(category.name)) {
+            // Assign a random ID (e.g., between 1000–9999) to each unique category
+            const randomId = Math.floor(Math.random() * 9000) + 1000;
+            categoryMap.set(category.name, {
+              id: randomId,
+              name: category.name,
+              description: category.description || ''
+            });
+          }
         }
       });
       this.categories = Array.from(categoryMap.values());
