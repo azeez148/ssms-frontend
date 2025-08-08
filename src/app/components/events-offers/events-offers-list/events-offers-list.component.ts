@@ -91,16 +91,10 @@ export class EventsOffersListComponent implements OnInit {
     });
   }
 
-  deleteEventOffer(id: number): void {
-    // In a real app, you'd use a confirmation dialog here.
-    this.eventsOffersService.deleteEventOffer(id).subscribe(() => {
-      this.loadEventOffers();
-    });
-  }
 
   toggleActivation(eventOffer: EventOffer): void {
     const updatedEventOffer = { ...eventOffer, isActive: !eventOffer.isActive };
-    this.eventsOffersService.deActivateEventOffer(updatedEventOffer).subscribe(() => {
+    this.eventsOffersService.toggleActivateEventOffer(updatedEventOffer).subscribe(() => {
       this.loadEventOffers();
     });
   }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable, of, tap } from 'rxjs';
 import { EventOffer, Participant } from '../data/events-offers-model';
 import { environment } from '../../../../environment';
@@ -45,19 +45,13 @@ export class EventsOffersService {
     return this.http.post<EventOffer>(`${this.apiUrl}/update/${eventOffer.id}`, payload);
   }
 
-    deActivateEventOffer(eventOffer: EventOffer): Observable<any> {
-    const payload = {
-       offer_id: eventOffer.id,
-    };
-    return this.http.post<EventOffer>(`${this.apiUrl}/deactivate/${eventOffer.id}`, payload);
+  toggleActivateEventOffer(eventOffer: EventOffer): Observable<EventOffer> {
+    const params = new HttpParams()
+      .set('offer_id', eventOffer.id)
+      .set('is_active', eventOffer.isActive);
+    return this.http.post<EventOffer>(`${this.apiUrl}/set_active_status`, null, { params });
   }
 
-  deleteEventOffer(id: number): Observable<any> {
-    const payload = {
-      offer_id: id
-    };
-    return this.http.post<EventOffer>(`${this.apiUrl}/deactivate`, payload);
-  }
 
   getParticipants(eventOfferId: number): Observable<Participant[]> {
     return this.http.get<Participant[]>(`${this.apiUrl}/${eventOfferId}/participants`);
