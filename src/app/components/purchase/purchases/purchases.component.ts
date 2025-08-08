@@ -1,48 +1,33 @@
-import { Component, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Component, OnInit } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Category } from '../../category/data/category-model';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { CategoryService } from '../../category/services/category.service';
 import { ProductService } from '../../product/services/product.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
 import { Purchase, PurchaseItem } from '../data/purchase-model';
 import { PurchaseDialogComponent } from '../purchase-dialog/purchase-dialog.component';
 import { PurchaseService } from '../services/purchase.service';
 import { Product } from '../../product/data/product-model';
 import { PurchaseDetailsDialogComponent } from '../purchase-details-dialog/purchase-details-dialog.component';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-purchases',
+  templateUrl: './purchases.component.html',
+  styleUrls: ['./purchases.component.css'],
+  standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
     FormsModule,
-    MatDialogModule,
-    MatDatepickerModule,
-    MatNativeDateModule
+    NgxPaginationModule
   ],
-  templateUrl: './purchases.component.html',
-  styleUrls: ['./purchases.component.css']
 })
-export class PurchasesComponent {
-  displayedColumns: string[] = ['id', 'supplierName', 'totalQuantity', 'totalPrice', 'date', 'viewDetails'];
-  dataSource = new MatTableDataSource<Purchase>([]);
+export class PurchasesComponent implements OnInit {
+  purchases: Purchase[] = [];
+  p: number = 1;
 
   categories: Category[] = [];
   products: Product[] = [];
@@ -51,8 +36,6 @@ export class PurchasesComponent {
   selectedDateFilter: string = 'all';
   customStartDate: Date | null = null;
   customEndDate: Date | null = null;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   private allPurchases: Purchase[] = [];
 
@@ -83,8 +66,7 @@ export class PurchasesComponent {
   loadPurchases(): void {
     this.purchaseService.getPurchases().subscribe(purchases => {
       this.allPurchases = purchases;
-      this.dataSource.data = purchases;
-      this.dataSource.paginator = this.paginator;
+      this.purchases = purchases;
       this.calculateTodaysPurchaseSummary();
     });
   }
@@ -104,7 +86,6 @@ export class PurchasesComponent {
     this.todaysPurchaseSummary.total_items_purchased = todaysPurchases.reduce((acc, purchase) => acc + purchase.totalQuantity, 0);
   }
 
-  // Called when the category or product filter is changed
   onFilterChange(): void {
     let filteredPurchases = this.allPurchases;
 
@@ -158,21 +139,16 @@ export class PurchasesComponent {
         }
         break;
       default:
-        // No date filter
         break;
     }
-    this.dataSource.data = filteredPurchases;
+    this.purchases = filteredPurchases;
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    this.dataSource.filterPredicate = (data: Purchase, filter: string) => {
-      return data.supplierName.toLowerCase().includes(filter);
-    };
+    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.purchases = this.allPurchases.filter(purchase => purchase.supplierName.toLowerCase().includes(filterValue));
   }
 
-  // Open dialog to create a new purchase
   openCreatePurchaseDialog(): void {
     const dialogRef = this.dialog.open(PurchaseDialogComponent, {
       maxWidth: '1000px',
@@ -187,15 +163,15 @@ export class PurchasesComponent {
           supplier_name: result.supplierName,
           supplier_address: result.supplierAddress,
           supplier_mobile: result.supplierMobile,
-          supplier_email: result.supplierEmail || '',  // Fallback if not provided
-          vendor_id: result.supplierId || 0, // New field for supplier ID
+          supplier_email: result.supplierEmail || '',
+          vendor_id: result.supplierId || 0,
           date: result.date,
           total_quantity: result.totalQuantity,
           total_price: result.totalPrice,
           payment_type_id: result.paymentType.id,
           payment_reference_number: result.paymentReferenceNumber,
           delivery_type_id: result.deliveryType.id,
-          shop_ids: result.shopIds, // Assuming shopIds is an array of numbers
+          shop_ids: result.shopIds,
           purchase_items: result.purchaseItems.map((item: PurchaseItem) => ({
             product_id: item.productId,
             product_name: item.productName,
@@ -223,12 +199,10 @@ export class PurchasesComponent {
     });
   }
   exportExcel(): void {
-    // Convert dataSource.data to worksheet and workbook
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.purchases);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Purchases');
 
-    // Write workbook result as binary array
     const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     this.saveAsExcelFile(excelBuffer, 'purchases_data');
   }

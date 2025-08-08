@@ -1,32 +1,28 @@
-<h1 mat-dialog-title>Assign Attribute Value</h1>
-<div mat-dialog-content>
+<div class="modal-header">
+  <h4 class="modal-title">Assign Attribute Value</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+<div class="modal-body">
   <form [formGroup]="assignForm">
-    <mat-form-field>
-      <mat-label>Select Attribute</mat-label>
-      <mat-select formControlName="attributeId">
-        <mat-option *ngFor="let attribute of attributes" [value]="attribute.id">
-          {{ attribute.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Enter Value</mat-label>
-      <input matInput formControlName="value" />
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Select Category</mat-label>
-      <mat-select formControlName="categoryId">
-        <mat-option *ngFor="let category of categories" [value]="category.id">
-          {{ category.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="mb-3">
+      <label for="attribute" class="form-label">Select Attribute</label>
+      <select id="attribute" class="form-select" formControlName="attributeId">
+        <option *ngFor="let attribute of attributes" [value]="attribute.id">{{ attribute.name }}</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="value" class="form-label">Enter Value</label>
+      <input type="text" id="value" class="form-control" formControlName="value">
+    </div>
+    <div class="mb-3">
+      <label for="category" class="form-label">Select Category</label>
+      <select id="category" class="form-select" formControlName="categoryId">
+        <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+      </select>
+    </div>
   </form>
 </div>
-
-<div mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onAssign()" cdkFocusInitial>Assign</button>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onAssign()" [disabled]="!assignForm.valid">Assign</button>
 </div>

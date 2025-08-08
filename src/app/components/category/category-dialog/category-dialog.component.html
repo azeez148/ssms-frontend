@@ -1,17 +1,20 @@
-<h1 mat-dialog-title>Create Category</h1>
-<div mat-dialog-content>
+<div class="modal-header">
+  <h4 class="modal-title">Create Category</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+<div class="modal-body">
   <form [formGroup]="categoryForm">
-    <mat-form-field>
-      <mat-label>Name</mat-label>
-      <input matInput formControlName="name">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Description</mat-label>
-      <input matInput formControlName="description">
-    </mat-form-field>
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" id="name" class="form-control" formControlName="name">
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <input type="text" id="description" class="form-control" formControlName="description">
+    </div>
   </form>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onSave()" cdkFocusInitial>Save</button>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="!categoryForm.valid">Save</button>
 </div>

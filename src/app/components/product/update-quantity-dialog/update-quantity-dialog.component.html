@@ -1,37 +1,39 @@
-<h1 mat-dialog-title>Update Product Quantity</h1>
-<div mat-dialog-content fxLayout="column" fxLayoutGap="16px">
-  <mat-form-field appearance="fill">
-    <mat-label>Size Type</mat-label>
-    <mat-select [(ngModel)]="quantities.sizeType" (selectionChange)="onSizeTypeChange($event)">
-      <mat-option value="Normal">Normal</mat-option>
-      <mat-option value="Boot">Boot</mat-option>
-      <mat-option value="Football">Football</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <div *ngIf="quantities.sizeType === 'Normal'" class="size-container">
-    <mat-form-field *ngFor="let size of quantities.sizes" appearance="fill" class="size-input">
-      <mat-label>{{ size }} Quantity</mat-label>
-      <input matInput [(ngModel)]="quantities[size]" type="number" placeholder="Enter quantity">
-    </mat-form-field>
+<div class="modal-header">
+  <h4 class="modal-title">Update Product Quantity</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+<div class="modal-body">
+  <div class="mb-3">
+    <label for="sizeType" class="form-label">Size Type</label>
+    <select id="sizeType" class="form-select" [(ngModel)]="quantities.sizeType" (change)="onSizeTypeChange($event)">
+      <option value="Normal">Normal</option>
+      <option value="Boot">Boot</option>
+      <option value="Football">Football</option>
+    </select>
   </div>
 
-  <div *ngIf="quantities.sizeType === 'Boot'" class="size-container">
-    <mat-form-field *ngFor="let size of quantities.bootSizes" appearance="fill" class="size-input">
-      <mat-label>{{ size }} Quantity</mat-label>
-      <input matInput [(ngModel)]="quantities[size]" type="number" placeholder="Enter quantity">
-    </mat-form-field>
+  <div *ngIf="quantities.sizeType === 'Normal'" class="row g-3">
+    <div *ngFor="let size of quantities.sizes" class="col-md-4">
+      <label [for]="'size' + size" class="form-label">{{ size }} Quantity</label>
+      <input [id]="'size' + size" type="number" class="form-control" [(ngModel)]="quantities[size]" placeholder="Enter quantity">
+    </div>
   </div>
 
-  <div *ngIf="quantities.sizeType === 'Football'" class="size-container">
-    <mat-form-field *ngFor="let size of quantities.footballSizes" appearance="fill" class="size-input">
-      <mat-label>{{ size }} Quantity</mat-label>
-      <input matInput [(ngModel)]="quantities[size]" type="number" placeholder="Enter quantity">
-    </mat-form-field>
+  <div *ngIf="quantities.sizeType === 'Boot'" class="row g-3">
+    <div *ngFor="let size of quantities.bootSizes" class="col-md-4">
+      <label [for]="'size' + size" class="form-label">{{ size }} Quantity</label>
+      <input [id]="'size' + size" type="number" class="form-control" [(ngModel)]="quantities[size]" placeholder="Enter quantity">
+    </div>
+  </div>
+
+  <div *ngIf="quantities.sizeType === 'Football'" class="row g-3">
+    <div *ngFor="let size of quantities.footballSizes" class="col-md-4">
+      <label [for]="'size' + size" class="form-label">{{ size }} Quantity</label>
+      <input [id]="'size' + size" type="number" class="form-control" [(ngModel)]="quantities[size]" placeholder="Enter quantity">
+    </div>
   </div>
 </div>
-
-<div mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onSave()">Save</button>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onSave()">Save</button>
 </div>

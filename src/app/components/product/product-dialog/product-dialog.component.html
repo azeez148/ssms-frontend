@@ -1,57 +1,52 @@
-<h1 mat-dialog-title>Create Product</h1>
-
-<div mat-dialog-content>
-  <form [formGroup]="productForm" fxLayout="column" fxLayoutGap="24px">
-    
-    <!-- Row 1: Product Name and Description -->
-    <div fxLayout="row" fxLayoutGap="24px" fxLayoutAlign="start stretch">
-      <mat-form-field fxFlex="50%">
-        <mat-label>Name</mat-label>
-        <input matInput formControlName="name">
-        <mat-error *ngIf="productForm.get('name')?.hasError('required')">Name is required</mat-error>
-      </mat-form-field>
-
-      <mat-form-field fxFlex="50%">
-        <mat-label>Description</mat-label>
-        <input matInput formControlName="description">
-      </mat-form-field>
+<div class="modal-header">
+  <h4 class="modal-title">Create Product</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="productForm">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" id="name" class="form-control" formControlName="name">
+        <div *ngIf="productForm.get('name')?.hasError('required')" class="invalid-feedback d-block">Name is required</div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="description" class="form-label">Description</label>
+        <input type="text" id="description" class="form-control" formControlName="description">
+      </div>
     </div>
-
-    <!-- Row 2: Category Selection -->
-    <div fxLayout="row" fxLayoutGap="24px" fxLayoutAlign="start stretch">
-      <mat-form-field fxFlex="50%">
-        <mat-label>Category</mat-label>
-        <mat-select formControlName="categoryId">
-          <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</mat-option>
-        </mat-select>
-        <mat-error *ngIf="productForm.get('categoryId')?.hasError('required')">Category is required</mat-error>
-      </mat-form-field>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select id="category" class="form-select" formControlName="categoryId">
+          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        </select>
+        <div *ngIf="productForm.get('categoryId')?.hasError('required')" class="invalid-feedback d-block">Category is required</div>
+      </div>
     </div>
-
-    <!-- Row 3: Unit Price and Selling Price -->
-    <div fxLayout="row" fxLayoutGap="24px" fxLayoutAlign="start stretch">
-      <mat-form-field fxFlex="50%">
-        <mat-label>Unit Price</mat-label>
-        <input matInput formControlName="unitPrice" type="number" min="0">
-        <mat-error *ngIf="productForm.get('unitPrice')?.hasError('required')">Unit Price is required</mat-error>
-      </mat-form-field>
-
-      <mat-form-field fxFlex="50%">
-        <mat-label>Selling Price</mat-label>
-        <input matInput formControlName="sellingPrice" type="number" min="0">
-        <mat-error *ngIf="productForm.get('sellingPrice')?.hasError('required')">Selling Price is required</mat-error>
-      </mat-form-field>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="unitPrice" class="form-label">Unit Price</label>
+        <input type="number" id="unitPrice" class="form-control" formControlName="unitPrice" min="0">
+        <div *ngIf="productForm.get('unitPrice')?.hasError('required')" class="invalid-feedback d-block">Unit Price is required</div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="sellingPrice" class="form-label">Selling Price</label>
+        <input type="number" id="sellingPrice" class="form-control" formControlName="sellingPrice" min="0">
+        <div *ngIf="productForm.get('sellingPrice')?.hasError('required')" class="invalid-feedback d-block">Selling Price is required</div>
+      </div>
     </div>
-
-    <!-- Row 4: Can Listed Checkbox -->
-    <div fxLayout="row" fxLayoutGap="24px" fxLayoutAlign="start center">
-      <mat-checkbox formControlName="canListed">Can Listed</mat-checkbox>
+    <div class="row">
+      <div class="col-12 mb-3">
+        <div class="form-check">
+          <input type="checkbox" id="canListed" class="form-check-input" formControlName="canListed">
+          <label for="canListed" class="form-check-label">Can be Listed</label>
+        </div>
+      </div>
     </div>
-
   </form>
 </div>
-
-<div mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onSave()" cdkFocusInitial>Save</button>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="!productForm.valid">Save</button>
 </div>
