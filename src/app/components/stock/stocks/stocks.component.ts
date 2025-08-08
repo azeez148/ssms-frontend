@@ -1,20 +1,14 @@
-import { Component, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Component, OnInit } from '@angular/core';
 import { Product } from '../../product/data/product-model';
 import { Category } from '../../category/data/category-model';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { CategoryService } from '../../category/services/category.service';
 import { ProductService } from '../../product/services/product.service';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatChipsModule } from '@angular/material/chips';  // <-- Import MatChipsModule here
+import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { StockService } from '../services/stock.service';
 import { ExcelImportDialogComponent } from '../excel-import-dialog/excel-import-dialog.component';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 // Import xlsx and file-saver libraries:
 import * as XLSX from 'xlsx';
@@ -22,21 +16,20 @@ import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-stocks',
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatButtonModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, FormsModule, MatInputModule, MatChipsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, NgxPaginationModule],
   templateUrl: './stocks.component.html',
   styleUrls: ['./stocks.component.css']
 })
-export class StocksComponent {
-  displayedColumns: string[] = ['id', 'name', 'description', 'category', 'quantity'];
-  dataSource = new MatTableDataSource<Product>([]);
+export class StocksComponent implements OnInit {
+  stocks: Product[] = [];
+  p: number = 1;
   
   categories: Category[] = [];
   selectedCategoryId: number | null = null;
   productNameFilter: string = '';
   private allProducts: Product[] = [];
 
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private productService: ProductService,
@@ -55,90 +48,50 @@ export class StocksComponent {
   loadProducts(): void {
     // Fetch products with the selected category and type filter
     this.productService.getFilteredProducts(this.selectedCategoryId, this.productNameFilter).subscribe(products => {
-      this.dataSource.data = products;
-      this.dataSource.paginator = this.paginator;
+      this.stocks = products;
       this.allProducts = products;
     });
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.stocks = this.allProducts.filter(product => product.name.toLowerCase().includes(filterValue));
   }
   
-  filterByCategory(categoryId: any) {
+  filterByCategory(event: any) {
+    const categoryId = event.target.value;
     if (categoryId === 'all') {
-      this.dataSource.data = this.allProducts;
+      this.stocks = this.allProducts;
     } else {
-      this.dataSource.data = this.allProducts.filter(p => p.categoryId === categoryId);
+      this.stocks = this.allProducts.filter(p => p.categoryId === +categoryId);
     }
   }
 
 
   getAvailableSizesWithQuantities(sizeMap: { size: string; quantity: number }[]): string[] {
-  const availableSizesWithQuantities: string[] = [];
-  let isOutOfStock = true;
-
-  for (const entry of sizeMap) {
-    const { size, quantity } = entry;
-    if (quantity > 0) {
-      availableSizesWithQuantities.push(`${size}:${quantity}`);
-      isOutOfStock = false;
-    } else if (quantity < 0) {
-      availableSizesWithQuantities.push(`${size}:${quantity}`); // show negative
+    if (!sizeMap || sizeMap.length === 0) {
+      return ['Out of Stock'];
     }
+
+    const availableSizesWithQuantities: string[] = [];
+    let isOutOfStock = true;
+
+    for (const entry of sizeMap) {
+      const { size, quantity } = entry;
+      if (quantity > 0) {
+        availableSizesWithQuantities.push(`${size}:${quantity}`);
+        isOutOfStock = false;
+      } else if (quantity <= 0) {
+        // You might want to handle this case differently, e.g., not show it
+      }
+    }
+
+    if (isOutOfStock) {
+      return ['Out of Stock'];
+    }
+
+    return availableSizesWithQuantities;
   }
-
-  if (isOutOfStock) {
-    availableSizesWithQuantities.push('Out of Stock');
-  }
-
-  return availableSizesWithQuantities;
-}
-
-  // Function to return sizes and their quantities with non-zero quantity
-  // getAvailableSizesWithQuantities(sizeMap: any): string[] {
-  //   const availableSizesWithQuantities: string[] = [];
-  //   let isOutOfStock = true;
-  
-  //   // Iterate over sizeMap to check if there's any size with a quantity greater than 0
-  //   for (const size in sizeMap) {
-  //     if (sizeMap[size] > 0) {
-  //       availableSizesWithQuantities.push(`${size}:${sizeMap[size]}`);
-  //       isOutOfStock = false;  // At least one size has stock, so it's not out of stock
-  //     }
-  //   }
-  
-  //   // If all sizes have 0 quantity, return "Out of Stock"
-  //   if (isOutOfStock) {
-  //     availableSizesWithQuantities.push('Out of Stock');
-  //   }
-  
-  //   return availableSizesWithQuantities;
-  // }
-
-  // getAvailableSizesWithQuantities(sizeMap: any): string[] {
-  //   const availableSizesWithQuantities: string[] = [];
-  //   let isOutOfStock = true;
-  
-  //   // Iterate over sizeMap to check if there's any size with a quantity greater than 0 or less than 0
-  //   for (const size in sizeMap) {
-  //     const quantity = sizeMap[size];
-  //     if (quantity > 0) {
-  //       availableSizesWithQuantities.push(`${size}:${quantity}`);
-  //       isOutOfStock = false;  // At least one size has stock, so it's not out of stock
-  //     } else if (quantity < 0) {
-  //       availableSizesWithQuantities.push(`${size}:${quantity}`); // Display negative quantities
-  //     }
-  //   }
-  
-  //   // If all sizes have 0 quantity, return "Out of Stock"
-  //   if (isOutOfStock) {
-  //     availableSizesWithQuantities.push('Out of Stock');
-  //   }
-  
-  //   return availableSizesWithQuantities;
-  // }
   
   openExcelImportDialog(): void {
     const dialogRef = this.dialog.open(ExcelImportDialogComponent, {
@@ -166,7 +119,7 @@ export class StocksComponent {
     // Convert dataSource.data to a worksheet.
     // You might want to process/extract only the fields you want to export.
     
-    const dataToExport = this.dataSource.data.map(product => ({
+    const dataToExport = this.stocks.map(product => ({
       ...product,
       sizeMap: `{${this.getAvailableSizesWithQuantities(product.sizeMap).join(', ')}}`
     }));

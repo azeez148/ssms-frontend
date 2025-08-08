@@ -13,121 +13,81 @@
     </div>
   </div>
 
-  <div class="filter-container">
-    <!-- Category Filter -->
-    <mat-form-field appearance="fill">
-      <mat-label>Category</mat-label>
-    <mat-select [(ngModel)]="selectedCategoryId" (selectionChange)="onFilterChange()">
-        <mat-option value="">All Categories</mat-option>
-        <mat-option *ngFor="let category of categories" [value]="category.id">
-          {{ category.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <!-- Product Filter -->
-    <mat-form-field appearance="fill">
-      <mat-label>Filter by Product Type</mat-label>
-      <input matInput [(ngModel)]="productNameFilter" (input)="onFilterChange()" placeholder="Search by product name">
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Filter by Customer Name</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Search by customer name">
-    </mat-form-field>
-
-    <!-- Date Filter -->
-    <mat-form-field appearance="fill">
-      <mat-label>Date Filter</mat-label>
-      <mat-select [(value)]="selectedDateFilter" (selectionChange)="onFilterChange()">
-        <mat-option value="all">All Time</mat-option>
-        <mat-option value="today">Today</mat-option>
-        <mat-option value="yesterday">Yesterday</mat-option>
-        <mat-option value="this_week">This Week</mat-option>
-        <mat-option value="this_month">This Month</mat-option>
-        <mat-option value="custom">Custom Range</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <!-- Custom Date Range -->
-    <div *ngIf="selectedDateFilter === 'custom'" class="custom-date-range">
-      <mat-form-field appearance="fill">
-        <mat-label>Start Date</mat-label>
-        <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="customStartDate" (dateChange)="onFilterChange()">
-        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-        <mat-datepicker #startDatePicker></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill">
-        <mat-label>End Date</mat-label>
-        <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="customEndDate" (dateChange)="onFilterChange()">
-        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-        <mat-datepicker #endDatePicker></mat-datepicker>
-      </mat-form-field>
+  <div class="row g-3 mb-3">
+    <div class="col-md-3">
+      <label for="categoryFilter" class="form-label">Category</label>
+      <select id="categoryFilter" class="form-select" [(ngModel)]="selectedCategoryId" (change)="onFilterChange()">
+        <option value="">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+      </select>
     </div>
-
-    <!-- Add New Sale Button -->
-    <button mat-raised-button color="primary" (click)="openCreateSaleDialog()" [disabled]="!(isDayStarted$ | async)">Create New Sale</button>
-  <button mat-raised-button color="accent" (click)="exportExcel()">Export to Excel</button>
-
+    <div class="col-md-3">
+      <label for="productFilter" class="form-label">Product Name</label>
+      <input type="text" id="productFilter" class="form-control" [(ngModel)]="productNameFilter" (input)="onFilterChange()" placeholder="Search by product name">
+    </div>
+    <div class="col-md-3">
+      <label for="customerFilter" class="form-label">Customer Name</label>
+      <input type="text" id="customerFilter" class="form-control" (keyup)="applyFilter($event)" placeholder="Search by customer name">
+    </div>
+    <div class="col-md-3">
+      <label for="dateFilter" class="form-label">Date Filter</label>
+      <select id="dateFilter" class="form-select" [(ngModel)]="selectedDateFilter" (change)="onFilterChange()">
+        <option value="all">All Time</option>
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="this_week">This Week</option>
+        <option value="this_month">This Month</option>
+        <option value="custom">Custom Range</option>
+      </select>
+    </div>
+    <div *ngIf="selectedDateFilter === 'custom'" class="col-md-6 d-flex align-items-end">
+      <div class="me-2">
+        <label for="startDate" class="form-label">Start Date</label>
+        <input type="date" id="startDate" class="form-control" [(ngModel)]="customStartDate" (change)="onFilterChange()">
+      </div>
+      <div>
+        <label for="endDate" class="form-label">End Date</label>
+        <input type="date" id="endDate" class="form-control" [(ngModel)]="customEndDate" (change)="onFilterChange()">
+      </div>
+    </div>
+    <div class="col-12 d-flex justify-content-end">
+      <button class="btn btn-primary me-2" (click)="openCreateSaleDialog()" [disabled]="!(isDayStarted$ | async)">Create New Sale</button>
+      <button class="btn btn-success" (click)="exportExcel()">Export to Excel</button>
+    </div>
   </div>
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  <!-- ID Column -->
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef> ID </th>
-    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-  </ng-container>
-
-  <!-- Customer Name Column -->
-  <ng-container matColumnDef="customerName">
-    <th mat-header-cell *matHeaderCellDef> Customer </th>
-    <td mat-cell *matCellDef="let element"> {{element.customerName}} </td>
-  </ng-container>
-
-  <!-- Total Quantity Column -->
-  <ng-container matColumnDef="totalQuantity">
-    <th mat-header-cell *matHeaderCellDef> Total Quantity </th>
-    <td mat-cell *matCellDef="let element"> {{element.totalQuantity}} </td>
-  </ng-container>
-
-  <!-- Total Price Column -->
-  <ng-container matColumnDef="totalPrice">
-    <th mat-header-cell *matHeaderCellDef> Total Price </th>
-    <td mat-cell *matCellDef="let element"> {{element.totalPrice}} </td>
-  </ng-container>
-
-  <!-- Date Column -->
-  <ng-container matColumnDef="date">
-    <th mat-header-cell *matHeaderCellDef> Date </th>
-    <td mat-cell *matCellDef="let element"> {{element.date}} </td>
-  </ng-container>
-
-  
-<!-- New View Details Column -->
-<ng-container matColumnDef="viewDetails">
-  <th mat-header-cell *matHeaderCellDef> View Details </th>
-  <td mat-cell *matCellDef="let element">
-    <button mat-button color="primary" (click)="viewDetails(element)">View Details</button>
-  </td>
-</ng-container>
-
-<ng-container matColumnDef="printReceipt">
-  <th mat-header-cell *matHeaderCellDef> Print Receipt </th>
-  <td mat-cell *matCellDef="let element">
-    <button mat-button color="warn" (click)="printReceipt(element)">Print Receipt</button>
-  </td>
-</ng-container>
-
-<ng-container matColumnDef="sendReceiptViaWhatsApp">
-  <th mat-header-cell *matHeaderCellDef> Send via WhatsApp </th>
-  <td mat-cell *matCellDef="let element">
-    <button mat-button color="accent" (click)="sendReceiptViaWhatsApp(element)">Send via WhatsApp</button>
-  </td>
-</ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-
-<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Customer</th>
+        <th>Total Quantity</th>
+        <th>Total Price</th>
+        <th>Date</th>
+        <th>View Details</th>
+        <th>Print Receipt</th>
+        <th>Send via WhatsApp</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let element of sales | paginate: { itemsPerPage: 10, currentPage: p }">
+        <td>{{element.id}}</td>
+        <td>{{element.customerName}}</td>
+        <td>{{element.totalQuantity}}</td>
+        <td>{{element.totalPrice | currency:'INR'}}</td>
+        <td>{{element.date | date:'shortDate'}}</td>
+        <td>
+          <button class="btn btn-info btn-sm" (click)="viewDetails(element)">View</button>
+        </td>
+        <td>
+          <button class="btn btn-warning btn-sm" (click)="printReceipt(element)">Print</button>
+        </td>
+        <td>
+          <button class="btn btn-success btn-sm" (click)="sendReceiptViaWhatsApp(element)">WhatsApp</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+</div>

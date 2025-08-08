@@ -1,41 +1,30 @@
-<div class="header">
-  <h1>Shops</h1>
-  <button mat-raised-button color="primary" (click)="createShop()">Create Shop</button>
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Shops</h1>
+    <button class="btn btn-primary" (click)="createShop()">Create Shop</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Address</th>
+          <th>Mobile Number</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let element of shops | paginate: { itemsPerPage: 10, currentPage: p }">
+          <td>{{element.id}}</td>
+          <td>{{element.name}}</td>
+          <td>{{element.addressLine1}}</td>
+          <td>{{element.mobileNumber}}</td>
+          <td>{{element.email}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>
 </div>
-
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  <!-- ID Column -->
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef> ID </th>
-    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-  </ng-container>
-
-  <!-- Name Column -->
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-  </ng-container>
-
-  <!-- Address Column -->
-  <ng-container matColumnDef="address">
-    <th mat-header-cell *matHeaderCellDef> Address </th>
-    <td mat-cell *matCellDef="let element"> {{element.addressLine1}} </td>
-  </ng-container>
-
-  <!-- Mobile Number Column -->
-  <ng-container matColumnDef="mobileNumber">
-    <th mat-header-cell *matHeaderCellDef> Mobile Number </th>
-    <td mat-cell *matCellDef="let element"> {{element.mobileNumber}} </td>
-  </ng-container>
-
-  <!-- Email Column -->
-  <ng-container matColumnDef="email">
-    <th mat-header-cell *matHeaderCellDef> Email </th>
-    <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-
-<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

@@ -3,11 +3,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Vendor } from '../data/vendor.model';
 import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-
 
 @Component({
   selector: 'app-vendor-dialog',
@@ -16,11 +11,7 @@ import { MatDialogModule } from '@angular/material/dialog';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatDialogModule
+    ReactiveFormsModule
   ]
 })
 export class VendorDialogComponent implements OnInit {

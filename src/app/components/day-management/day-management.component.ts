@@ -1,14 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DayManagementService } from './day-management.service';
 import { Expense } from './expense.model';
 import { DaySummary } from './day-summary.model';
 import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-day-management',
@@ -17,10 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule
+    ReactiveFormsModule
   ]
 })
 export class DayManagementComponent implements OnInit {
@@ -32,7 +24,6 @@ export class DayManagementComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private dialog: MatDialog,
     private dayManagementService: DayManagementService
   ) {
     this.startDayForm = this.fb.group({

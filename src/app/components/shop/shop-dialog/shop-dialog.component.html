@@ -1,54 +1,67 @@
-<h1 mat-dialog-title>Create Shop</h1>
-<div mat-dialog-content>
-  <form [formGroup]="shopForm" class="shop-form">
-    <mat-form-field>
-      <mat-label>Name</mat-label>
-      <input matInput formControlName="name">
-      <mat-error *ngIf="shopForm.get('name')?.hasError('required')">Name is required</mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Address Line 1</mat-label>
-      <input matInput formControlName="addressLine1">
-      <mat-error *ngIf="shopForm.get('addressLine1')?.hasError('required')">Address Line 1 is required</mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Address Line 2</mat-label>
-      <input matInput formControlName="addressLine2">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>City</mat-label>
-      <input matInput formControlName="city">
-      <mat-error *ngIf="shopForm.get('city')?.hasError('required')">City is required</mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>State</mat-label>
-      <input matInput formControlName="state">
-      <mat-error *ngIf="shopForm.get('state')?.hasError('required')">State is required</mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Country</mat-label>
-      <input matInput formControlName="country">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Zipcode</mat-label>
-      <input matInput formControlName="zipcode">
-      <mat-error *ngIf="shopForm.get('zipcode')?.hasError('required')">Zipcode is required</mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Mobile Number</mat-label>
-      <input matInput formControlName="mobileNumber">
-      <mat-error *ngIf="shopForm.get('mobileNumber')?.hasError('required')">Mobile Number is required</mat-error>
-      <mat-error *ngIf="shopForm.get('mobileNumber')?.hasError('pattern')">Mobile Number must be 10 digits</mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email">
-      <mat-error *ngIf="shopForm.get('email')?.hasError('required')">Email is required</mat-error>
-      <mat-error *ngIf="shopForm.get('email')?.hasError('email')">Email must be valid</mat-error>
-    </mat-form-field>
+<div class="modal-header">
+  <h4 class="modal-title">Create Shop</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="shopForm">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" id="name" class="form-control" formControlName="name">
+        <div *ngIf="shopForm.get('name')?.hasError('required')" class="invalid-feedback d-block">Name is required</div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="addressLine1" class="form-label">Address Line 1</label>
+        <input type="text" id="addressLine1" class="form-control" formControlName="addressLine1">
+        <div *ngIf="shopForm.get('addressLine1')?.hasError('required')" class="invalid-feedback d-block">Address is required</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="addressLine2" class="form-label">Address Line 2</label>
+        <input type="text" id="addressLine2" class="form-control" formControlName="addressLine2">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="city" class="form-label">City</label>
+        <input type="text" id="city" class="form-control" formControlName="city">
+        <div *ngIf="shopForm.get('city')?.hasError('required')" class="invalid-feedback d-block">City is required</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="state" class="form-label">State</label>
+        <input type="text" id="state" class="form-control" formControlName="state">
+        <div *ngIf="shopForm.get('state')?.hasError('required')" class="invalid-feedback d-block">State is required</div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="country" class="form-label">Country</label>
+        <input type="text" id="country" class="form-control" formControlName="country">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="zipcode" class="form-label">Zipcode</label>
+        <input type="text" id="zipcode" class="form-control" formControlName="zipcode">
+        <div *ngIf="shopForm.get('zipcode')?.hasError('required')" class="invalid-feedback d-block">Zipcode is required</div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="mobileNumber" class="form-label">Mobile Number</label>
+        <input type="text" id="mobileNumber" class="form-control" formControlName="mobileNumber">
+        <div *ngIf="shopForm.get('mobileNumber')?.hasError('required')" class="invalid-feedback d-block">Mobile is required</div>
+        <div *ngIf="shopForm.get('mobileNumber')?.hasError('pattern')" class="invalid-feedback d-block">Invalid mobile</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" id="email" class="form-control" formControlName="email">
+        <div *ngIf="shopForm.get('email')?.hasError('required')" class="invalid-feedback d-block">Email is required</div>
+        <div *ngIf="shopForm.get('email')?.hasError('email')" class="invalid-feedback d-block">Invalid email</div>
+      </div>
+    </div>
   </form>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onSave()" cdkFocusInitial>Save</button>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="!shopForm.valid">Save</button>
 </div>
