@@ -32,8 +32,8 @@ export class SystemConfigurationService {
     );
   }
 
-  resetData(passkey: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/reset-db`, { passkey }).pipe(
+  resetData(pass_key: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/reset-db`, { pass_key }).pipe(
       tap(() => {
         console.log('Data reset successfully');
       })

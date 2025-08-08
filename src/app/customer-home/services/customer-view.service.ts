@@ -29,7 +29,10 @@ export class CustomerHomeService {
           sellingPrice: product.selling_price,
           imageUrl: product.image_url || '',
           isActive: product.is_active,
-          canListed: product.can_listed
+          canListed: product.can_listed,
+           offerId: product.offer_id || null,  // Ensure offerId is nullable
+        discountedPrice: product.discounted_price || product.selling_price,  // Default to 0 if not provided
+        offerPrice: product.offer_price || 0  // Default to 0 if not provided
         }));
         // Prepend the base URL to each product's imageUrl
         data.products.forEach(product => {

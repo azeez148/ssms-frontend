@@ -43,7 +43,10 @@ export class ProductService {
         imageUrl: product.image_url || '',
         isActive: product.is_active,
         canListed: product.can_listed,
-        categoryId: product.category_id
+        categoryId: product.category_id,
+        offerId: product.offer_id || null,  // Ensure offerId is nullable
+        discountedPrice: product.discounted_price || 0,  // Default to 0 if not provided
+        offerPrice: product.offer_price || 0  // Default to 0 if not provided
       }));
     }),tap((products: Product[]) => {
         this.products = products;
@@ -82,7 +85,10 @@ getFilteredProducts(categoryId: number | null, productNameFilter: string): Obser
         sellingPrice: product.selling_price,
         imageUrl: product.image_url || '',
         isActive: product.is_active,
-        canListed: product.can_listed
+        canListed: product.can_listed,
+        offerId: product.offer_id || null,  // Ensure offerId is nullable
+        discountedPrice: product.discounted_price || product.selling_price,  // Default to 0 if not provided
+        offerPrice: product.offer_price || 0  // Default to 0 if not provided
       }));
     }),
     tap((products: Product[]) => {

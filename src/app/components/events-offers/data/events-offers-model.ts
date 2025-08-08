@@ -12,6 +12,8 @@ export interface EventOffer {
   categories: Category[];
   startDate: string;
   endDate: string;
+  rateType: 'flat' | 'percentage';
+  rate: number;
 }
 
 export interface Participant {

@@ -124,7 +124,16 @@ export class ProductsComponent implements OnInit {
           unitPrice: result.unitPrice,
           sellingPrice: result.sellingPrice,
           isActive: result.isActive,
-          canListed: result.canListed
+          canListed: result.canListed,
+          description: result.description,
+          imageUrl: result.imageUrl,
+          category: result.category,
+          sizeMap: result.sizeMap,
+          categoryId: result.categoryId,
+          name: result.name,
+          offerId: result.offerId,
+          discountedPrice: result.discountedPrice,
+          offerPrice: result.offerPrice
         };
         this.productService.updateProduct(updatedProductData).subscribe(updatedProduct => {
           this.loadProducts();

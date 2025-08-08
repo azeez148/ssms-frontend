@@ -32,7 +32,7 @@ import { EventsOffersDialogComponent } from '../events-offers-dialog/events-offe
   styleUrls: ['./events-offers-list.component.css']
 })
 export class EventsOffersListComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'name', 'type', 'startDate', 'endDate', 'isActive', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'description', 'type', 'startDate', 'endDate', 'rateType', 'rate', 'isActive', 'actions'];
   dataSource = new MatTableDataSource<EventOffer>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -66,12 +66,26 @@ export class EventsOffersListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        // convert to snackecase from camelCase
+        const eventOfferObject = {
+          id: result.id || null,
+          name: result.name,
+          description: result.description,
+          type: result.type,
+          is_active: result.isActive,
+          start_date: result.startDate,
+          end_date: result.endDate,
+          rate_type: result.rateType,
+          rate: result.rate,
+          products: result.products || [],
+          categories: result.categories || []
+        };
         if (result.id) {
           // Update
-          this.eventsOffersService.updateEventOffer(result).subscribe(() => this.loadEventOffers());
+          this.eventsOffersService.updateEventOffer(eventOfferObject).subscribe(() => this.loadEventOffers());
         } else {
           // Create
-          this.eventsOffersService.addEventOffer(result).subscribe(() => this.loadEventOffers());
+          this.eventsOffersService.addEventOffer(eventOfferObject).subscribe(() => this.loadEventOffers());
         }
       }
     });
@@ -86,7 +100,7 @@ export class EventsOffersListComponent implements OnInit {
 
   toggleActivation(eventOffer: EventOffer): void {
     const updatedEventOffer = { ...eventOffer, isActive: !eventOffer.isActive };
-    this.eventsOffersService.updateEventOffer(updatedEventOffer).subscribe(() => {
+    this.eventsOffersService.deActivateEventOffer(updatedEventOffer).subscribe(() => {
       this.loadEventOffers();
     });
   }
