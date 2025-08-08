@@ -23,6 +23,10 @@ import { DayManagementComponent } from '../day-management/day-management.compone
 })
 export class HomeComponent implements OnInit {
 
+  totalStockValue = 0;
+  projectedSaleValue = 0;
+  projectedProfitValue = 0;
+
   dashboardData: DashboardData = {
     total_sales: {
       total_count: 0,
@@ -66,6 +70,7 @@ export class HomeComponent implements OnInit {
     this.loadDashboardData();
     this.loadSalesAndCalculateSummary();
     this.loadPurchasesAndCalculateSummary();
+    this.calculateStockValues();
   }
 
   loadDashboardData(): void {
@@ -153,6 +158,23 @@ export class HomeComponent implements OnInit {
   openDayManagement(): void {
     const dialogRef = this.dialog.open(DayManagementComponent, {
       width: '80%'
+    });
+  }
+
+  calculateStockValues(): void {
+    this.productService.getProducts().subscribe(products => {
+      let totalStock = 0;
+      let projectedSale = 0;
+
+      products.forEach(product => {
+        const totalQuantity = product.sizeMap.reduce((acc, size) => acc + size.quantity, 0);
+        totalStock += totalQuantity * product.unitPrice;
+        projectedSale += totalQuantity * product.sellingPrice;
+      });
+
+      this.totalStockValue = totalStock;
+      this.projectedSaleValue = projectedSale;
+      this.projectedProfitValue = projectedSale - totalStock;
     });
   }
 }
