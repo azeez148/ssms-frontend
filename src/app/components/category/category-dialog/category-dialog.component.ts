@@ -1,14 +1,14 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatFormField, MatFormFieldControl, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-category-dialog',
-  imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './category-dialog.component.html',
-  styleUrl: './category-dialog.component.css'
+  styleUrls: ['./category-dialog.component.css']
 })
 export class CategoryDialogComponent {
   categoryForm: FormGroup;
@@ -19,7 +19,7 @@ export class CategoryDialogComponent {
     private fb: FormBuilder
   ) {
     this.categoryForm = this.fb.group({
-      name: [''],
+      name: ['', Validators.required],
       description: ['']
     });
   }
@@ -29,6 +29,8 @@ export class CategoryDialogComponent {
   }
 
   onSave(): void {
-    this.dialogRef.close(this.categoryForm.value);
+    if (this.categoryForm.valid) {
+      this.dialogRef.close(this.categoryForm.value);
+    }
   }
 }

@@ -1,84 +1,57 @@
 <div class="container">
-  <div class="header">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Stocks</h1>
     <div>
-      <button mat-raised-button color="primary" (click)="openExcelImportDialog()">
-        Import Excel Data
-      </button>
-      <button mat-raised-button color="accent" (click)="downloadExcel()">
-        Download Excel
-      </button>
+      <button class="btn btn-primary me-2" (click)="openExcelImportDialog()">Import Excel Data</button>
+      <button class="btn btn-success" (click)="downloadExcel()">Download Excel</button>
     </div>
   </div>
 
-<div class="filter-container">
-  <mat-form-field appearance="fill">
-    <mat-label>Search by name</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Pizza">
-  </mat-form-field>
+  <div class="row g-3 mb-3">
+    <div class="col-md-6">
+      <input type="text" class="form-control" (keyup)="applyFilter($event)" placeholder="Search by name">
+    </div>
+    <div class="col-md-6">
+      <select class="form-select" (change)="filterByCategory($event)">
+        <option value="all">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+      </select>
+    </div>
+  </div>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Filter by category</mat-label>
-    <mat-select (selectionChange)="onFilterChange()" [(ngModel)]="selectedCategoryId">
-      <mat-option value="">All Categories</mat-option>
-      <mat-option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let element of stocks | paginate: { itemsPerPage: 10, currentPage: p }">
+          <td>{{element.id}}</td>
+          <td>{{element.name}}</td>
+          <td>{{element.description}}</td>
+          <td>{{element.category.name}}</td>
+          <td>
+            <div class="d-flex flex-wrap">
+              <ng-container *ngFor="let sizeInfo of getAvailableSizesWithQuantities(element.sizeMap)">
+                <span class="badge me-1" [ngClass]="{
+                  'bg-danger': sizeInfo === 'Out of Stock' || sizeInfo.includes('-'),
+                  'bg-secondary': sizeInfo !== 'Out of Stock' && !sizeInfo.includes('-')
+                }">
+                  {{ sizeInfo }}
+                </span>
+              </ng-container>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>
 </div>
-
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <!-- ID Column -->
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef> ID </th>
-      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-    </ng-container>
-  
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-    </ng-container>
-  
-    <!-- Description Column -->
-    <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef> Description </th>
-      <td mat-cell *matCellDef="let element"> {{element.description}} </td>
-    </ng-container>
-  
-    <!-- Category Column -->
-    <ng-container matColumnDef="category">
-      <th mat-header-cell *matHeaderCellDef> Category </th>
-      <td mat-cell *matCellDef="let element"> {{element.category.name}} </td>
-    </ng-container>
-  
-    <!-- Quantity Column -->
-    <ng-container matColumnDef="quantity">
-        <th mat-header-cell *matHeaderCellDef> Quantity </th>
-        <td mat-cell *matCellDef="let element">
-          <div class="size-chip-container">
-            <!-- Iterate over the size:quantity pairs and display them -->
-            <ng-container *ngFor="let sizeInfo of getAvailableSizesWithQuantities(element.sizeMap)">
-              <div 
-                [ngClass]="{
-                  'out-of-stock': sizeInfo === 'Out of Stock', 
-                  'negative-quantity': sizeInfo.includes('-')
-                }" 
-                class="size-chip">
-                {{ sizeInfo }}
-              </div>
-            </ng-container>
-          </div>
-        </td>
-      </ng-container>
-      
-
-  
-    <!-- Header Row -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  
-    <!-- Data Row -->
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-  
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
   

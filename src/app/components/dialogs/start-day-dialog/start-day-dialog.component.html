@@ -1,0 +1,21 @@
+<div class="modal-header">
+  <h4 class="modal-title">Start Day</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+<div class="modal-body" [formGroup]="form">
+  <p>Enter the opening balance for today.</p>
+  <div class="mb-3">
+    <label for="openingBalance" class="form-label">Opening Balance</label>
+    <input type="number" id="openingBalance" class="form-control" formControlName="openingBalance" placeholder="Enter amount">
+    <div *ngIf="form.controls['openingBalance'].hasError('required')" class="invalid-feedback d-block">
+      Opening balance is required.
+    </div>
+    <div *ngIf="form.controls['openingBalance'].hasError('pattern')" class="invalid-feedback d-block">
+      Please enter a valid number.
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onStart()" [disabled]="!form.valid">Start Day</button>
+</div>

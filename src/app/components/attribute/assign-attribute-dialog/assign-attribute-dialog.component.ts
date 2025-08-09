@@ -1,27 +1,30 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatOptionModule } from '@angular/material/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CategoryService } from '../../category/services/category.service';
+import { CommonModule } from '@angular/common';
+import { AttributeService } from '../services/attribute.service';
+import { Category } from '../../category/data/category-model';
+import { Attribute } from '../data/attribute-model';
 
 @Component({
   selector: 'app-assign-attribute-dialog',
-  imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatOptionModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './assign-attribute-dialog.component.html',
-  styleUrl: './assign-attribute-dialog.component.css'
+  styleUrls: ['./assign-attribute-dialog.component.css']
 })
-export class AssignAttributeDialogComponent {
+export class AssignAttributeDialogComponent implements OnInit {
   assignForm: FormGroup;
-  attributes: any[] = [];
-  categories: any[] = [];
+  attributes: Attribute[] = [];
+  categories: Category[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<AssignAttributeDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private attributeService: AttributeService
   ) {
     this.assignForm = this.fb.group({
       attributeId: ['', Validators.required],
@@ -32,6 +35,7 @@ export class AssignAttributeDialogComponent {
 
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe(categories => this.categories = categories);
+    this.attributeService.getAttributes().subscribe(attributes => this.attributes = attributes);
   }
 
   onCancel(): void {

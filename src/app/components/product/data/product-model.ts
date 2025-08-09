@@ -10,12 +10,16 @@ export interface Product {
   name: string;
   description: string;
   category: Category;
+  categoryId: number; // Added to match the backend structure
   sizeMap: ProductSize[];  // Changed from object to array
   unitPrice: number;
   sellingPrice: number;
   imageUrl?: string; // Optional field for product image URL
   isActive: boolean;
   canListed: boolean;
+    offerId: string; // Nullable to match the backend structure
+    discountedPrice: number;
+    offerPrice: number;
 }
 
 export interface Quantities {

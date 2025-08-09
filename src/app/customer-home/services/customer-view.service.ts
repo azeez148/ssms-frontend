@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, of, tap, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Product } from '../../components/product/data/product-model';
 import { environment } from '../../../environment';
@@ -16,14 +16,38 @@ export class CustomerHomeService {
 
   getHomeData(): Observable<CustomerHome> {
     return this.http.get<CustomerHome>(`${this.apiUrl}/all`).pipe(
+      map((data: CustomerHome) => {
+        // convert the underscore keys to camelCase
+        data.products = data.products.map((product: any) => ({
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          category: product.category,
+          categoryId: product.category_id, // Ensure categoryId is included
+          sizeMap: product.size_map,
+          unitPrice: product.unit_price,
+          sellingPrice: product.selling_price,
+          imageUrl: product.image_url || '',
+          isActive: product.is_active,
+          canListed: product.can_listed,
+           offerId: product.offer_id || null,  // Ensure offerId is nullable
+        discountedPrice: product.discounted_price || product.selling_price,  // Default to 0 if not provided
+        offerPrice: product.offer_price || 0  // Default to 0 if not provided
+        }));
+        // Prepend the base URL to each product's imageUrl
+        data.products.forEach(product => {
+          if (product.imageUrl) {
+            product.imageUrl = `${environment.apiUrl}/${product.imageUrl}`;
+          }
+          else {
+          product.imageUrl = 'notfound.png';
+          }
+        });
+        return data;
+      }),
       tap((data: CustomerHome) => {
         this.data = data;
       })
     );
-  }
-
-    // New method to get product image as Blob.
-  getProductImage(productId: number): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${productId}/image`, { responseType: 'blob' });
   }
 }

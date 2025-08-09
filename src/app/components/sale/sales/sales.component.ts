@@ -1,48 +1,39 @@
-import { Component, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Component } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Category } from '../../category/data/category-model';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { CategoryService } from '../../category/services/category.service';
 import { ProductService } from '../../product/services/product.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
 import { Sale, SaleItem } from '../data/sale-model';
 import { SaleDialogComponent } from '../sale-dialog/sale-dialog.component';
 import { SaleService } from '../services/sale.service';
 import { Product } from '../../product/data/product-model';
 import { SaleDetailDialogComponent } from '../sale-detail-dialog/sale-detail-dialog.component';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import { selectDayStarted } from 'src/app/store/selectors/day.selectors';
+import { Observable } from 'rxjs';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-sales',
   imports: [
     CommonModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
     FormsModule,
-    MatDialogModule,
-    MatDatepickerModule,
-    MatNativeDateModule
+    NgxPaginationModule
   ],
+  standalone: true,
   templateUrl: './sales.component.html',
   styleUrls: ['./sales.component.css']
 })
 export class SalesComponent {
-  displayedColumns: string[] = ['id', 'customerName', 'totalQuantity', 'totalPrice', 'date', 'viewDetails', 'printReceipt', 'sendReceiptViaWhatsApp'];
-  dataSource = new MatTableDataSource<Sale>([]);
+  isDayStarted$: Observable<boolean>;
+
+  sales: Sale[] = [];
+  p: number = 1;
 
   categories: Category[] = [];
   products: Product[] = [];
@@ -51,8 +42,6 @@ export class SalesComponent {
   selectedDateFilter: string = 'all';
   customStartDate: Date | null = null;
   customEndDate: Date | null = null;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   private allSales: Sale[] = [];
 
@@ -66,8 +55,11 @@ export class SalesComponent {
     private productService: ProductService,
     private categoryService: CategoryService,
     private dialog: MatDialog,
-    private saleService: SaleService
-  ) { }
+    private saleService: SaleService,
+    private store: Store<AppState>
+  ) {
+    this.isDayStarted$ = this.store.select(selectDayStarted);
+  }
 
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe(categories => {
@@ -83,8 +75,7 @@ export class SalesComponent {
   loadSales(): void {
     this.saleService.getSales().subscribe(sales => {
       this.allSales = sales;
-      this.dataSource.data = sales;
-      this.dataSource.paginator = this.paginator;
+      this.sales = sales;
       this.calculateTodaysSaleSummary();
     });
   }
@@ -161,15 +152,12 @@ export class SalesComponent {
         // No date filter
         break;
     }
-    this.dataSource.data = filteredSales;
+    this.sales = filteredSales;
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    this.dataSource.filterPredicate = (data: Sale, filter: string) => {
-      return data.customerName.toLowerCase().includes(filter);
-    };
+    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.sales = this.allSales.filter(sale => sale.customerName.toLowerCase().includes(filterValue));
   }
 
   // Open dialog to create a new sale
@@ -225,7 +213,7 @@ export class SalesComponent {
 
   exportExcel(): void {
     // Convert dataSource.data to worksheet and workbook
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.sales);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sales');
 

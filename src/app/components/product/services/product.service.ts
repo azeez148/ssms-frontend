@@ -42,7 +42,11 @@ export class ProductService {
         sellingPrice: product.selling_price,
         imageUrl: product.image_url || '',
         isActive: product.is_active,
-        canListed: product.can_listed
+        canListed: product.can_listed,
+        categoryId: product.category_id,
+        offerId: product.offer_id || null,  // Ensure offerId is nullable
+        discountedPrice: product.discounted_price || 0,  // Default to 0 if not provided
+        offerPrice: product.offer_price || 0  // Default to 0 if not provided
       }));
     }),tap((products: Product[]) => {
         this.products = products;
@@ -75,12 +79,16 @@ getFilteredProducts(categoryId: number | null, productNameFilter: string): Obser
         name: product.name,
         description: product.description,
         category: product.category,
+        categoryId: product.category_id, // Ensure categoryId is included
         sizeMap: product.size_map,
         unitPrice: product.unit_price,
         sellingPrice: product.selling_price,
         imageUrl: product.image_url || '',
         isActive: product.is_active,
-        canListed: product.can_listed
+        canListed: product.can_listed,
+        offerId: product.offer_id || null,  // Ensure offerId is nullable
+        discountedPrice: product.discounted_price || product.selling_price,  // Default to 0 if not provided
+        offerPrice: product.offer_price || 0  // Default to 0 if not provided
       }));
     }),
     tap((products: Product[]) => {
@@ -90,19 +98,14 @@ getFilteredProducts(categoryId: number | null, productNameFilter: string): Obser
 }
 
   // Upload multiple product images to the server
-  uploadProductImages(productId: number, images: File[]): Observable<any> {
+  uploadProductImages(productId: number, image: File): Observable<any> {
     const formData = new FormData();
-    
-    // Append productId to the formData payload
-    formData.append('productId', productId.toString());
 
     // Append each image file to the formData
-    images.forEach(image => {
-      formData.append('images', image, image.name);
-    });
+    formData.append('image', image, image.name);
 
     // POST request to upload the images with a tap to refresh the products
-    return this.http.post<any>(`${this.apiUrl}/upload-images`, formData).pipe(
+    return this.http.post<any>(`${this.apiUrl}/upload-images?product_id=${productId}`, formData).pipe(
       tap(() => {
         this.getProducts().subscribe();
       })

@@ -1,0 +1,69 @@
+<div class="container my-5">
+  <h1 class="text-center mb-4">Day Management</h1>
+
+  <div *ngIf="!dayStarted">
+    <h2>Start Day</h2>
+    <form [formGroup]="startDayForm" (ngSubmit)="onStartDay()">
+      <div class="mb-3">
+        <label for="openingBalance" class="form-label">Opening Balance</label>
+        <input type="number" id="openingBalance" class="form-control" formControlName="openingBalance" placeholder="Enter amount">
+        <div *ngIf="startDayForm.controls['openingBalance'].hasError('required')" class="invalid-feedback d-block">
+          Opening balance is required.
+        </div>
+        <div *ngIf="startDayForm.controls['openingBalance'].hasError('pattern')" class="invalid-feedback d-block">
+          Please enter a valid number.
+        </div>
+      </div>
+      <button class="btn btn-primary" type="submit" [disabled]="!startDayForm.valid">Start Day</button>
+    </form>
+  </div>
+
+  <div *ngIf="dayStarted">
+    <h2>Add Expense</h2>
+    <form [formGroup]="expenseForm" (ngSubmit)="onAddExpense()">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="description" class="form-label">Description</label>
+          <input type="text" id="description" class="form-control" formControlName="description" placeholder="Enter description">
+          <div *ngIf="expenseForm.controls['description'].hasError('required')" class="invalid-feedback d-block">
+            Description is required.
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="amount" class="form-label">Amount</label>
+          <input type="number" id="amount" class="form-control" formControlName="amount" placeholder="Enter amount">
+          <div *ngIf="expenseForm.controls['amount'].hasError('required')" class="invalid-feedback d-block">
+            Amount is required.
+          </div>
+          <div *ngIf="expenseForm.controls['amount'].hasError('pattern')" class="invalid-feedback d-block">
+            Please enter a valid number.
+          </div>
+        </div>
+        <div class="col-md-2 mb-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="submit" [disabled]="!expenseForm.valid">Add Expense</button>
+        </div>
+      </div>
+    </form>
+
+    <h2 class="mt-4">Today's Expenses</h2>
+    <ul class="list-group">
+      <li *ngFor="let expense of expenses" class="list-group-item">{{ expense.description }}: {{ expense.amount | currency:'INR' }}</li>
+    </ul>
+
+    <button class="btn btn-danger mt-4" (click)="onEndDay()">End Day</button>
+  </div>
+
+  <div *ngIf="daySummary" class="mt-4">
+    <h2>End of Day Summary</h2>
+    <div class="card">
+      <div class="card-body">
+        <p><strong>Opening Balance:</strong> {{ daySummary.openingBalance | currency:'INR' }}</p>
+        <p><strong>Total Sales Revenue:</strong> {{ daySummary.totalSales | currency:'INR' }}</p>
+        <p><strong>Total Purchase Cost:</strong> {{ daySummary.totalPurchases | currency:'INR' }}</p>
+        <p><strong>Total Expenses:</strong> {{ daySummary.totalExpenses | currency:'INR' }}</p>
+        <hr>
+        <p><strong>Closing Balance:</strong> {{ daySummary.closingBalance | currency:'INR' }}</p>
+      </div>
+    </div>
+  </div>
+</div>

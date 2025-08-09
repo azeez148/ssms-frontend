@@ -1,10 +1,16 @@
-<h1 mat-dialog-title>Import Excel Data</h1>
-<div mat-dialog-content>
+<div class="modal-header">
+  <h4 class="modal-title">Import Excel Data</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+<div class="modal-body">
   <form [formGroup]="importForm">
-    <input type="file" (change)="onFileChange($event)" required>
+    <div class="mb-3">
+      <label for="excelFile" class="form-label">Select Excel File</label>
+      <input type="file" id="excelFile" class="form-control" (change)="onFileChange($event)" required>
+    </div>
   </form>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onSave()" cdkFocusInitial>Save</button>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="!importForm.valid">Save</button>
 </div>

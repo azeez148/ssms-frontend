@@ -1,34 +1,29 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ShopDialogComponent } from '../shop-dialog/shop-dialog.component';
-import { Shop, SHOP_DATA } from '../data/shop-model';
+import { Shop } from '../data/shop-model';
 import { ShopService } from '../services/shop.service';
-import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-shops',
-  imports: [MatTableModule, MatPaginator, MatButtonModule],
+  standalone: true,
+  imports: [CommonModule, NgxPaginationModule],
   templateUrl: './shops.component.html',
-  styleUrl: './shops.component.css'
+  styleUrls: ['./shops.component.css']
 })
-export class ShopsComponent {
-  displayedColumns: string[] = ['id', 'name', 'address', 'mobileNumber', 'email'];
-  dataSource = new MatTableDataSource<Shop>();
-
-  ngOnInit() {
-    this.shopService.getShops().subscribe(shops => {
-      this.dataSource.data = shops;
-      this.dataSource.paginator = this.paginator;
-    });
-  }
-
-  @ViewChild(MatPaginator)
-  paginator!: MatPaginator;
+export class ShopsComponent implements OnInit {
+  shops: Shop[] = [];
+  p: number = 1;
 
   constructor(public dialog: MatDialog, private shopService: ShopService) {}
 
+  ngOnInit() {
+    this.shopService.getShops().subscribe(shops => {
+      this.shops = shops;
+    });
+  }
 
   createShop(): void {
     const dialogRef = this.dialog.open(ShopDialogComponent, {
@@ -39,8 +34,7 @@ export class ShopsComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.shopService.addShop(result).subscribe(newShop => {
-          this.dataSource.data = [...this.dataSource.data, newShop];
-          this.dataSource.paginator = this.paginator; // Reassign paginator to trigger change detection
+          this.ngOnInit();
         });
       }
     });

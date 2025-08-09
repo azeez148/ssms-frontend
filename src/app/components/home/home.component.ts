@@ -12,6 +12,7 @@ import { KeyValuePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Sale } from '../sale/data/sale-model';
 import { Purchase } from '../purchase/data/purchase-model';
+import { DayManagementComponent } from '../day-management/day-management.component';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +22,10 @@ import { Purchase } from '../purchase/data/purchase-model';
   standalone: true,
 })
 export class HomeComponent implements OnInit {
+
+  totalStockValue = 0;
+  projectedSaleValue = 0;
+  projectedProfitValue = 0;
 
   dashboardData: DashboardData = {
     total_sales: {
@@ -58,12 +63,14 @@ export class HomeComponent implements OnInit {
     private saleService: SaleService,
     private purchaseService: PurchaseService,
     public dialog: MatDialog
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.loadDashboardData();
     this.loadSalesAndCalculateSummary();
     this.loadPurchasesAndCalculateSummary();
+    this.calculateStockValues();
   }
 
   loadDashboardData(): void {
@@ -147,6 +154,29 @@ export class HomeComponent implements OnInit {
           });
         }
       });
+    });
+  }
+
+  openDayManagement(): void {
+    const dialogRef = this.dialog.open(DayManagementComponent, {
+      width: '80%'
+    });
+  }
+
+  calculateStockValues(): void {
+    this.productService.getProducts().subscribe(products => {
+      let totalStock = 0;
+      let projectedSale = 0;
+
+      products.forEach(product => {
+        const totalQuantity = product.sizeMap.reduce((acc, size) => acc + size.quantity, 0);
+        totalStock += totalQuantity * product.unitPrice;
+        projectedSale += totalQuantity * product.sellingPrice;
+      });
+
+      this.totalStockValue = totalStock;
+      this.projectedSaleValue = projectedSale;
+      this.projectedProfitValue = projectedSale - totalStock;
     });
   }
 }

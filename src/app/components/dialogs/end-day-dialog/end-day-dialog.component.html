@@ -1,0 +1,15 @@
+<div class="modal-header">
+  <h4 class="modal-title">End of Day Summary</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+<div class="modal-body">
+  <p><strong>Opening Balance:</strong> {{ data.openingBalance | currency:'INR' }}</p>
+  <p><strong>Total Sales Revenue:</strong> {{ data.totalSales | currency:'INR' }}</p>
+  <p><strong>Total Purchase Cost:</strong> {{ data.totalPurchases | currency:'INR' }}</p>
+  <hr>
+  <p><strong>Closing Balance:</strong> {{ data.closingBalance | currency:'INR' }}</p>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onConfirm()">Confirm & Send Notifications</button>
+</div>
