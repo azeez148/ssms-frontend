@@ -1,7 +1,7 @@
 <div class="container my-5">
   <h1 class="text-center mb-4">Day Management</h1>
 
-  <div *ngIf="!dayStarted">
+  <div *ngIf="!(dayStarted$ | async)">
     <h2>Start Day</h2>
     <form [formGroup]="startDayForm" (ngSubmit)="onStartDay()">
       <div class="mb-3">
@@ -18,7 +18,7 @@
     </form>
   </div>
 
-  <div *ngIf="dayStarted">
+  <div *ngIf="dayStarted$ | async">
     <h2>Add Expense</h2>
     <form [formGroup]="expenseForm" (ngSubmit)="onAddExpense()">
       <div class="row">

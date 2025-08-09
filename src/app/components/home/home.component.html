@@ -1,6 +1,6 @@
 <div class="container my-5">
   <div class="d-flex justify-content-end mb-3">
-    <button class="btn btn-primary me-2" (click)="openSaleDialog()">Quick Sale</button>
+    <button class="btn btn-primary me-2" (click)="openSaleDialog()" [disabled]="!(isDayStarted$ | async)">Quick Sale</button>
     <button class="btn btn-secondary me-2" (click)="openPurchaseDialog()">Quick Purchase</button>
     <button class="btn btn-danger" (click)="openDayManagement()">Day Management</button>
   </div>
