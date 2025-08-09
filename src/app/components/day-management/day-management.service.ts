@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Expense } from './expense.model';
 import { DaySummary } from './day-summary.model';
+import { environment } from 'src/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DayManagementService {
-  private apiUrl = '/day-management'; // Replace with your actual API URL
+    private apiUrl = environment.apiUrl + '/day-management';
+  
 
   constructor(private http: HttpClient) { }
 
