@@ -8,6 +8,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { dayReducer } from './store/reducers/day.reducer';
+import { provideEffects } from '@ngrx/effects';
+import { DayEffects } from './store/effects/day.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,6 +19,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(withFetch()),
     provideNativeDateAdapter(),
-    provideStore({ day: dayReducer })
+    provideStore({ day: dayReducer }),
+    provideEffects([DayEffects])
   ]
 };

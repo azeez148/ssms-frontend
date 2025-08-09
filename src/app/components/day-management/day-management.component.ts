@@ -4,6 +4,11 @@ import { DayManagementService } from './day-management.service';
 import { Expense } from './expense.model';
 import { DaySummary } from './day-summary.model';
 import { CommonModule } from '@angular/common';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import { loadDayState, startDay, endDay } from 'src/app/store/actions/day.actions';
+import { selectDayStarted, selectOpeningBalance } from 'src/app/store/selectors/day.selectors';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-day-management',
@@ -18,13 +23,15 @@ import { CommonModule } from '@angular/common';
 export class DayManagementComponent implements OnInit {
   startDayForm: FormGroup;
   expenseForm: FormGroup;
-  dayStarted = false;
+  dayStarted$: Observable<boolean>;
   expenses: Expense[] = [];
   daySummary: DaySummary | null = null;
+  openingBalance$: Observable<number>;
 
   constructor(
     private fb: FormBuilder,
-    private dayManagementService: DayManagementService
+    private dayManagementService: DayManagementService,
+    private store: Store<AppState>
   ) {
     this.startDayForm = this.fb.group({
       openingBalance: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
@@ -34,23 +41,24 @@ export class DayManagementComponent implements OnInit {
       description: ['', [Validators.required]],
       amount: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
     });
+
+    this.dayStarted$ = this.store.select(selectDayStarted);
+    this.openingBalance$ = this.store.select(selectOpeningBalance);
   }
 
   ngOnInit(): void {
-    this.dayManagementService.getDayStatus().subscribe((summary: DaySummary) => {
-      this.dayStarted = summary.dayStarted;
-      if (this.dayStarted) {
-        this.startDayForm.patchValue({ openingBalance: summary.openingBalance });
-      }
-      this.expenses = summary.totalExpenses ? [] : [];
+    this.store.dispatch(loadDayState());
+    this.openingBalance$.subscribe(balance => {
+      this.startDayForm.patchValue({ openingBalance: balance });
     });
+    // You might want to load expenses here as well if they are part of the day state
   }
 
   onStartDay(): void {
     if (this.startDayForm.valid) {
       const openingBalance = this.startDayForm.value.openingBalance;
       this.dayManagementService.startDay(openingBalance).subscribe(() => {
-        this.dayStarted = true;
+        this.store.dispatch(startDay({ openingBalance }));
       });
     }
   }
@@ -76,24 +84,25 @@ export class DayManagementComponent implements OnInit {
       // For now, I will use dummy data.
       const totalSales = 1000;
       const totalPurchases = 500;
-      const openingBalance = this.startDayForm.value.openingBalance;
-      const closingBalance = openingBalance + totalSales - totalPurchases - totalExpenses;
+      this.openingBalance$.subscribe(openingBalance => {
+        const closingBalance = openingBalance + totalSales - totalPurchases - totalExpenses;
 
-      this.daySummary = {
-        openingBalance,
-        totalSales,
-        totalPurchases,
-        totalExpenses,
-        closingBalance,
-        dayStarted: false
-      };
+        this.daySummary = {
+          openingBalance,
+          totalSales,
+          totalPurchases,
+          totalExpenses,
+          closingBalance,
+          dayStarted: false
+        };
 
-      this.dayManagementService.endDay(this.daySummary).subscribe(() => {
-        const message = `End of Day Summary:\nOpening Balance: ${this.daySummary?.openingBalance}\nTotal Sales: ${this.daySummary?.totalSales}\nTotal Purchases: ${this.daySummary?.totalPurchases}\nTotal Expenses: ${this.daySummary?.totalExpenses}\nClosing Balance: ${this.daySummary?.closingBalance}`;
-        this.dayManagementService.sendWhatsAppMessage(message).subscribe(() => {
-          this.dayStarted = false;
+        this.dayManagementService.endDay(this.daySummary).subscribe(() => {
+          const message = `End of Day Summary:\nOpening Balance: ${this.daySummary?.openingBalance}\nTotal Sales: ${this.daySummary?.totalSales}\nTotal Purchases: ${this.daySummary?.totalPurchases}\nTotal Expenses: ${this.daySummary?.totalExpenses}\nClosing Balance: ${this.daySummary?.closingBalance}`;
+          this.dayManagementService.sendWhatsAppMessage(message).subscribe(() => {
+            this.store.dispatch(endDay());
+          });
         });
-      });
+      })
     });
   }
 }

@@ -13,6 +13,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { Sale } from '../sale/data/sale-model';
 import { Purchase } from '../purchase/data/purchase-model';
 import { DayManagementComponent } from '../day-management/day-management.component';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import { loadDayState } from 'src/app/store/actions/day.actions';
+import { selectDayStarted } from 'src/app/store/selectors/day.selectors';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +27,7 @@ import { DayManagementComponent } from '../day-management/day-management.compone
   standalone: true,
 })
 export class HomeComponent implements OnInit {
-
+  isDayStarted$: Observable<boolean>;
   totalStockValue = 0;
   projectedSaleValue = 0;
   projectedProfitValue = 0;
@@ -62,11 +67,14 @@ export class HomeComponent implements OnInit {
     private productService: ProductService,
     private saleService: SaleService,
     private purchaseService: PurchaseService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private store: Store<AppState>
   ) {
+    this.isDayStarted$ = this.store.select(selectDayStarted);
   }
 
   ngOnInit(): void {
+    this.store.dispatch(loadDayState());
     this.loadDashboardData();
     this.loadSalesAndCalculateSummary();
     this.loadPurchasesAndCalculateSummary();
