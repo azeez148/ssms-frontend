@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { DayManagementService } from 'src/app/components/day-management/day-management.service';
 import { loadDayState, loadDayStateSuccess, loadDayStateFailure } from '../actions/day.actions';
@@ -7,10 +7,8 @@ import { of } from 'rxjs';
 
 @Injectable()
 export class DayEffects {
-  constructor(
-    private actions$: Actions,
-    private dayManagementService: DayManagementService
-  ) {}
+  private actions$ = inject(Actions);
+  private dayManagementService = inject(DayManagementService);
 
   loadDayState$ = createEffect(() =>
     this.actions$.pipe(
