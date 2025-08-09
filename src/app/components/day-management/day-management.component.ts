@@ -67,8 +67,7 @@ export class DayManagementComponent implements OnInit {
     if (this.expenseForm.valid) {
       const newExpense: Expense = {
         description: this.expenseForm.value.description,
-        amount: this.expenseForm.value.amount,
-        date: new Date()
+        amount: this.expenseForm.value.amount
       };
       this.dayManagementService.addExpense(newExpense).subscribe(() => {
         this.expenses.push(newExpense);

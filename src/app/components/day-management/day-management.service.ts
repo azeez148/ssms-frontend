@@ -19,11 +19,11 @@ export class DayManagementService {
   }
 
   startDay(openingBalance: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/start`, { openingBalance });
+    return this.http.post(`${this.apiUrl}/startDay`, { opening_balance: openingBalance });
   }
 
   addExpense(expense: Expense): Observable<any> {
-    return this.http.post(`${this.apiUrl}/expense`, expense);
+    return this.http.post(`${this.apiUrl}/addExpense`, expense);
   }
 
   endDay(summary: DaySummary): Observable<any> {
