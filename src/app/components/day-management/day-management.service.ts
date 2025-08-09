@@ -12,6 +12,10 @@ export class DayManagementService {
 
   constructor(private http: HttpClient) { }
 
+  getDayStatus(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/status`);
+  }
+
   startDay(openingBalance: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/start`, { openingBalance });
   }

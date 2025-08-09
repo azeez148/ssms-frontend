@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { startDay, endDay } from '../actions/day.actions';
+import { startDay, endDay, loadDayStateSuccess } from '../actions/day.actions';
 
 export interface DayState {
   dayStarted: boolean;
@@ -21,5 +21,10 @@ export const dayReducer = createReducer(
   on(endDay, (state) => ({
     ...state,
     dayStarted: false,
+  })),
+  on(loadDayStateSuccess, (state, { dayStarted, openingBalance }) => ({
+    ...state,
+    dayStarted,
+    openingBalance,
   }))
 );
