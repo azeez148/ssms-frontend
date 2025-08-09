@@ -8,12 +8,12 @@ import { DaySummary } from './day-summary.model';
   providedIn: 'root'
 })
 export class DayManagementService {
-  private apiUrl = '/api/day-management'; // Replace with your actual API URL
+  private apiUrl = '/day-management'; // Replace with your actual API URL
 
   constructor(private http: HttpClient) { }
 
   getDayStatus(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/status`);
+    return this.http.get<DaySummary>(`${this.apiUrl}/today`);
   }
 
   startDay(openingBalance: number): Observable<any> {

@@ -37,6 +37,13 @@ export class DayManagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dayManagementService.getDayStatus().subscribe((summary: DaySummary) => {
+      this.dayStarted = summary.dayStarted;
+      if (this.dayStarted) {
+        this.startDayForm.patchValue({ openingBalance: summary.openingBalance });
+      }
+      this.expenses = summary.totalExpenses ? [] : [];
+    });
   }
 
   onStartDay(): void {
@@ -77,7 +84,8 @@ export class DayManagementComponent implements OnInit {
         totalSales,
         totalPurchases,
         totalExpenses,
-        closingBalance
+        closingBalance,
+        dayStarted: false
       };
 
       this.dayManagementService.endDay(this.daySummary).subscribe(() => {

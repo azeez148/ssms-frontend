@@ -4,4 +4,5 @@ export interface DaySummary {
   totalPurchases: number;
   totalExpenses: number;
   closingBalance: number;
+  dayStarted: boolean;
 }
