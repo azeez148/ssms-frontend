@@ -17,6 +17,8 @@ import { AppState } from 'src/app/store/app.state';
 import { selectDayStarted } from 'src/app/store/selectors/day.selectors';
 import { Observable } from 'rxjs';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { DayManagementService } from '../../day-management/day-management.service';
+import { loadDayState } from 'src/app/store/actions/day.actions';
 
 @Component({
   selector: 'app-sales',
@@ -56,12 +58,14 @@ export class SalesComponent {
     private categoryService: CategoryService,
     private dialog: MatDialog,
     private saleService: SaleService,
+    private dayManagementService: DayManagementService,
     private store: Store<AppState>
   ) {
     this.isDayStarted$ = this.store.select(selectDayStarted);
   }
 
   ngOnInit(): void {
+    this.store.dispatch(loadDayState());
     this.categoryService.getCategories().subscribe(categories => {
       this.categories = categories;
     });
