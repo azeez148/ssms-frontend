@@ -43,8 +43,13 @@ export const dayReducer = createReducer(
     error: null,
   })),
 
-  // End day success resets the state
-  on(DayActions.endDaySuccess, (state) => initialState),
+  on(DayActions.endDaySuccess, (state, { summary }) => ({
+    ...state,
+    summary,
+    dayStarted: false,
+    loading: false,
+    error: null,
+  })),
 
   // Failure actions
   on(DayActions.loadDayStateFailure, DayActions.startDayFailure, DayActions.endDayFailure, DayActions.addExpenseFailure, (state, { error }) => ({

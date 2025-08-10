@@ -33,12 +33,12 @@ export const startDayFailure = createAction(
 );
 
 // End Day Actions
-export const endDay = createAction(
-    '[Day] End Day',
-    props<{ summary: DaySummary }>()
-);
+export const endDay = createAction('[Day] End Day');
 
-export const endDaySuccess = createAction('[Day] End Day Success');
+export const endDaySuccess = createAction(
+  '[Day] End Day Success',
+  props<{ summary: DaySummary }>()
+);
 
 export const endDayFailure = createAction(
   '[Day] End Day Failure',

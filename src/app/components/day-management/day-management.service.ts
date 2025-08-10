@@ -33,8 +33,8 @@ export class DayManagementService {
     return this.http.post(`${this.apiUrl}/addExpense`, payload);
   }
 
-  endDay(dayId: number, summary: DaySummary): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${dayId}/end`, summary);
+  endDay(dayId: number): Observable<DaySummary> {
+    return this.http.post<DaySummary>(`${this.apiUrl}/end`, { day_id: dayId });
   }
 
   getTodaysExpenses(dayId: number): Observable<Expense[]> {
