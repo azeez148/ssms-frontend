@@ -21,6 +21,10 @@ export class CategoriesComponent implements OnInit {
   constructor(public dialog: MatDialog, private categoryService: CategoryService) {}
 
   ngOnInit() {
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
     this.categoryService.getCategories().subscribe(categories => {
       this.allCategories = categories;
       this.categories = categories;
@@ -31,11 +35,11 @@ export class CategoriesComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
     this.categories = this.allCategories.filter(category =>
       category.name.toLowerCase().includes(filterValue) ||
-      category.description.toLowerCase().includes(filterValue)
+      (category.description && category.description.toLowerCase().includes(filterValue))
     );
   }
 
-  createCategory(): void {
+  openCreateCategoryDialog(): void {
     const dialogRef = this.dialog.open(CategoryDialogComponent, {
       width: '250px',
       data: {}
@@ -43,8 +47,24 @@ export class CategoriesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.categoryService.addCategory(result).subscribe(newCategory => {
-          this.ngOnInit(); // Refresh the list
+        this.categoryService.addCategory(result).subscribe(() => {
+          this.loadCategories();
+        });
+      }
+    });
+  }
+
+  onUpdate(category: Category): void {
+    const dialogRef = this.dialog.open(CategoryDialogComponent, {
+      width: '250px',
+      data: { category: category }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        result.id = category.id;
+        this.categoryService.updateCategory(result).subscribe(() => {
+          this.loadCategories();
         });
       }
     });
