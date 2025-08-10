@@ -1,9 +1,13 @@
-.shop-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.mat-form-field {
+mat-form-field {
   width: 100%;
+}
+
+[mat-dialog-actions] {
+  justify-content: flex-end;
 }
