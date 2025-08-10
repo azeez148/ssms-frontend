@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Expense } from './expense.model';
 import { DayStatus } from './day-status.model';
@@ -34,7 +34,7 @@ export class DayManagementService {
   }
 
   endDay(dayId: number): Observable<DaySummary> {
-    return this.http.post<DaySummary>(`${this.apiUrl}/end`, { day_id: dayId });
+     return this.http.post<DaySummary>(`${this.apiUrl}/endDay/${dayId}`, null);
   }
 
   getTodaysExpenses(dayId: number): Observable<Expense[]> {
