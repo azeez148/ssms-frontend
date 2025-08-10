@@ -46,9 +46,11 @@
     </form>
 
     <h2 class="mt-4">Today's Expenses</h2>
-    <ul class="list-group">
-      <li *ngFor="let expense of expenses$ | async" class="list-group-item">{{ expense.description }}: {{ expense.amount | currency:'INR' }}</li>
-    </ul>
+    <div class="expense-list-container">
+      <ul class="list-group">
+        <li *ngFor="let expense of expenses$ | async" class="list-group-item">{{ expense.description }}: {{ expense.amount | currency:'INR' }}</li>
+      </ul>
+    </div>
 
     <button class="btn btn-danger mt-4" (click)="onEndDay()">End Day</button>
   </div>
