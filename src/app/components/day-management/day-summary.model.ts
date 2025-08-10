@@ -1,7 +1,7 @@
 import { Expense } from './expense.model';
 
 export interface DaySummary {
-  day_id: number;
+  id: number;
   opening_balance: number;
   start_time: string;
   end_time: string | null;

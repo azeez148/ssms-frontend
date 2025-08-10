@@ -61,8 +61,10 @@ export class DayManagementComponent implements OnInit {
   onAddExpense(): void {
     if (this.expenseForm.valid) {
       const newExpense: Expense = {
+        id: 0, // ID will be assigned by the backend
         description: this.expenseForm.value.description,
-        amount: this.expenseForm.value.amount
+        amount: this.expenseForm.value.amount,
+        timestamp: ""
       };
       this.store.dispatch(DayActions.addExpense({ expense: newExpense }));
       this.expenseForm.reset();
@@ -70,6 +72,7 @@ export class DayManagementComponent implements OnInit {
   }
 
   onEndDay(): void {
+    console.log('End Day clicked');
     this.store.dispatch(DayActions.endDay());
   }
 }
