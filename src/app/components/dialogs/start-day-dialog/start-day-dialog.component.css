@@ -1,1 +1,13 @@
-/* Add your styles here */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+[mat-dialog-actions] {
+  justify-content: flex-end;
+}

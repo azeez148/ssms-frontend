@@ -1,21 +1,22 @@
-<div class="modal-header">
-  <h4 class="modal-title">Start Day</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
-</div>
-<div class="modal-body" [formGroup]="form">
+<h1 mat-dialog-title>Start Day</h1>
+
+<div mat-dialog-content>
   <p>Enter the opening balance for today.</p>
-  <div class="mb-3">
-    <label for="opening_balance" class="form-label">Opening Balance</label>
-    <input type="number" id="opening_balance" class="form-control" formControlName="opening_balance" placeholder="Enter amount">
-    <div *ngIf="form.controls['opening_balance'].hasError('required')" class="invalid-feedback d-block">
-      Opening balance is required.
-    </div>
-    <div *ngIf="form.controls['opening_balance'].hasError('pattern')" class="invalid-feedback d-block">
-      Please enter a valid number.
-    </div>
-  </div>
+  <form [formGroup]="form">
+    <mat-form-field>
+      <mat-label>Opening Balance</mat-label>
+      <input matInput type="number" formControlName="opening_balance" placeholder="Enter amount">
+      <mat-error *ngIf="form.controls['opening_balance'].hasError('required')">
+        Opening balance is required.
+      </mat-error>
+      <mat-error *ngIf="form.controls['opening_balance'].hasError('pattern')">
+        Please enter a valid number.
+      </mat-error>
+    </mat-form-field>
+  </form>
 </div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="onStart()" [disabled]="!form.valid">Start Day</button>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onStart()" [disabled]="form.invalid">Start Day</button>
 </div>
