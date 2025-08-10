@@ -31,5 +31,9 @@ export class ShopService {
       })
     );
   }
+
+  updateShop(shop: Shop): Observable<Shop> {
+    return this.http.put<Shop>(`${this.apiUrl}/${shop.id}`, shop);
+  }
   
 }
