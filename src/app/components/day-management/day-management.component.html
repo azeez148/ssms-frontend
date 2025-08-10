@@ -47,13 +47,13 @@
 
     <h2 class="mt-4">Today's Expenses</h2>
     <ul class="list-group">
-      <li *ngFor="let expense of expenses" class="list-group-item">{{ expense.description }}: {{ expense.amount | currency:'INR' }}</li>
+      <li *ngFor="let expense of expenses$ | async" class="list-group-item">{{ expense.description }}: {{ expense.amount | currency:'INR' }}</li>
     </ul>
 
     <button class="btn btn-danger mt-4" (click)="onEndDay()">End Day</button>
   </div>
 
-  <div *ngIf="daySummary" class="mt-4">
+  <div *ngIf="daySummary$ | async as daySummary" class="mt-4">
     <h2>End of Day Summary</h2>
     <div class="card">
       <div class="card-body">
