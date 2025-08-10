@@ -14,9 +14,10 @@ export class DayManagementService {
 
   constructor(private http: HttpClient) { }
 
-  getDayStatus(): Observable<any> {
+  getDayStatus(): Observable<DaySummary> {
     return this.http.get<DaySummary>(`${this.apiUrl}/today`);
   }
+
 
   startDay(openingBalance: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/startDay`, { opening_balance: openingBalance });
@@ -26,12 +27,12 @@ export class DayManagementService {
     return this.http.post(`${this.apiUrl}/addExpense`, expense);
   }
 
-  endDay(summary: DaySummary): Observable<any> {
-    return this.http.post(`${this.apiUrl}/end`, summary);
+  endDay(dayId: number, summary: DaySummary): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${dayId}/end`, summary);
   }
 
-  getTodaysExpenses(): Observable<Expense[]> {
-    return this.http.get<Expense[]>(`${this.apiUrl}/expenses`);
+  getTodaysExpenses(dayId: number): Observable<Expense[]> {
+    return this.http.get<Expense[]>(`${this.apiUrl}/${dayId}/expenses`);
   }
 
   sendWhatsAppMessage(message: string): Observable<any> {
