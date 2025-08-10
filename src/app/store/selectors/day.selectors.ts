@@ -20,7 +20,7 @@ export const selectDayStarted = createSelector(
 
 export const selectOpeningBalance = createSelector(
     selectDaySummary,
-    (summary) => summary?.openingBalance
+    (summary) => summary?.opening_balance
 );
 
 export const selectDayLoading = createSelector(

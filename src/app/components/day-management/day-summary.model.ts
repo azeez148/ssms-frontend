@@ -2,14 +2,12 @@ import { Expense } from './expense.model';
 
 export interface DaySummary {
   id: number;
-  openingBalance: number;
-  startTime: string;
-  endTime: string | null;
-  closingBalance: number | null;
-  totalSales?: number;
-  totalPurchases?: number;
-  totalExpenses: number | null;
-  cashInHand: number | null;
-  cashInAccount: number | null;
+  opening_balance: number;
+  start_time: string;
+  end_time: string | null;
+  closing_balance: number | null;
+  total_expense: number | null;
+  cash_in_hand: number | null;
+  cash_in_account: number | null;
   expenses: Expense[];
 }

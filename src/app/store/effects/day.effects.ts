@@ -19,7 +19,7 @@ export class DayEffects {
       ofType(DayActions.loadDayState),
       switchMap(() =>
         this.dayManagementService.getDayStatus().pipe(
-          map((summary) => DayActions.loadDayStateSuccess({ summary })),
+          map((dayStatus) => DayActions.loadDayStateSuccess({ dayStatus })),
           catchError((error) => of(DayActions.loadDayStateFailure({ error })))
         )
       )
@@ -30,7 +30,7 @@ export class DayEffects {
     this.actions$.pipe(
       ofType(DayActions.startDay),
       switchMap((action) =>
-        this.dayManagementService.startDay(action.openingBalance).pipe(
+        this.dayManagementService.startDay(action.opening_balance).pipe(
           map((summary) => DayActions.startDaySuccess({ summary })),
           catchError((error) => of(DayActions.startDayFailure({ error })))
         )

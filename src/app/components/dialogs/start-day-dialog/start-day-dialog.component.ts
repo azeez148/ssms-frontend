@@ -22,7 +22,7 @@ export class StartDayDialogComponent {
     private fb: FormBuilder
   ) {
     this.form = this.fb.group({
-      openingBalance: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
+      opening_balance: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
     });
   }
 
@@ -32,7 +32,7 @@ export class StartDayDialogComponent {
 
   onStart(): void {
     if (this.form.valid) {
-      this.dialogRef.close(this.form.value.openingBalance);
+      this.dialogRef.close(this.form.value.opening_balance);
     }
   }
 }

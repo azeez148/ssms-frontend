@@ -33,7 +33,7 @@ export class DayManagementComponent implements OnInit {
     private store: Store<AppState>
   ) {
     this.startDayForm = this.fb.group({
-      openingBalance: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
+      opening_balance: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
     });
 
     this.expenseForm = this.fb.group({
@@ -53,8 +53,8 @@ export class DayManagementComponent implements OnInit {
 
   onStartDay(): void {
     if (this.startDayForm.valid) {
-      const openingBalance = this.startDayForm.value.openingBalance;
-      this.store.dispatch(DayActions.startDay({ openingBalance }));
+      const opening_balance = this.startDayForm.value.opening_balance;
+      this.store.dispatch(DayActions.startDay({ opening_balance }));
     }
   }
 

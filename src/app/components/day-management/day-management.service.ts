@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Expense } from './expense.model';
+import { DayStatus } from './day-status.model';
 import { DaySummary } from './day-summary.model';
 import { environment } from 'src/environment';
 
@@ -14,13 +15,13 @@ export class DayManagementService {
 
   constructor(private http: HttpClient) { }
 
-  getDayStatus(): Observable<DaySummary> {
-    return this.http.get<DaySummary>(`${this.apiUrl}/today`);
+  getDayStatus(): Observable<DayStatus> {
+    return this.http.get<DayStatus>(`${this.apiUrl}/today`);
   }
 
 
-  startDay(openingBalance: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/startDay`, { opening_balance: openingBalance });
+  startDay(opening_balance: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/startDay`, { opening_balance: opening_balance });
   }
 
   addExpense(expense: Expense): Observable<any> {

@@ -5,12 +5,12 @@
 <div class="modal-body" [formGroup]="form">
   <p>Enter the opening balance for today.</p>
   <div class="mb-3">
-    <label for="openingBalance" class="form-label">Opening Balance</label>
-    <input type="number" id="openingBalance" class="form-control" formControlName="openingBalance" placeholder="Enter amount">
-    <div *ngIf="form.controls['openingBalance'].hasError('required')" class="invalid-feedback d-block">
+    <label for="opening_balance" class="form-label">Opening Balance</label>
+    <input type="number" id="opening_balance" class="form-control" formControlName="opening_balance" placeholder="Enter amount">
+    <div *ngIf="form.controls['opening_balance'].hasError('required')" class="invalid-feedback d-block">
       Opening balance is required.
     </div>
-    <div *ngIf="form.controls['openingBalance'].hasError('pattern')" class="invalid-feedback d-block">
+    <div *ngIf="form.controls['opening_balance'].hasError('pattern')" class="invalid-feedback d-block">
       Please enter a valid number.
     </div>
   </div>

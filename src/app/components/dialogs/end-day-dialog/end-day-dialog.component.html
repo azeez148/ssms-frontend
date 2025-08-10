@@ -3,11 +3,10 @@
   <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
 </div>
 <div class="modal-body">
-  <p><strong>Opening Balance:</strong> {{ data.openingBalance | currency:'INR' }}</p>
-  <p><strong>Total Sales Revenue:</strong> {{ data.totalSales | currency:'INR' }}</p>
-  <p><strong>Total Purchase Cost:</strong> {{ data.totalPurchases | currency:'INR' }}</p>
+  <p><strong>Opening Balance:</strong> {{ data.opening_balance | currency:'INR' }}</p>
+  <p><strong>Total Expense:</strong> {{ data.total_expense | currency:'INR' }}</p>
   <hr>
-  <p><strong>Closing Balance:</strong> {{ data.closingBalance | currency:'INR' }}</p>
+  <p><strong>Closing Balance:</strong> {{ data.closing_balance | currency:'INR' }}</p>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
