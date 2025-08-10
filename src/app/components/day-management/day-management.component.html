@@ -57,10 +57,41 @@
     <h2>End of Day Summary</h2>
     <div class="card">
       <div class="card-body">
-        <p><strong>Opening Balance:</strong> {{ daySummary.opening_balance | currency:'INR' }}</p>
-        <p><strong>Total Expenses:</strong> {{ daySummary.total_expense | currency:'INR' }}</p>
-        <hr>
-        <p><strong>Closing Balance:</strong> {{ daySummary.closing_balance | currency:'INR' }}</p>
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Day ID:</strong> {{ daySummary.day_id }}</p>
+            <p><strong>Message:</strong> {{ daySummary.message }}</p>
+            <p><strong>Start Time:</strong> {{ daySummary.start_time | date:'medium' }}</p>
+            <p><strong>End Time:</strong> {{ daySummary.end_time | date:'medium' }}</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Opening Balance:</strong> {{ daySummary.opening_balance | currency:'INR' }}</p>
+            <p><strong>Total Expenses:</strong> {{ daySummary.total_expense | currency:'INR' }}</p>
+            <p><strong>Cash in Hand:</strong> {{ daySummary.cash_in_hand | currency:'INR' }}</p>
+            <p><strong>Cash in Account:</strong> {{ daySummary.cash_in_account | currency:'INR' }}</p>
+            <hr>
+            <p><strong>Closing Balance:</strong> {{ daySummary.closing_balance | currency:'INR' }}</p>
+          </div>
+        </div>
+        <h4 class="mt-4">Expenses</h4>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let expense of daySummary.expenses">
+              <td>{{ expense.id }}</td>
+              <td>{{ expense.description }}</td>
+              <td>{{ expense.amount | currency:'INR' }}</td>
+              <td>{{ expense.timestamp | date:'medium' }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
