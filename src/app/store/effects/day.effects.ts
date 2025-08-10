@@ -46,7 +46,7 @@ export class DayEffects {
         if (!dayId) {
           return of(DayActions.addExpenseFailure({ error: 'Day ID is not available to add expense.' }));
         }
-        return this.dayManagementService.addExpense(action.expense).pipe(
+        return this.dayManagementService.addExpense(dayId, action.expense).pipe(
           map((summary) => DayActions.addExpenseSuccess({ summary })),
           catchError((error) => of(DayActions.addExpenseFailure({ error })))
         );
