@@ -1,21 +1,13 @@
-/* Add general padding to form fields */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
 mat-form-field {
-    width: 100%;
-    padding-bottom: 16px;
-  }
-  
-  /* Add space between the form rows */
-  form {
-    margin-bottom: 16px;
-  }
-  
-  /* Add some spacing between the buttons */
-  mat-dialog-actions {
-    padding-top: 16px;
-  }
-  
-  /* Align buttons horizontally */
-  button {
-    margin-left: 8px;
-  }
-  
+  width: 100%;
+}
+
+[mat-dialog-actions] {
+  justify-content: flex-end;
+}
