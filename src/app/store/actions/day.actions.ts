@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { DayStatus } from 'src/app/components/day-management/day-status.model';
 import { DaySummary } from 'src/app/components/day-management/day-summary.model';
 import { Expense } from 'src/app/components/day-management/expense.model';
 
@@ -7,7 +8,7 @@ export const loadDayState = createAction('[Day] Load Day State');
 
 export const loadDayStateSuccess = createAction(
   '[Day] Load Day State Success',
-  props<{ summary: DaySummary }>()
+  props<{ dayStatus: DayStatus }>()
 );
 
 export const loadDayStateFailure = createAction(
@@ -18,7 +19,7 @@ export const loadDayStateFailure = createAction(
 // Start Day Actions
 export const startDay = createAction(
   '[Day] Start Day',
-  props<{ openingBalance: number }>()
+  props<{ opening_balance: number }>()
 );
 
 export const startDaySuccess = createAction(

@@ -26,8 +26,16 @@ export const dayReducer = createReducer(
     error: null,
   })),
 
+  on(DayActions.loadDayStateSuccess, (state, { dayStatus }) => ({
+    ...state,
+    summary: dayStatus.active_day,
+    dayStarted: dayStatus.day_started,
+    loading: false,
+    error: null,
+  })),
+
   // Success actions that update the summary
-  on(DayActions.loadDayStateSuccess, DayActions.startDaySuccess, DayActions.addExpenseSuccess, (state, { summary }) => ({
+  on(DayActions.startDaySuccess, DayActions.addExpenseSuccess, (state, { summary }) => ({
     ...state,
     summary,
     dayStarted: summary && summary.id ? true : false,
