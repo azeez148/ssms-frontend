@@ -62,8 +62,8 @@ export class DayEffects {
         if (!dayId) {
           return of(DayActions.endDayFailure({ error: 'Day ID is not available to end day.' }));
         }
-        return this.dayManagementService.endDay(dayId, action.summary).pipe(
-          map(() => DayActions.endDaySuccess()),
+        return this.dayManagementService.endDay(dayId).pipe(
+          map((summary) => DayActions.endDaySuccess({ summary })),
           catchError((error) => of(DayActions.endDayFailure({ error })))
         );
       })

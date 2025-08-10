@@ -70,12 +70,6 @@ export class DayManagementComponent implements OnInit {
   }
 
   onEndDay(): void {
-    this.daySummary$.pipe(take(1)).subscribe(summary => {
-      if (summary) {
-        this.store.dispatch(DayActions.endDay({ summary }));
-      } else {
-        console.error("Cannot end day: Day summary is not available.");
-      }
-    });
+    this.store.dispatch(DayActions.endDay());
   }
 }
