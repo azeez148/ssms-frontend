@@ -97,6 +97,7 @@ export class ProductsComponent implements OnInit {
       if (selectedImage) {
         this.productService.uploadProductImages(product.id, selectedImage).subscribe(response => {
           console.log('Product images updated successfully', response);
+          this.loadProducts();
         });
       }
     });

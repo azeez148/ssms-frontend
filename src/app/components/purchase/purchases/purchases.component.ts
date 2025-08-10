@@ -187,6 +187,7 @@ export class PurchasesComponent implements OnInit {
 
         this.purchaseService.addPurchase(purchaseData).subscribe(newProduct => {
           console.log(newProduct);
+          this.loadPurchases();
         });
       }
     });

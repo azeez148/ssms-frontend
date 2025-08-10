@@ -20,12 +20,16 @@ export class ShopsComponent implements OnInit {
   constructor(public dialog: MatDialog, private shopService: ShopService) {}
 
   ngOnInit() {
+    this.loadShops();
+  }
+
+  loadShops(): void {
     this.shopService.getShops().subscribe(shops => {
       this.shops = shops;
     });
   }
 
-  createShop(): void {
+  openCreateShopDialog(): void {
     const dialogRef = this.dialog.open(ShopDialogComponent, {
       width: '650px',
       data: {}
@@ -33,8 +37,23 @@ export class ShopsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.shopService.addShop(result).subscribe(newShop => {
-          this.ngOnInit();
+        this.shopService.addShop(result).subscribe(() => {
+          this.loadShops();
+        });
+      }
+    });
+  }
+
+  onUpdate(shop: Shop): void {
+    const dialogRef = this.dialog.open(ShopDialogComponent, {
+      width: '650px',
+      data: { shop: shop }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.shopService.updateShop(result).subscribe(() => {
+          this.loadShops();
         });
       }
     });
