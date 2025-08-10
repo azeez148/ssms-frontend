@@ -94,8 +94,15 @@ const categoryMap = new Map<string, Category>();
       alert('Please select a size before ordering.');
       return;
     }
-    const message = encodeURIComponent(`Hello, I would like to order ${product.name} with selected size ${this.selectedSize} at ${product.sellingPrice}.`);
-    // Replace the phone number with your WhatsApp number
+
+    let messageBody = `Hello, I would like to order ${product.name} with selected size ${this.selectedSize} at ${product.sellingPrice}.`;
+
+    if (product.imageUrl) {
+      const imageUrl = `${environment.apiUrl}/${product.imageUrl}`;
+      messageBody += `\nImage: ${imageUrl}`;
+    }
+
+    const message = encodeURIComponent(messageBody);
     const url = `https://api.whatsapp.com/send?phone=+918089325733&text=${message}`;
     window.open(url, '_blank');
     this.closeBuyModal();
