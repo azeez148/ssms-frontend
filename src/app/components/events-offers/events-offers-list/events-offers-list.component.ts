@@ -77,8 +77,8 @@ export class EventsOffersListComponent implements OnInit {
           end_date: result.endDate,
           rate_type: result.rateType,
           rate: result.rate,
-          products: result.products || [],
-          categories: result.categories || []
+          product_ids: result.productIds || [],
+          category_ids: result.categoryIds || []
         };
         if (result.id) {
           // Update
