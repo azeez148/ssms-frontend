@@ -13,7 +13,50 @@ import { FormsModule } from '@angular/forms';
 })
 export class UpdateQuantityDialogComponent {
 
-  quantities: any = {};
+  quantities: any = {
+    sizes: [],
+    customSizes: []
+  };
+  newSizeName: string = '';
+  newSizeQuantity: number = 0;
+
+  sizeConfig: any = {
+    "Jersey": ["XS", "S", "M", "L", "XL", "XXL"],
+    "5s Jersey": ["XS", "S", "M", "L", "XL", "XXL"],
+    "Kids Jersey": ["20", "22", "24", "26", "28", "30"],
+    "First Copy Jersey": ["XS", "S", "M", "L", "XL", "XXL"],
+    "Tshirt": ["S", "M", "L", "XL", "XXL"],
+    "Dotknit Shorts - Embroidery": ["S", "M", "L", "XL", "XXL"],
+    "Dotknit Shorts - Submiation": ["S", "M", "L", "XL", "XXL"],
+    "Dotknit Shorts - Plain": ["S", "M", "L", "XL", "XXL"],
+    "PP Shorts - Plain": ["S", "M", "L", "XL", "XXL"],
+    "PP Shorts - Embroidery": ["S", "M", "L", "XL", "XXL"],
+    "FC Shorts": ["S", "M", "L", "XL", "XXL"],
+    "NS Shorts": ["S", "M", "L", "XL", "XXL"],
+    "Sleeve Less - D/N": ["S", "M", "L", "XL", "XXL"],
+    "Sleeve Less - Saleena": ["S", "M", "L", "XL", "XXL"],
+    "Sleeve Less - Other": ["S", "M", "L", "XL", "XXL"],
+    "Sleeve Less - NS": ["S", "M", "L", "XL", "XXL"],
+    "Track Pants - Imp": ["S", "M", "L", "XL", "XXL"],
+    "Track Pants - Normal": ["S", "M", "L", "XL", "XXL"],
+    "Boot-Adult": ["5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11"],
+    "Boot-Kids": ["-13", "-12", "-11", "1", "2", "3", "4"],
+    "Boot-Imp": ["5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11"],
+    "Shorts-Kids": ["20", "22", "24", "26", "28", "30"],
+    "Football": ["3", "4", "5"],
+    "Cricket Ball": ["Standard"],
+    "Shuttle Bat": ["Standard"],
+    "Shuttle Cock": ["Standard"],
+    "Foot Pad": ["S", "M", "L", "XL"],
+    "Foot sleeve": ["S", "M", "L", "XL"],
+    "Socks-Full": ["Free Size"],
+    "Socks-3/4": ["Free Size"],
+    "Socks-Half": ["Free Size"],
+    "Socks-Ankle": ["Free Size"],
+    "Hand Sleeve": ["S", "M", "L"],
+    "GK Glove": ["7", "8", "9", "10", "11"],
+    "Trophy": ["Small", "Medium", "Large"]
+  };
 
   constructor(
     public dialogRef: MatDialogRef<UpdateQuantityDialogComponent>,
@@ -23,64 +66,50 @@ export class UpdateQuantityDialogComponent {
   }
 
   initializeQuantities(product: Product) {
-    this.quantities = {};
+    this.quantities = {
+      sizes: [],
+      customSizes: []
+    };
 
     const getQuantity = (sizeToFind: string | number): number => {
       const match = product.sizeMap.find(s => s.size === sizeToFind.toString());
       return match ? match.quantity : 0;
     };
 
-    if (
-      product.category.name === 'Jersey' ||
-      product.category.name === 'Shorts' ||
-      product.category.name === 'Five Sleeve'
-    ) {
-      this.quantities.sizeType = 'Normal';
-      this.quantities.sizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+    const categoryName = product.category.name;
+    if (this.sizeConfig[categoryName]) {
+      this.quantities.sizes = this.sizeConfig[categoryName];
       this.quantities.sizes.forEach((size: string) => {
         this.quantities[size] = getQuantity(size);
       });
-    } else if (product.category.name === 'Boot') {
-      this.quantities.sizeType = 'Boot';
-      this.quantities.bootSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-      this.quantities.bootSizes.forEach((size: number) => {
-        this.quantities[size] = getQuantity(size);
-      });
-    } else if (product.category.name === 'Football') {
-      this.quantities.sizeType = 'Football';
-      this.quantities.footballSizes = [3, 4, 5];
-      this.quantities.footballSizes.forEach((size: number) => {
-        this.quantities[size] = getQuantity(size);
-      });
+    }
+  }
+
+  addCustomSize(): void {
+    if (this.newSizeName && !this.quantities.customSizes.some((s: any) => s.size === this.newSizeName)) {
+      this.quantities.customSizes.push({ size: this.newSizeName, quantity: this.newSizeQuantity });
+      this.newSizeName = '';
+      this.newSizeQuantity = 0;
     }
   }
 
   onSave(): void {
     const sizeMap: any = {};
 
-    if (this.quantities.sizeType === 'Normal') {
-      for (let size of this.quantities.sizes) {
-        sizeMap[size] = this.quantities[size] !== undefined ? this.quantities[size] : 0;
-      }
-    } else if (this.quantities.sizeType === 'Boot') {
-      for (let size of this.quantities.bootSizes) {
-        sizeMap[size] = this.quantities[size] !== undefined ? this.quantities[size] : 0;
-      }
-    } else if (this.quantities.sizeType === 'Football') {
-      for (let size of this.quantities.footballSizes) {
-        sizeMap[size] = this.quantities[size] !== undefined ? this.quantities[size] : 0;
-      }
+    // Standard sizes
+    for (let size of this.quantities.sizes) {
+      sizeMap[size] = this.quantities[size] !== undefined ? this.quantities[size] : 0;
+    }
+
+    // Custom sizes
+    for (let customSize of this.quantities.customSizes) {
+      sizeMap[customSize.size] = customSize.quantity !== undefined ? customSize.quantity : 0;
     }
 
     this.dialogRef.close({
       productId: this.data.product.id,
       sizeMap: sizeMap
     });
-  }
-
-  onSizeTypeChange(event: any) {
-    this.quantities.sizeType = event.target.value;
-    this.initializeQuantities(this.data.product);
   }
 
   onCancel(): void {
