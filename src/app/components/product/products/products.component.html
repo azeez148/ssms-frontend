@@ -24,6 +24,9 @@
           <th>Name</th>
           <th>Description</th>
           <th>Category</th>
+          <th>Unit Price</th>
+          <th>Selling Price</th>
+          <th>Discounted Price</th>
           <th>Update Quantity</th>
           <th>Update Image</th>
           <th>Update Whatsapp Group</th>
@@ -36,6 +39,9 @@
           <td>{{element.name}}</td>
           <td>{{element.description}}</td>
           <td>{{element.category.name}}</td>
+          <td>{{element.unitPrice | currency:'INR'}}</td>
+          <td>{{element.sellingPrice | currency:'INR'}}</td>
+          <td>{{element.discountedPrice | currency:'INR'}}</td>
           <td><button class="btn btn-sm btn-secondary" (click)="openUpdateQuantityDialog(element)">Update Quantity</button></td>
           <td><button class="btn btn-sm btn-secondary" (click)="openUpdateImageDialog(element)">Update Image</button></td>
           <td><button class="btn btn-sm btn-secondary" (click)="openUpdateWhatsappGroup(element)">Update Whatsapp Group</button></td>
