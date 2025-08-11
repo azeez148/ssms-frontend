@@ -54,7 +54,9 @@ export class EventsOffersDialogComponent implements OnInit {
       productIds: [[]],
       categoryIds: [[]],
       startDate: ['', Validators.required],
-      endDate: ['', Validators.required]
+      endDate: ['', Validators.required],
+      rateType: ['flat', Validators.required],
+      rate: [0, [Validators.required, Validators.min(0)]]
     });
 
     if (data && data.eventOffer) {
