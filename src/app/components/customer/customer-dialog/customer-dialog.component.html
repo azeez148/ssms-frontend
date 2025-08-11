@@ -1,29 +1,33 @@
-<div class="modal-header">
-  <h4 class="modal-title">{{ isEditMode ? 'Edit Customer' : 'Add Customer' }}</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+<h1 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Add' }} Customer</h1>
+
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name">
+      <mat-error *ngIf="form.get('name')?.hasError('required')">Name is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Address</mat-label>
+      <input matInput formControlName="address">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Mobile</mat-label>
+      <input matInput formControlName="mobile">
+      <mat-error *ngIf="form.get('mobile')?.hasError('required')">Mobile is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email">
+      <mat-error *ngIf="form.get('email')?.hasError('email')">Please enter a valid email address</mat-error>
+    </mat-form-field>
+  </form>
 </div>
-<div class="modal-body" [formGroup]="form">
-  <div class="mb-3">
-    <label for="name" class="form-label">Name</label>
-    <input type="text" id="name" class="form-control" formControlName="name" required>
-    <div *ngIf="form.get('name')?.hasError('required')" class="invalid-feedback d-block">Name is required</div>
-  </div>
-  <div class="mb-3">
-    <label for="address" class="form-label">Address</label>
-    <input type="text" id="address" class="form-control" formControlName="address">
-  </div>
-  <div class="mb-3">
-    <label for="mobile" class="form-label">Mobile</label>
-    <input type="text" id="mobile" class="form-control" formControlName="mobile" required>
-    <div *ngIf="form.get('mobile')?.hasError('required')" class="invalid-feedback d-block">Mobile is required</div>
-  </div>
-  <div class="mb-3">
-    <label for="email" class="form-label">Email</label>
-    <input type="email" id="email" class="form-control" formControlName="email">
-    <div *ngIf="form.get('email')?.hasError('email')" class="invalid-feedback d-block">Please enter a valid email address</div>
-  </div>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="!form.valid">Save</button>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="form.invalid">Save</button>
 </div>

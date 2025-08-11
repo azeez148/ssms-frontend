@@ -13,6 +13,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { Sale } from '../sale/data/sale-model';
 import { Purchase } from '../purchase/data/purchase-model';
 import { DayManagementComponent } from '../day-management/day-management.component';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import { loadDayState } from 'src/app/store/actions/day.actions';
+import { selectDayStarted } from 'src/app/store/selectors/day.selectors';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +27,10 @@ import { DayManagementComponent } from '../day-management/day-management.compone
   standalone: true,
 })
 export class HomeComponent implements OnInit {
+  isDayStarted$: Observable<boolean>;
+  totalStockValue = 0;
+  projectedSaleValue = 0;
+  projectedProfitValue = 0;
 
   dashboardData: DashboardData = {
     total_sales: {
@@ -58,14 +67,18 @@ export class HomeComponent implements OnInit {
     private productService: ProductService,
     private saleService: SaleService,
     private purchaseService: PurchaseService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private store: Store<AppState>
   ) {
+    this.isDayStarted$ = this.store.select(selectDayStarted);
   }
 
   ngOnInit(): void {
+    this.store.dispatch(loadDayState());
     this.loadDashboardData();
     this.loadSalesAndCalculateSummary();
     this.loadPurchasesAndCalculateSummary();
+    this.calculateStockValues();
   }
 
   loadDashboardData(): void {
@@ -119,7 +132,8 @@ export class HomeComponent implements OnInit {
   openSaleDialog(): void {
     this.productService.getProducts().subscribe(products => {
       const dialogRef = this.dialog.open(SaleDialogComponent, {
-        width: '80%',
+         maxWidth: '1000px',
+      height: '800px',
         data: products
       });
 
@@ -136,7 +150,8 @@ export class HomeComponent implements OnInit {
   openPurchaseDialog(): void {
     this.productService.getProducts().subscribe(products => {
       const dialogRef = this.dialog.open(PurchaseDialogComponent, {
-        width: '80%',
+        maxWidth: '1000px',
+      height: '800px',
         data: products
       });
 
@@ -153,6 +168,23 @@ export class HomeComponent implements OnInit {
   openDayManagement(): void {
     const dialogRef = this.dialog.open(DayManagementComponent, {
       width: '80%'
+    });
+  }
+
+  calculateStockValues(): void {
+    this.productService.getProducts().subscribe(products => {
+      let totalStock = 0;
+      let projectedSale = 0;
+
+      products.forEach(product => {
+        const totalQuantity = product.sizeMap.reduce((acc, size) => acc + size.quantity, 0);
+        totalStock += totalQuantity * product.unitPrice;
+        projectedSale += totalQuantity * product.sellingPrice;
+      });
+
+      this.totalStockValue = totalStock;
+      this.projectedSaleValue = projectedSale;
+      this.projectedProfitValue = projectedSale - totalStock;
     });
   }
 }

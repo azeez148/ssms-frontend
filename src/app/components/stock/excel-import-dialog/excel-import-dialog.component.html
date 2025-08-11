@@ -1,16 +1,16 @@
-<div class="modal-header">
-  <h4 class="modal-title">Import Excel Data</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+<h1 mat-dialog-title>Import Excel Data</h1>
+
+<div mat-dialog-content>
+  <p>Select an Excel file to import stock data.</p>
+  <input type="file" #fileInput style="display: none" (change)="onFileChange($event)" accept=".xlsx, .xls">
+  <button mat-stroked-button color="primary" (click)="fileInput.click()">
+    <mat-icon>attach_file</mat-icon>
+    Select File
+  </button>
+  <p *ngIf="selectedFile">Selected file: {{ selectedFile.name }}</p>
 </div>
-<div class="modal-body">
-  <form [formGroup]="importForm">
-    <div class="mb-3">
-      <label for="excelFile" class="form-label">Select Excel File</label>
-      <input type="file" id="excelFile" class="form-control" (change)="onFileChange($event)" required>
-    </div>
-  </form>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="!importForm.valid">Save</button>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!selectedFile">Import</button>
 </div>

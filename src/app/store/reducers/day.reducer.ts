@@ -1,25 +1,60 @@
 import { createReducer, on } from '@ngrx/store';
-import { startDay, endDay } from '../actions/day.actions';
+import { DaySummary } from 'src/app/components/day-management/day-summary.model';
+import * as DayActions from '../actions/day.actions';
 
 export interface DayState {
+  summary: DaySummary | null;
   dayStarted: boolean;
-  openingBalance: number;
+  loading: boolean;
+  error: any;
 }
 
 export const initialState: DayState = {
+  summary: null,
   dayStarted: false,
-  openingBalance: 0,
+  loading: false,
+  error: null,
 };
 
 export const dayReducer = createReducer(
   initialState,
-  on(startDay, (state, { openingBalance }) => ({
+
+  // Actions that trigger loading state
+  on(DayActions.loadDayState, DayActions.startDay, DayActions.endDay, DayActions.addExpense, (state) => ({
     ...state,
-    dayStarted: true,
-    openingBalance,
+    loading: true,
+    error: null,
   })),
-  on(endDay, (state) => ({
+
+  on(DayActions.loadDayStateSuccess, (state, { dayStatus }) => ({
     ...state,
+    summary: dayStatus.active_day,
+    dayStarted: dayStatus.day_started,
+    loading: false,
+    error: null,
+  })),
+
+  // Success actions that update the summary
+  on(DayActions.startDaySuccess, DayActions.addExpenseSuccess, (state, { summary }) => ({
+    ...state,
+    summary,
+    dayStarted: summary && summary.id ? true : false,
+    loading: false,
+    error: null,
+  })),
+
+  on(DayActions.endDaySuccess, (state, { summary }) => ({
+    ...state,
+    summary,
     dayStarted: false,
-  }))
+    loading: false,
+    error: null,
+  })),
+
+  // Failure actions
+  on(DayActions.loadDayStateFailure, DayActions.startDayFailure, DayActions.endDayFailure, DayActions.addExpenseFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error: error,
+  })),
 );

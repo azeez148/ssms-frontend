@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-excel-import-dialog',
@@ -9,27 +10,22 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./excel-import-dialog.component.css'],
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule
   ],
   standalone: true
 })
 export class ExcelImportDialogComponent {
-  importForm: FormGroup;
   selectedFile!: File;
 
   constructor(
-    public dialogRef: MatDialogRef<ExcelImportDialogComponent>,
-    private fb: FormBuilder
-  ) {
-    this.importForm = this.fb.group({
-      file: [null, Validators.required]
-    });
-  }
+    public dialogRef: MatDialogRef<ExcelImportDialogComponent>
+  ) {}
 
   onFileChange(event: any): void {
     if (event.target.files && event.target.files.length > 0) {
       this.selectedFile = event.target.files[0];
-      this.importForm.get('file')?.setValue(this.selectedFile);
     }
   }
 
@@ -38,7 +34,7 @@ export class ExcelImportDialogComponent {
   }
 
   onSave(): void {
-    if (this.importForm.valid) {
+    if (this.selectedFile) {
       this.dialogRef.close(this.selectedFile);
     }
   }
