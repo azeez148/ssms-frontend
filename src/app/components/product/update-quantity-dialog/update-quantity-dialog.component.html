@@ -3,33 +3,43 @@
   <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
 </div>
 <div class="modal-body">
-  <div class="mb-3">
-    <label for="sizeType" class="form-label">Size Type</label>
-    <select id="sizeType" class="form-select" [(ngModel)]="quantities.sizeType" (change)="onSizeTypeChange($event)">
-      <option value="Normal">Normal</option>
-      <option value="Boot">Boot</option>
-      <option value="Football">Football</option>
-    </select>
-  </div>
-
-  <div *ngIf="quantities.sizeType === 'Normal'" class="row g-3">
+  <!-- Standard Sizes -->
+  <h5>Standard Sizes</h5>
+  <div class="row g-3">
     <div *ngFor="let size of quantities.sizes" class="col-md-4">
       <label [for]="'size' + size" class="form-label">{{ size }} Quantity</label>
       <input [id]="'size' + size" type="number" class="form-control" [(ngModel)]="quantities[size]" placeholder="Enter quantity">
     </div>
   </div>
 
-  <div *ngIf="quantities.sizeType === 'Boot'" class="row g-3">
-    <div *ngFor="let size of quantities.bootSizes" class="col-md-4">
-      <label [for]="'size' + size" class="form-label">{{ size }} Quantity</label>
-      <input [id]="'size' + size" type="number" class="form-control" [(ngModel)]="quantities[size]" placeholder="Enter quantity">
+  <hr>
+
+  <!-- Custom Sizes -->
+  <h5>Add Custom Size</h5>
+  <div class="row g-3 align-items-end">
+    <div class="col-md-5">
+      <label for="newSizeName" class="form-label">Size Name</label>
+      <input id="newSizeName" type="text" class="form-control" [(ngModel)]="newSizeName" placeholder="Enter size name">
+    </div>
+    <div class="col-md-5">
+      <label for="newSizeQuantity" class="form-label">Quantity</label>
+      <input id="newSizeQuantity" type="number" class="form-control" [(ngModel)]="newSizeQuantity" placeholder="Enter quantity">
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-success" (click)="addCustomSize()">Add</button>
     </div>
   </div>
 
-  <div *ngIf="quantities.sizeType === 'Football'" class="row g-3">
-    <div *ngFor="let size of quantities.footballSizes" class="col-md-4">
-      <label [for]="'size' + size" class="form-label">{{ size }} Quantity</label>
-      <input [id]="'size' + size" type="number" class="form-control" [(ngModel)]="quantities[size]" placeholder="Enter quantity">
+  <!-- Display Custom Sizes -->
+  <div *ngIf="quantities.customSizes.length > 0" class="mt-3">
+    <h5>Custom Sizes</h5>
+    <div *ngFor="let customSize of quantities.customSizes; let i = index" class="row g-3 mb-2">
+      <div class="col-md-5">
+        <input type="text" class="form-control" [(ngModel)]="customSize.size" disabled>
+      </div>
+      <div class="col-md-5">
+        <input type="number" class="form-control" [(ngModel)]="customSize.quantity">
+      </div>
     </div>
   </div>
 </div>
