@@ -1,31 +1,44 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Expense } from './expense.model';
+import { DayStatus } from './day-status.model';
 import { DaySummary } from './day-summary.model';
+import { environment } from 'src/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DayManagementService {
-  private apiUrl = '/api/day-management'; // Replace with your actual API URL
+    private apiUrl = environment.apiUrl + '/day-management';
+  
 
   constructor(private http: HttpClient) { }
 
-  startDay(openingBalance: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/start`, { openingBalance });
+  getDayStatus(): Observable<DayStatus> {
+    return this.http.get<DayStatus>(`${this.apiUrl}/today`);
   }
 
-  addExpense(expense: Expense): Observable<any> {
-    return this.http.post(`${this.apiUrl}/expense`, expense);
+
+  startDay(opening_balance: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/startDay`, { opening_balance: opening_balance });
   }
 
-  endDay(summary: DaySummary): Observable<any> {
-    return this.http.post(`${this.apiUrl}/end`, summary);
+  addExpense(dayId: number, expense: Expense): Observable<any> {
+    const payload = {
+      day_id: dayId,
+      description: expense.description,
+      amount: expense.amount
+    };
+    return this.http.post(`${this.apiUrl}/addExpense`, payload);
   }
 
-  getTodaysExpenses(): Observable<Expense[]> {
-    return this.http.get<Expense[]>(`${this.apiUrl}/expenses`);
+  endDay(dayId: number): Observable<DaySummary> {
+     return this.http.post<DaySummary>(`${this.apiUrl}/endDay/${dayId}`, null);
+  }
+
+  getTodaysExpenses(dayId: number): Observable<Expense[]> {
+    return this.http.get<Expense[]>(`${this.apiUrl}/${dayId}/expenses`);
   }
 
   sendWhatsAppMessage(message: string): Observable<any> {

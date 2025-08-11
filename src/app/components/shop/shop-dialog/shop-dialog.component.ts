@@ -1,18 +1,26 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-shop-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
+  ],
   templateUrl: './shop-dialog.component.html',
   styleUrls: ['./shop-dialog.component.css'],
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule]
 })
-export class ShopDialogComponent {
+export class ShopDialogComponent implements OnInit {
   shopForm: FormGroup;
 
   constructor(
@@ -32,6 +40,12 @@ export class ShopDialogComponent {
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       email: ['', [Validators.required, Validators.email]]
     });
+  }
+
+  ngOnInit(): void {
+    if (this.data.shop) {
+      this.shopForm.patchValue(this.data.shop);
+    }
   }
 
   onCancel(): void {

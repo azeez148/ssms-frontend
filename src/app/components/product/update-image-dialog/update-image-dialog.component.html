@@ -1,22 +1,20 @@
-<h1 mat-dialog-title>Update Product Image</h1>
-<div mat-dialog-content fxLayout="column" fxLayoutGap="16px">
-  <form [formGroup]="imageForm" fxLayout="column" fxLayoutGap="16px">
-    <div class="file-input-container">
-      <button mat-stroked-button color="primary" (click)="fileInput.click()">
-        Choose File
-      </button>
-      <input hidden type="file" #fileInput (change)="onImageChange($event)" accept="image/*">
-      <span class="file-name" *ngIf="selectedImage">{{ selectedImage.name }}</span>
+<div class="modal-header">
+  <h4 class="modal-title">Update Product Image</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="imageForm">
+    <div class="mb-3">
+      <label for="imageUpload" class="form-label">Choose File</label>
+      <input type="file" id="imageUpload" class="form-control" (change)="onImageChange($event)" accept="image/*">
     </div>
-
-    <div *ngIf="selectedImage">
+    <div *ngIf="selectedImage" class="mb-3">
       <p><strong>Selected Image Preview:</strong></p>
-      <img [src]="imagePreview" alt="Image Preview" style="max-width: 100%; max-height: 200px;">
+      <img [src]="imagePreview" alt="Image Preview" class="img-fluid" style="max-height: 200px;">
     </div>
   </form>
 </div>
-
-<div mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onSave()" [disabled]="!selectedImage">Save</button>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="!selectedImage">Save</button>
 </div>

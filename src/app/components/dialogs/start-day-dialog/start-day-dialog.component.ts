@@ -1,11 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-start-day-dialog',
@@ -15,6 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule
@@ -29,7 +29,7 @@ export class StartDayDialogComponent {
     private fb: FormBuilder
   ) {
     this.form = this.fb.group({
-      openingBalance: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
+      opening_balance: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
     });
   }
 
@@ -39,7 +39,7 @@ export class StartDayDialogComponent {
 
   onStart(): void {
     if (this.form.valid) {
-      this.dialogRef.close(this.form.value.openingBalance);
+      this.dialogRef.close(this.form.value.opening_balance);
     }
   }
 }

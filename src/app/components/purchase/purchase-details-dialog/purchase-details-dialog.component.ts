@@ -1,14 +1,12 @@
-//// filepath: c:\Projects\ADrenaline\ssms-front-end\src\app\components\purchase\purchase-details-dialog\purchase-details-dialog.component.ts
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-purchase-details-dialog',
   templateUrl: './purchase-details-dialog.component.html',
   styleUrls: ['./purchase-details-dialog.component.css'],
-  imports: [CommonModule, MatDialogModule, MatButtonModule],
+  imports: [CommonModule],
   standalone: true
 })
 export class PurchaseDetailsDialogComponent {

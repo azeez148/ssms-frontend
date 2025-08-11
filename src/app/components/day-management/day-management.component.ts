@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { DayManagementService } from './day-management.service';
-import { Expense } from './expense.model';
-import { DaySummary } from './day-summary.model';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import * as DayActions from 'src/app/store/actions/day.actions';
+import { selectDayStarted, selectDaySummary, selectExpenses, selectDayLoading } from 'src/app/store/selectors/day.selectors';
+import { Observable } from 'rxjs';
+import { DaySummary } from './day-summary.model';
+import { Expense } from './expense.model';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-day-management',
@@ -17,84 +17,62 @@ import { ReactiveFormsModule } from '@angular/forms';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule
+    ReactiveFormsModule
   ]
 })
 export class DayManagementComponent implements OnInit {
   startDayForm: FormGroup;
   expenseForm: FormGroup;
-  dayStarted = false;
-  expenses: Expense[] = [];
-  daySummary: DaySummary | null = null;
+  dayStarted$: Observable<boolean>;
+  daySummary$: Observable<DaySummary | null>;
+  expenses$: Observable<Expense[]>;
+  loading$: Observable<boolean>;
 
   constructor(
     private fb: FormBuilder,
-    private dialog: MatDialog,
-    private dayManagementService: DayManagementService
+    private store: Store<AppState>
   ) {
     this.startDayForm = this.fb.group({
-      openingBalance: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
+      opening_balance: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
     });
 
     this.expenseForm = this.fb.group({
       description: ['', [Validators.required]],
       amount: ['', [Validators.required, Validators.pattern('^[0-9]*\\.?[0-9]+$')]]
     });
+
+    this.dayStarted$ = this.store.select(selectDayStarted);
+    this.daySummary$ = this.store.select(selectDaySummary);
+    this.expenses$ = this.store.select(selectExpenses);
+    this.loading$ = this.store.select(selectDayLoading);
   }
 
   ngOnInit(): void {
+    this.store.dispatch(DayActions.loadDayState());
   }
 
   onStartDay(): void {
     if (this.startDayForm.valid) {
-      const openingBalance = this.startDayForm.value.openingBalance;
-      this.dayManagementService.startDay(openingBalance).subscribe(() => {
-        this.dayStarted = true;
-      });
+      const opening_balance = this.startDayForm.value.opening_balance;
+      this.store.dispatch(DayActions.startDay({ opening_balance }));
     }
   }
 
   onAddExpense(): void {
     if (this.expenseForm.valid) {
       const newExpense: Expense = {
+        id: 0, // ID will be assigned by the backend
         description: this.expenseForm.value.description,
         amount: this.expenseForm.value.amount,
-        date: new Date()
+        timestamp: ""
       };
-      this.dayManagementService.addExpense(newExpense).subscribe(() => {
-        this.expenses.push(newExpense);
-        this.expenseForm.reset();
-      });
+      this.store.dispatch(DayActions.addExpense({ expense: newExpense }));
+      this.expenseForm.reset();
     }
   }
 
   onEndDay(): void {
-    this.dayManagementService.getTodaysExpenses().subscribe(expenses => {
-      const totalExpenses = expenses.reduce((acc, expense) => acc + expense.amount, 0);
-      // You will need to get the total sales and purchases from their respective services.
-      // For now, I will use dummy data.
-      const totalSales = 1000;
-      const totalPurchases = 500;
-      const openingBalance = this.startDayForm.value.openingBalance;
-      const closingBalance = openingBalance + totalSales - totalPurchases - totalExpenses;
-
-      this.daySummary = {
-        openingBalance,
-        totalSales,
-        totalPurchases,
-        totalExpenses,
-        closingBalance
-      };
-
-      this.dayManagementService.endDay(this.daySummary).subscribe(() => {
-        const message = `End of Day Summary:\nOpening Balance: ${this.daySummary?.openingBalance}\nTotal Sales: ${this.daySummary?.totalSales}\nTotal Purchases: ${this.daySummary?.totalPurchases}\nTotal Expenses: ${this.daySummary?.totalExpenses}\nClosing Balance: ${this.daySummary?.closingBalance}`;
-        this.dayManagementService.sendWhatsAppMessage(message).subscribe(() => {
-          this.dayStarted = false;
-        });
-      });
-    });
+    console.log('End Day clicked');
+    this.store.dispatch(DayActions.endDay());
   }
 }

@@ -1,32 +1,57 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, tap } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map, Observable, of, tap } from 'rxjs';
 import { EventOffer, Participant } from '../data/events-offers-model';
 import { environment } from '../../../../environment';
+import { start } from 'repl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventsOffersService {
-  private apiUrl = environment.apiUrl + '/events-offers';
+  private apiUrl = environment.apiUrl + '/events';
 
   constructor(private http: HttpClient) {}
 
   getEventOffers(): Observable<EventOffer[]> {
-    return this.http.get<EventOffer[]>(`${this.apiUrl}/all`);
+  return this.http.get<any[]>(`${this.apiUrl}/all`).pipe(
+    map((offers) =>
+      offers.map((offer) => ({
+        id: offer.id,
+        name: offer.name,
+        description: offer.description,
+        type: offer.type,
+        isActive: offer.is_active,
+        rateType: offer.rate_type,
+        rate: offer.rate,
+        startDate: offer.start_date,
+        endDate: offer.end_date,
+        products: offer.products || [],
+        categories: offer.categories || []
+      }))
+    )
+  );
+}
+
+
+  addEventOffer(eventOffer: any): Observable<EventOffer> {
+    return this.http.post<EventOffer>(`${this.apiUrl}/create`, eventOffer);
   }
 
-  addEventOffer(eventOffer: EventOffer): Observable<EventOffer> {
-    return this.http.post<EventOffer>(`${this.apiUrl}/add`, eventOffer);
+  updateEventOffer(eventOffer: any): Observable<EventOffer> {
+    const payload = {
+      offer_update: eventOffer
+    };
+    return this.http.post<EventOffer>(`${this.apiUrl}/update/${eventOffer.id}`, payload);
   }
 
-  updateEventOffer(eventOffer: EventOffer): Observable<EventOffer> {
-    return this.http.post<EventOffer>(`${this.apiUrl}/update`, eventOffer);
+  toggleActivateEventOffer(eventOffer: EventOffer): Observable<EventOffer> {
+    const params = new HttpParams()
+      .set('offer_id', eventOffer.id)
+      .set('is_active', eventOffer.isActive);
+    return this.http.post<EventOffer>(`${this.apiUrl}/set_active_status`, null, { params });
   }
 
-  deleteEventOffer(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/delete/${id}`);
-  }
 
   getParticipants(eventOfferId: number): Observable<Participant[]> {
     return this.http.get<Participant[]>(`${this.apiUrl}/${eventOfferId}/participants`);

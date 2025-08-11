@@ -1,16 +1,26 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatFormField, MatFormFieldControl, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-category-dialog',
-  imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
+  ],
   templateUrl: './category-dialog.component.html',
-  styleUrl: './category-dialog.component.css'
+  styleUrls: ['./category-dialog.component.css']
 })
-export class CategoryDialogComponent {
+export class CategoryDialogComponent implements OnInit {
   categoryForm: FormGroup;
 
   constructor(
@@ -19,9 +29,15 @@ export class CategoryDialogComponent {
     private fb: FormBuilder
   ) {
     this.categoryForm = this.fb.group({
-      name: [''],
+      name: ['', Validators.required],
       description: ['']
     });
+  }
+
+  ngOnInit(): void {
+    if (this.data.category) {
+      this.categoryForm.patchValue(this.data.category);
+    }
   }
 
   onCancel(): void {
@@ -29,6 +45,8 @@ export class CategoryDialogComponent {
   }
 
   onSave(): void {
-    this.dialogRef.close(this.categoryForm.value);
+    if (this.categoryForm.valid) {
+      this.dialogRef.close(this.categoryForm.value);
+    }
   }
 }

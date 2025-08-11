@@ -1,13 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { Customer } from '../data/customer.model';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-
 
 @Component({
   selector: 'app-customer-dialog',
@@ -17,10 +15,10 @@ import { MatDialogModule } from '@angular/material/dialog';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
-    MatDialogModule
+    MatButtonModule
   ]
 })
 export class CustomerDialogComponent implements OnInit {

@@ -1,147 +1,97 @@
-<div class="purchase-details">
-    <mat-form-field appearance="fill" class="mat-form-field-purchase">
-      <mat-label>Vendor Name</mat-label>
-      <input matInput [(ngModel)]="purchase.supplierName" name="supplierName" required [formControl]="vendorCtrl" [matAutocomplete]="auto" />
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onVendorSelected($event.option.value)">
-        <mat-option *ngFor="let vendor of filteredVendors | async" [value]="vendor">
-          {{ vendor.name }}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-  
-    <mat-form-field appearance="fill" class="mat-form-field-purchase">
-        <mat-label>Vendor Address</mat-label>
-        <textarea matInput [(ngModel)]="purchase.supplierAddress"></textarea>
-    </mat-form-field>      
-  
-    <mat-form-field appearance="fill" class="mat-form-field-purchase">
-      <mat-label>Vendor Mobile</mat-label>
-      <input matInput [(ngModel)]="purchase.supplierMobile">
-    </mat-form-field>
-  
-    <mat-form-field appearance="fill" class="mat-form-field-purchase">
-        <mat-label>Date</mat-label>
-        <input matInput [(ngModel)]="purchase.date" [matDatepicker]="picker" placeholder="Choose a date">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-  
-    <mat-form-field appearance="fill" class="mat-form-field-purchase">
-      <mat-label>Payment Type</mat-label>
-      <mat-select [(ngModel)]="purchase.paymentType">
-        <mat-option *ngFor="let payment of paymentTypes" [value]="payment">
-          {{ payment.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  
-    <mat-form-field appearance="fill" class="mat-form-field-purchase">
-      <mat-label>Payment Ref #</mat-label>
-      <input matInput [(ngModel)]="purchase.paymentReferenceNumber">
-    </mat-form-field>
-  
-    <mat-form-field appearance="fill" class="mat-form-field-purchase">
-      <mat-label>Delivery Type</mat-label>
-      <mat-select [(ngModel)]="purchase.deliveryType">
-        <mat-option *ngFor="let delivery of deliveryTypes" [value]="delivery">
-          {{ delivery.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  
-    <div class="purchase-summary">
-      <div>Total Quantity: {{ purchase.totalQuantity }}</div>
-      <div>Total Price: {{ purchase.totalPrice | currency }}</div>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Purchase Details Form -->
+    <div class="col-md-4">
+      <h2>Purchase Details</h2>
+      <form>
+        <div class="mb-3">
+          <label for="vendorName" class="form-label">Vendor Name</label>
+          <input type="text" id="vendorName" class="form-control" [(ngModel)]="purchase.supplierName" name="supplierName" required>
+        </div>
+        <div class="mb-3">
+          <label for="vendorAddress" class="form-label">Vendor Address</label>
+          <textarea id="vendorAddress" class="form-control" [(ngModel)]="purchase.supplierAddress" name="supplierAddress"></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="vendorMobile" class="form-label">Vendor Mobile</label>
+          <input type="text" id="vendorMobile" class="form-control" [(ngModel)]="purchase.supplierMobile" name="supplierMobile">
+        </div>
+        <div class="mb-3">
+          <label for="purchaseDate" class="form-label">Date</label>
+          <input type="date" id="purchaseDate" class="form-control" [(ngModel)]="purchase.date" name="date">
+        </div>
+        <div class="mb-3">
+          <label for="paymentType" class="form-label">Payment Type</label>
+          <select id="paymentType" class="form-select" [(ngModel)]="purchase.paymentType" name="paymentType">
+            <option *ngFor="let payment of paymentTypes" [ngValue]="payment">{{ payment.name }}</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="paymentRef" class="form-label">Payment Ref #</label>
+          <input type="text" id="paymentRef" class="form-control" [(ngModel)]="purchase.paymentReferenceNumber" name="paymentReferenceNumber">
+        </div>
+        <div class="mb-3">
+          <label for="deliveryType" class="form-label">Delivery Type</label>
+          <select id="deliveryType" class="form-select" [(ngModel)]="purchase.deliveryType" name="deliveryType">
+            <option *ngFor="let delivery of deliveryTypes" [ngValue]="delivery">{{ delivery.name }}</option>
+          </select>
+        </div>
+      </form>
+      <div class="purchase-summary mt-3">
+        <h4>Total Quantity: {{ purchase.totalQuantity }}</h4>
+        <h4>Total Price: {{ purchase.totalPrice | currency:'INR' }}</h4>
+      </div>
+      <div class="d-flex justify-content-end mt-3">
+        <button type="button" class="btn btn-secondary me-2" (click)="onCancel()">Cancel</button>
+        <button type="button" class="btn btn-primary" [disabled]="selectedPurchaseItems.length === 0" (click)="onCreate()">Create</button>
+      </div>
     </div>
 
-    <div class="button-container">
-        <button mat-button (click)="onCancel()">Cancel</button>
-        <button mat-raised-button color="primary" [disabled]="selectedPurchaseItems.length === 0" (click)="onCreate()">Create</button>
+    <!-- Product Table -->
+    <div class="col-md-8">
+      <h2>Products</h2>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <input type="text" class="form-control" (keyup)="applyFilter($event)" placeholder="Search by name">
+        </div>
+        <div class="col-md-6">
+          <select class="form-select" (change)="applyFilter($event)">
+            <option [value]="'all'">All Categories</option>
+            <option *ngFor="let category of categories" [value]="category.name">{{ category.name }}</option>
+          </select>
+        </div>
       </div>
-</div>
-  
-<!-- Product Table -->
-<div class="table-container">
-    <div class="filter-container">
-        <mat-form-field appearance="fill">
-          <mat-label>Search Products</mat-label>
-          <input matInput (keyup)="applyFilter($event)" placeholder="Search by name">
-        </mat-form-field>
-
-        <mat-form-field appearance="fill">
-          <mat-label>Filter by Category</mat-label>
-          <mat-select (selectionChange)="applyFilter($event)">
-            <mat-option [value]="'all'">All Categories</mat-option>
-            <mat-option *ngFor="let category of categories" [value]="category.name">
-              {{ category.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th><input type="checkbox" (change)="selectAll($event)"></th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Size</th>
+              <th>Available</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let element of filteredPurchaseItems | paginate: { itemsPerPage: pageSize, currentPage: pageIndex + 1 }">
+              <td><input type="checkbox" (change)="toggleSelection(element)" [checked]="isSelected(element)"></td>
+              <td>{{element.productId}}</td>
+              <td>{{element.productName}}</td>
+              <td>{{element.productCategory}}</td>
+              <td>{{element.size}}</td>
+              <td>{{element.quantityAvailable}}</td>
+              <td><input type="number" class="form-control form-control-sm" [(ngModel)]="element.quantity" min="0" (input)="element.totalPrice = getTotalPrice(element)"></td>
+              <td><input type="number" class="form-control form-control-sm" [(ngModel)]="element.purchasePrice" min="0" (input)="element.totalPrice = getTotalPrice(element)"></td>
+              <td>{{ getTotalPrice(element) | currency:'INR' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
       </div>
-    <table mat-table [dataSource]="filteredPurchaseItems" class="mat-elevation-z8">
-      <ng-container matColumnDef="selectAll">
-        <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="selectAll($event)"></mat-checkbox>
-        </th>
-        <td mat-cell *matCellDef="let element">
-          <mat-checkbox (change)="toggleSelection(element)" [checked]="isSelected(element)"></mat-checkbox>
-        </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let element"> {{element.productId}} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.productName}} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="category">
-        <th mat-header-cell *matHeaderCellDef> Category </th>
-        <td mat-cell *matCellDef="let element"> {{element.productCategory}} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="size">
-        <th mat-header-cell *matHeaderCellDef> Size </th>
-        <td mat-cell *matCellDef="let element"> {{element.size}} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="quantityAvailable">
-        <th mat-header-cell *matHeaderCellDef> Quantity Left </th>
-        <td mat-cell *matCellDef="let element"> {{element.quantityAvailable}} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="quantity">
-        <th mat-header-cell *matHeaderCellDef> Quantity </th>
-        <td mat-cell *matCellDef="let element">
-          <input matInput type="number" [(ngModel)]="element.quantity" min="0" (input)="element.totalPrice = getTotalPrice(element)">
-        </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="purchasePrice">
-        <th mat-header-cell *matHeaderCellDef> Buying Price </th>
-        <td mat-cell *matCellDef="let element">
-          <input matInput type="number" [(ngModel)]="element.purchasePrice" min="0" (input)="element.totalPrice = getTotalPrice(element)">
-        </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="totalPrice">
-        <th mat-header-cell *matHeaderCellDef> Total Price </th>
-        <td mat-cell *matCellDef="let element">
-          {{ getTotalPrice(element) }}
-        </td>
-      </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  
-    <mat-paginator [length]="length"
-                   [pageSize]="pageSize"
-                   [pageIndex]="pageIndex"
-                   (page)="onPageChange($event)"
-                   aria-label="Select page">
-    </mat-paginator>
+    </div>
+  </div>
 </div>

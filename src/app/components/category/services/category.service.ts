@@ -28,4 +28,8 @@ export class CategoryService {
       })
     );
   }
+
+  updateCategory(category: Category): Observable<Category> {
+    return this.http.put<Category>(`${this.apiUrl}/${category.id}`, category);
+  }
 }
