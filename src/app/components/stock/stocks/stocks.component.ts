@@ -23,12 +23,17 @@ import { saveAs } from 'file-saver';
 })
 export class StocksComponent implements OnInit {
   stocks: Product[] = [];
+  inStockProducts: Product[] = [];
+  outOfStockProducts: Product[] = [];
   p: number = 1;
   
   categories: Category[] = [];
-  selectedCategoryId: number | null = null;
+  selectedCategoryId: any = 'all';
   productNameFilter: string = '';
   private allProducts: Product[] = [];
+
+  availableSizes: string[] = [];
+  selectedSize: any = 'all';
 
 
   constructor(
@@ -47,50 +52,61 @@ export class StocksComponent implements OnInit {
 
   loadProducts(): void {
     // Fetch products with the selected category and type filter
-    this.productService.getFilteredProducts(this.selectedCategoryId, this.productNameFilter).subscribe(products => {
-      this.stocks = products;
+    this.productService.getFilteredProducts(null, '').subscribe(products => {
       this.allProducts = products;
+      this.stocks = products;
+      this.extractAllSizes();
+      this.populateStockArrays();
     });
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
-    this.stocks = this.allProducts.filter(product => product.name.toLowerCase().includes(filterValue));
-  }
-  
-  filterByCategory(event: any) {
-    const categoryId = event.target.value;
-    if (categoryId === 'all') {
-      this.stocks = this.allProducts;
-    } else {
-      this.stocks = this.allProducts.filter(p => p.categoryId === +categoryId);
-    }
-  }
-
-
-  getAvailableSizesWithQuantities(sizeMap: { size: string; quantity: number }[]): string[] {
-    if (!sizeMap || sizeMap.length === 0) {
-      return ['Out of Stock'];
-    }
-
-    const availableSizesWithQuantities: string[] = [];
-    let isOutOfStock = true;
-
-    for (const entry of sizeMap) {
-      const { size, quantity } = entry;
-      if (quantity > 0) {
-        availableSizesWithQuantities.push(`${size}:${quantity}`);
-        isOutOfStock = false;
-      } else if (quantity <= 0) {
-        // You might want to handle this case differently, e.g., not show it
+  extractAllSizes(): void {
+    const allSizes = new Set<string>();
+    this.allProducts.forEach(product => {
+      if (product.sizeMap) {
+        product.sizeMap.forEach(sizeInfo => {
+          allSizes.add(sizeInfo.size);
+        });
       }
+    });
+    this.availableSizes = Array.from(allSizes);
+  }
+
+  populateStockArrays(): void {
+    this.inStockProducts = this.stocks.filter(p => this.isProductInStock(p));
+    this.outOfStockProducts = this.stocks.filter(p => !this.isProductInStock(p));
+  }
+
+  isProductInStock(product: Product): boolean {
+    if (!product.sizeMap || product.sizeMap.length === 0) {
+      return false;
+    }
+    return product.sizeMap.some(sizeInfo => sizeInfo.quantity > 0);
+  }
+
+  applyFilters() {
+    let filteredProducts = this.allProducts;
+
+    // Filter by name
+    if (this.productNameFilter) {
+      const filterValue = this.productNameFilter.toLowerCase();
+      filteredProducts = filteredProducts.filter(product => product.name.toLowerCase().includes(filterValue));
     }
 
-    if (isOutOfStock) {
-      return ['Out of Stock'];
+    // Filter by category
+    if (this.selectedCategoryId && this.selectedCategoryId !== 'all') {
+      filteredProducts = filteredProducts.filter(p => p.categoryId === +this.selectedCategoryId);
     }
 
-    return availableSizesWithQuantities;
+    // Filter by size
+    if (this.selectedSize && this.selectedSize !== 'all') {
+      filteredProducts = filteredProducts.filter(p =>
+        p.sizeMap && p.sizeMap.some(s => s.size === this.selectedSize && s.quantity > 0)
+      );
+    }
+
+    this.stocks = filteredProducts;
+    this.populateStockArrays();
   }
   
   openExcelImportDialog(): void {
@@ -119,10 +135,13 @@ export class StocksComponent implements OnInit {
     // Convert dataSource.data to a worksheet.
     // You might want to process/extract only the fields you want to export.
     
-    const dataToExport = this.stocks.map(product => ({
-      ...product,
-      sizeMap: `{${this.getAvailableSizesWithQuantities(product.sizeMap).join(', ')}}`
-    }));
+    const dataToExport = this.stocks.map(product => {
+      const sizeMapString = product.sizeMap.map(s => `${s.size}:${s.quantity}`).join(', ');
+      return {
+        ...product,
+        sizeMap: `{${sizeMapString}}`
+      }
+    });
 
     console.log('Data to export:', dataToExport); // Debugging line to check the data structure
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
