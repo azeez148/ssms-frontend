@@ -8,17 +8,26 @@
   </div>
 
   <div class="row g-3 mb-3">
-    <div class="col-md-6">
-      <input type="text" class="form-control" (keyup)="applyFilter($event)" placeholder="Search by name">
+    <div class="col-md-4">
+      <input type="text" class="form-control" [(ngModel)]="productNameFilter" (ngModelChange)="applyFilters()" placeholder="Search by name">
     </div>
-    <div class="col-md-6">
-      <select class="form-select" (change)="filterByCategory($event)">
+    <div class="col-md-4">
+      <select class="form-select" [(ngModel)]="selectedCategoryId" (ngModelChange)="applyFilters()">
         <option value="all">All Categories</option>
         <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
       </select>
     </div>
+    <div class="col-md-4">
+      <select class="form-select" [(ngModel)]="selectedSize" (ngModelChange)="applyFilters()">
+        <option value="all">All Sizes</option>
+        <option *ngFor="let size of availableSizes" [value]="size">{{ size }}</option>
+      </select>
+    </div>
   </div>
 
+  <hr>
+
+  <h2>In Stock</h2>
   <div class="table-responsive">
     <table class="table table-striped table-hover">
       <thead>
@@ -31,19 +40,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let element of stocks | paginate: { itemsPerPage: 10, currentPage: p }">
+        <tr *ngFor="let element of inStockProducts | paginate: { itemsPerPage: 10, currentPage: p }">
           <td>{{element.id}}</td>
           <td>{{element.name}}</td>
           <td>{{element.description}}</td>
           <td>{{element.category.name}}</td>
           <td>
             <div class="d-flex flex-wrap">
-              <ng-container *ngFor="let sizeInfo of getAvailableSizesWithQuantities(element.sizeMap)">
-                <span class="badge me-1" [ngClass]="{
-                  'bg-danger': sizeInfo === 'Out of Stock' || sizeInfo.includes('-'),
-                  'bg-secondary': sizeInfo !== 'Out of Stock' && !sizeInfo.includes('-')
+              <ng-container *ngFor="let sizeInfo of element.sizeMap">
+                <span *ngIf="sizeInfo.quantity > 0" class="badge me-1" [ngClass]="{
+                  'bg-success': sizeInfo.quantity === 1 || sizeInfo.quantity === 2,
+                  'bg-warning text-dark': sizeInfo.quantity > 2
                 }">
-                  {{ sizeInfo }}
+                  {{ sizeInfo.size }}:{{ sizeInfo.quantity }}
                 </span>
               </ng-container>
             </div>
@@ -52,6 +61,30 @@
       </tbody>
     </table>
     <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>
+
+  <hr>
+
+  <h2>Out of Stock</h2>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Category</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let element of outOfStockProducts">
+          <td>{{element.id}}</td>
+          <td>{{element.name}}</td>
+          <td>{{element.description}}</td>
+          <td>{{element.category.name}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
   
