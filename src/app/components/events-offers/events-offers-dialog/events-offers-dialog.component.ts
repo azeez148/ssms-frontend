@@ -14,6 +14,9 @@ import { Category } from '../../category/data/category-model';
 import { ProductService } from '../../product/services/product.service';
 import { CategoryService } from '../../category/services/category.service';
 import { EventOffer } from '../data/events-offers-model';
+import { EventsOffersService } from '../services/events-offers.service';
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-events-offers-dialog',
@@ -37,13 +40,16 @@ export class EventsOffersDialogComponent implements OnInit {
   eventOfferForm: FormGroup;
   products: Product[] = [];
   categories: Category[] = [];
+  selectedImage: File | null = null;
+  imagePreview: string | ArrayBuffer | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<EventsOffersDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { eventOffer: EventOffer },
     private fb: FormBuilder,
     private productService: ProductService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private eventsOffersService: EventsOffersService
   ) {
     this.eventOfferForm = this.fb.group({
       id: [null],
@@ -65,6 +71,9 @@ export class EventsOffersDialogComponent implements OnInit {
         productIds: data.eventOffer.products.map(p => p.id),
         categoryIds: data.eventOffer.categories.map(c => c.id)
       });
+      if (data.eventOffer.imageUrl) {
+        this.imagePreview = data.eventOffer.imageUrl;
+      }
     }
   }
 
@@ -73,13 +82,60 @@ export class EventsOffersDialogComponent implements OnInit {
     this.categoryService.getCategories().subscribe(categories => this.categories = categories);
   }
 
+  onImageChange(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedImage = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   onCancel(): void {
     this.dialogRef.close();
   }
 
   onSave(): void {
-    if (this.eventOfferForm.valid) {
-      this.dialogRef.close(this.eventOfferForm.value);
+    if (this.eventOfferForm.invalid) {
+      return;
     }
+
+    const formValue = this.eventOfferForm.value;
+    const payload = {
+        id: this.data.eventOffer ? this.data.eventOffer.id : null,
+        name: formValue.name,
+        description: formValue.description,
+        type: formValue.type,
+        is_active: formValue.isActive,
+        start_date: formValue.startDate,
+        end_date: formValue.endDate,
+        rate_type: formValue.rateType,
+        rate: formValue.rate,
+        product_ids: formValue.productIds || [],
+        category_ids: formValue.categoryIds || []
+    };
+
+    let saveObservable: Observable<EventOffer>;
+
+    if (payload.id) {
+      saveObservable = this.eventsOffersService.updateEventOffer(payload);
+    } else {
+      saveObservable = this.eventsOffersService.addEventOffer(payload);
+    }
+
+    saveObservable.pipe(
+      switchMap((savedEventOffer: EventOffer) => {
+        if (this.selectedImage) {
+          return this.eventsOffersService.uploadEventOfferImage(savedEventOffer.id, this.selectedImage);
+        } else {
+          return of(savedEventOffer);
+        }
+      })
+    ).subscribe(() => {
+      this.dialogRef.close(true);
+    });
   }
 }

@@ -14,6 +14,7 @@ export interface EventOffer {
   endDate: string;
   rateType: 'flat' | 'percentage';
   rate: number;
+  imageUrl?: string;
 }
 
 export interface Participant {
