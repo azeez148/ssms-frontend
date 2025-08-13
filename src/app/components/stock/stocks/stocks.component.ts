@@ -26,6 +26,7 @@ export class StocksComponent implements OnInit {
   inStockProducts: Product[] = [];
   outOfStockProducts: Product[] = [];
   p: number = 1;
+  p2: number = 1;
   
   categories: Category[] = [];
   selectedCategoryId: any = 'all';

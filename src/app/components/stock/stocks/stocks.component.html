@@ -40,7 +40,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let element of inStockProducts | paginate: { itemsPerPage: 10, currentPage: p }">
+        <tr *ngFor="let element of inStockProducts | paginate: { itemsPerPage: 10, currentPage: p, id: 'inStockPaginator' }">
           <td>{{element.id}}</td>
           <td>{{element.name}}</td>
           <td>{{element.description}}</td>
@@ -60,7 +60,7 @@
         </tr>
       </tbody>
     </table>
-    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    <pagination-controls id="inStockPaginator" (pageChange)="p = $event"></pagination-controls>
   </div>
 
   <hr>
@@ -77,7 +77,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let element of outOfStockProducts">
+        <tr *ngFor="let element of outOfStockProducts | paginate: { itemsPerPage: 10, currentPage: p2, id: 'outOfStockPaginator' }">
           <td>{{element.id}}</td>
           <td>{{element.name}}</td>
           <td>{{element.description}}</td>
@@ -85,6 +85,7 @@
         </tr>
       </tbody>
     </table>
+    <pagination-controls id="outOfStockPaginator" (pageChange)="p2 = $event"></pagination-controls>
   </div>
 </div>
   
