@@ -32,7 +32,7 @@ import { EventsOffersDialogComponent } from '../events-offers-dialog/events-offe
   styleUrls: ['./events-offers-list.component.css']
 })
 export class EventsOffersListComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'name', 'description', 'type', 'startDate', 'endDate', 'rateType', 'rate', 'isActive', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'imageUrl', 'description', 'type', 'startDate', 'endDate', 'rateType', 'rate', 'isActive', 'actions'];
   dataSource = new MatTableDataSource<EventOffer>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -66,27 +66,7 @@ export class EventsOffersListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // convert to snackecase from camelCase
-        const eventOfferObject = {
-          id: result.id || null,
-          name: result.name,
-          description: result.description,
-          type: result.type,
-          is_active: result.isActive,
-          start_date: result.startDate,
-          end_date: result.endDate,
-          rate_type: result.rateType,
-          rate: result.rate,
-          product_ids: result.productIds || [],
-          category_ids: result.categoryIds || []
-        };
-        if (result.id) {
-          // Update
-          this.eventsOffersService.updateEventOffer(eventOfferObject).subscribe(() => this.loadEventOffers());
-        } else {
-          // Create
-          this.eventsOffersService.addEventOffer(eventOfferObject).subscribe(() => this.loadEventOffers());
-        }
+        this.loadEventOffers();
       }
     });
   }

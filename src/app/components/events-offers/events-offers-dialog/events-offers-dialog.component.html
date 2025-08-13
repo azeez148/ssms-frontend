@@ -12,6 +12,15 @@
       <textarea matInput formControlName="description"></textarea>
     </mat-form-field>
 
+    <div class="mb-3">
+      <label for="imageUpload" class="form-label">Choose File</label>
+      <input type="file" id="imageUpload" class="form-control" (change)="onImageChange($event)" accept="image/*">
+    </div>
+    <div *ngIf="imagePreview" class="mb-3">
+      <p><strong>Selected Image Preview:</strong></p>
+      <img [src]="imagePreview" alt="Image Preview" class="img-fluid" style="max-height: 200px;">
+    </div>
+
     <mat-form-field>
       <mat-label>Type</mat-label>
       <mat-select formControlName="type">

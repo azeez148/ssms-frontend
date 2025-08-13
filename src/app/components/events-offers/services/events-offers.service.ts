@@ -27,7 +27,8 @@ export class EventsOffersService {
         startDate: offer.start_date,
         endDate: offer.end_date,
         products: offer.products || [],
-        categories: offer.categories || []
+        categories: offer.categories || [],
+        imageUrl: offer.image_url || ''
       }))
     )
   );
@@ -63,5 +64,11 @@ export class EventsOffersService {
 
   updateWhatsappGroup(eventOfferId: number, message: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/${eventOfferId}/update-whatsapp-group`, { message });
+  }
+
+  uploadEventOfferImage(eventOfferId: number, image: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('image', image, image.name);
+    return this.http.post<any>(`${this.apiUrl}/upload-image?event_offer_id=${eventOfferId}`, formData);
   }
 }
