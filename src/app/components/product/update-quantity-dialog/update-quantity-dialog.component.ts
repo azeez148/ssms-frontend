@@ -21,10 +21,10 @@ export class UpdateQuantityDialogComponent {
   newSizeQuantity: number = 0;
 
   sizeConfig: any = {
-    "Jersey": ["XS", "S", "M", "L", "XL", "XXL"],
-    "5s Jersey": ["XS", "S", "M", "L", "XL", "XXL"],
-    "Kids Jersey": ["20", "22", "24", "26", "28", "30"],
-    "First Copy Jersey": ["XS", "S", "M", "L", "XL", "XXL"],
+    "Jersey": ["S", "M", "L", "XL", "XXL"],
+    "5s Jersey": ["S", "M", "L", "XL", "XXL"],
+    "Kids Jersey": ["20", "22", "24", "26", "28", "30", "32", "34"],
+    "First Copy Jersey": ["S", "M", "L", "XL", "XXL"],
     "Tshirt": ["S", "M", "L", "XL", "XXL"],
     "Dotknit Shorts - Embroidery": ["S", "M", "L", "XL", "XXL"],
     "Dotknit Shorts - Submiation": ["S", "M", "L", "XL", "XXL"],
@@ -42,19 +42,19 @@ export class UpdateQuantityDialogComponent {
     "Boot-Adult": ["5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11"],
     "Boot-Kids": ["-13", "-12", "-11", "1", "2", "3", "4"],
     "Boot-Imp": ["5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11"],
-    "Shorts-Kids": ["20", "22", "24", "26", "28", "30"],
+    "Shorts-Kids": ["20", "22", "24", "26", "28", "30", "32", "34"],
     "Football": ["3", "4", "5"],
     "Cricket Ball": ["Standard"],
     "Shuttle Bat": ["Standard"],
     "Shuttle Cock": ["Standard"],
-    "Foot Pad": ["S", "M", "L", "XL"],
-    "Foot sleeve": ["S", "M", "L", "XL"],
+    "Foot Pad": ["Free Size"],
+    "Foot sleeve": ["Free Size"],
     "Socks-Full": ["Free Size"],
     "Socks-3/4": ["Free Size"],
     "Socks-Half": ["Free Size"],
     "Socks-Ankle": ["Free Size"],
-    "Hand Sleeve": ["S", "M", "L"],
-    "GK Glove": ["7", "8", "9", "10", "11"],
+    "Hand Sleeve": ["Free Size"],
+    "GK Glove": ["5.5", "6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11"],
     "Trophy": ["Small", "Medium", "Large"]
   };
 
