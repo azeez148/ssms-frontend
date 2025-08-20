@@ -9,6 +9,11 @@
       <img [src]="data.product.imageUrl" alt="{{ data.product.name }}" class="product-image">
     </div>
     <p><strong>Category:</strong> {{ data.product.category.name }}</p>
+    <p><strong>Description:</strong> {{ data.product.description }}</p>
+    <p><strong>Sizes:</strong>
+      <span *ngFor="let size of data.product.sizeMap; let last = last">
+        {{ size.size }}:{{ size.quantity }}<span *ngIf="!last">, </span>
+      </span>
     <p><strong>Unit Price:</strong> {{ data.product.unitPrice | currency:'INR' }}</p>
     <p><strong>Selling Price:</strong> {{ data.product.sellingPrice | currency:'INR' }}</p>
     <p><strong>Discounted Price:</strong> {{ data.product.discountedPrice | currency:'INR' }}</p>

@@ -134,7 +134,7 @@ export class ProductsComponent implements OnInit {
 
   viewDetails(product: any): void {
     const dialogRef = this.dialog.open(ProductDetailDialogComponent, {
-      width: '600px',
+      maxWidth: '1200px',
       data: { product }
     });
 
