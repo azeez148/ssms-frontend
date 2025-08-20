@@ -34,16 +34,13 @@ export class ProductsComponent implements OnInit {
   ) { }
 
   exportAsXLSX(): void {
-    const dataToExport = this.products.map(product => ({
-      ID: product.id,
-      Name: product.name,
-      Description: product.description,
-      Category: product.category.name,
-      'Unit Price': product.unitPrice,
-      'Selling Price': product.sellingPrice,
-      'Discounted Price': product.discountedPrice,
-      'Offer': product.offerId ? 'Yes' : 'No',
-    }));
+     const dataToExport = this.products.map(product => {
+      const sizeMapString = product.sizeMap.map(s => `${s.size}:${s.quantity}`).join(', ');
+      return {
+        ...product,
+        sizeMap: `{${sizeMapString}}`
+      }
+    });
     this.excelExportService.exportAsExcelFile(dataToExport, 'products');
   }
 
