@@ -1,20 +1,19 @@
-<div class="modal-header">
-  <h4 class="modal-title">Update Product Image</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+<h1 mat-dialog-title>Update Product Image</h1>
+
+<div mat-dialog-content>
+  <div class="image-upload-container">
+    <button type="button" mat-stroked-button (click)="fileInput.click()">Choose File</button>
+    <input hidden (change)="onImageChange($event)" #fileInput type="file" accept="image/*">
+    <span *ngIf="selectedImage" class="file-name">{{ selectedImage.name }}</span>
+  </div>
+
+  <div *ngIf="imagePreview" class="image-preview-container">
+    <p><strong>Selected Image Preview:</strong></p>
+    <img [src]="imagePreview" alt="Image Preview" class="image-preview">
+  </div>
 </div>
-<div class="modal-body">
-  <form [formGroup]="imageForm">
-    <div class="mb-3">
-      <label for="imageUpload" class="form-label">Choose File</label>
-      <input type="file" id="imageUpload" class="form-control" (change)="onImageChange($event)" accept="image/*">
-    </div>
-    <div *ngIf="selectedImage" class="mb-3">
-      <p><strong>Selected Image Preview:</strong></p>
-      <img [src]="imagePreview" alt="Image Preview" class="img-fluid" style="max-height: 200px;">
-    </div>
-  </form>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="!selectedImage">Save</button>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!selectedImage">Save</button>
 </div>

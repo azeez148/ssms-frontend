@@ -1,19 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { Product } from '../data/product-model';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-product-detail-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule
+  ],
   templateUrl: './product-detail-dialog.component.html',
   styleUrls: ['./product-detail-dialog.component.css']
 })
 export class ProductDetailDialogComponent {
-
-  editMode: boolean = false;
+  editMode = false;
   editForm: FormGroup;
 
   constructor(
@@ -31,8 +42,9 @@ export class ProductDetailDialogComponent {
   }
 
   toggleEditMode(): void {
-    if (this.editMode) {
-      this.editForm.patchValue({
+    this.editMode = !this.editMode;
+    if (!this.editMode) {
+      this.editForm.reset({
         category: this.data.product.category?.name,
         unitPrice: this.data.product.unitPrice,
         sellingPrice: this.data.product.sellingPrice,
@@ -40,15 +52,16 @@ export class ProductDetailDialogComponent {
         canListed: this.data.product.canListed
       });
     }
-    this.editMode = !this.editMode;
   }
 
   onUpdate(): void {
-    const updatedProduct = {
-      ...this.data.product,
-      ...this.editForm.value
-    };
-    this.dialogRef.close(updatedProduct);
+    if (this.editForm.valid) {
+      const updatedProduct = {
+        ...this.data.product,
+        ...this.editForm.value
+      };
+      this.dialogRef.close(updatedProduct);
+    }
   }
 
   onClose(): void {

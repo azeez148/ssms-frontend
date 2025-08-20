@@ -1,49 +1,37 @@
-<div class="modal-header">
-  <h4 class="modal-title">Update Product Quantity</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
-</div>
-<div class="modal-body">
-  <!-- Standard Sizes -->
-  <h5>Standard Sizes</h5>
-  <div class="row g-3">
-    <div *ngFor="let size of quantities.sizes" class="col-md-4">
-      <label [for]="'size' + size" class="form-label">{{ size }} Quantity</label>
-      <input [id]="'size' + size" type="number" class="form-control" [(ngModel)]="quantities[size]" placeholder="Enter quantity">
-    </div>
+<h1 mat-dialog-title>Update Product Quantity for {{ data.product.name }}</h1>
+
+<div mat-dialog-content [formGroup]="quantityForm">
+  <h2>Standard Sizes</h2>
+  <div formGroupName="standardSizes" class="sizes-grid">
+    <mat-form-field *ngFor="let size of standardSizes" class="size-field">
+      <mat-label>{{ size }} Quantity</mat-label>
+      <input matInput type="number" [formControlName]="size">
+    </mat-form-field>
   </div>
 
   <hr>
 
-  <!-- Custom Sizes -->
-  <h5>Add Custom Size</h5>
-  <div class="row g-3 align-items-end">
-    <div class="col-md-5">
-      <label for="newSizeName" class="form-label">Size Name</label>
-      <input id="newSizeName" type="text" class="form-control" [(ngModel)]="newSizeName" placeholder="Enter size name">
-    </div>
-    <div class="col-md-5">
-      <label for="newSizeQuantity" class="form-label">Quantity</label>
-      <input id="newSizeQuantity" type="number" class="form-control" [(ngModel)]="newSizeQuantity" placeholder="Enter quantity">
-    </div>
-    <div class="col-md-2">
-      <button type="button" class="btn btn-success" (click)="addCustomSize()">Add</button>
+  <h2>Custom Sizes</h2>
+  <div formArrayName="customSizes">
+    <div *ngFor="let group of customSizes.controls; let i = index" [formGroupName]="i" class="custom-size-row">
+      <mat-form-field>
+        <mat-label>Size Name</mat-label>
+        <input matInput formControlName="size">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Quantity</mat-label>
+        <input matInput type="number" formControlName="quantity">
+      </mat-form-field>
+      <button mat-icon-button color="warn" (click)="removeCustomSize(i)">
+        <mat-icon>remove_circle</mat-icon>
+      </button>
     </div>
   </div>
 
-  <!-- Display Custom Sizes -->
-  <div *ngIf="quantities.customSizes.length > 0" class="mt-3">
-    <h5>Custom Sizes</h5>
-    <div *ngFor="let customSize of quantities.customSizes; let i = index" class="row g-3 mb-2">
-      <div class="col-md-5">
-        <input type="text" class="form-control" [(ngModel)]="customSize.size" disabled>
-      </div>
-      <div class="col-md-5">
-        <input type="number" class="form-control" [(ngModel)]="customSize.quantity">
-      </div>
-    </div>
-  </div>
+  <button mat-stroked-button color="primary" (click)="addCustomSize()">Add Custom Size</button>
 </div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
-  <button type="button" class="btn btn-primary" (click)="onSave()">Save</button>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="quantityForm.invalid">Save</button>
 </div>
