@@ -1,7 +1,10 @@
 <div class="container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Categories</h1>
-    <button class="btn btn-primary" (click)="openCreateCategoryDialog()">Create Category</button>
+    <div>
+      <button class="btn btn-primary" (click)="openCreateCategoryDialog()">Create Category</button>
+      <button class="btn btn-success ms-2" (click)="exportAsXLSX()">Export to Excel</button>
+    </div>
   </div>
 
   <div class="mb-3">

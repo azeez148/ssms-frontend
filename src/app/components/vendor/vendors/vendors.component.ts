@@ -5,6 +5,7 @@ import { VendorService } from '../services/vendor.service';
 import { VendorDialogComponent } from '../vendor-dialog/vendor-dialog.component';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ExcelExportService } from '../../shared/services/excel-export.service';
 
 @Component({
   selector: 'app-vendors',
@@ -21,7 +22,15 @@ export class VendorsComponent implements OnInit {
   allVendors: Vendor[] = [];
   p: number = 1;
 
-  constructor(private vendorService: VendorService, public dialog: MatDialog) {}
+  constructor(
+    private vendorService: VendorService,
+    public dialog: MatDialog,
+    private excelExportService: ExcelExportService
+  ) {}
+
+  exportAsXLSX(): void {
+    this.excelExportService.exportAsExcelFile(this.vendors, 'vendors');
+  }
 
   ngOnInit(): void {
     this.loadVendors();
