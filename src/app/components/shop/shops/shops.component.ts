@@ -5,6 +5,7 @@ import { Shop } from '../data/shop-model';
 import { ShopService } from '../services/shop.service';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ExcelExportService } from '../../shared/services/excel-export.service';
 
 @Component({
   selector: 'app-shops',
@@ -17,7 +18,15 @@ export class ShopsComponent implements OnInit {
   shops: Shop[] = [];
   p: number = 1;
 
-  constructor(public dialog: MatDialog, private shopService: ShopService) {}
+  constructor(
+    public dialog: MatDialog,
+    private shopService: ShopService,
+    private excelExportService: ExcelExportService
+  ) {}
+
+  exportAsXLSX(): void {
+    this.excelExportService.exportAsExcelFile(this.shops, 'shops');
+  }
 
   ngOnInit() {
     this.loadShops();
