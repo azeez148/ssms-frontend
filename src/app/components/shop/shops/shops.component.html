@@ -1,7 +1,10 @@
 <div class="container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Shops</h1>
-    <button class="btn btn-primary" (click)="openCreateShopDialog()">Create Shop</button>
+    <div>
+      <button class="btn btn-primary" (click)="openCreateShopDialog()">Create Shop</button>
+      <button class="btn btn-success ms-2" (click)="exportAsXLSX()">Export to Excel</button>
+    </div>
   </div>
 
   <div class="table-responsive">

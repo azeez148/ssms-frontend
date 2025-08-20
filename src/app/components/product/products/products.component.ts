@@ -11,6 +11,7 @@ import { Category } from '../../category/data/category-model';
 import { CategoryService } from '../../category/services/category.service';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { FormsModule } from '@angular/forms';
+import { ExcelExportService } from '../../shared/services/excel-export.service';
 
 @Component({
   selector: 'app-products',
@@ -25,7 +26,26 @@ export class ProductsComponent implements OnInit {
   p: number = 1;
   categories: Category[] = [];
 
-  constructor(public dialog: MatDialog, private productService: ProductService, private categoryService: CategoryService) { }
+  constructor(
+    public dialog: MatDialog,
+    private productService: ProductService,
+    private categoryService: CategoryService,
+    private excelExportService: ExcelExportService
+  ) { }
+
+  exportAsXLSX(): void {
+    const dataToExport = this.products.map(product => ({
+      ID: product.id,
+      Name: product.name,
+      Description: product.description,
+      Category: product.category.name,
+      'Unit Price': product.unitPrice,
+      'Selling Price': product.sellingPrice,
+      'Discounted Price': product.discountedPrice,
+      'Offer': product.offerId ? 'Yes' : 'No',
+    }));
+    this.excelExportService.exportAsExcelFile(dataToExport, 'products');
+  }
 
   ngOnInit() {
     this.loadProducts();

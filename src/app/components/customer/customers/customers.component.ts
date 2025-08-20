@@ -5,6 +5,7 @@ import { CustomerService } from '../services/customer.service';
 import { CustomerDialogComponent } from '../customer-dialog/customer-dialog.component';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ExcelExportService } from '../../shared/services/excel-export.service';
 
 @Component({
   selector: 'app-customers',
@@ -21,7 +22,15 @@ export class CustomersComponent implements OnInit {
   allCustomers: Customer[] = [];
   p: number = 1;
 
-  constructor(private customerService: CustomerService, public dialog: MatDialog) {}
+  constructor(
+    private customerService: CustomerService,
+    public dialog: MatDialog,
+    private excelExportService: ExcelExportService
+  ) {}
+
+  exportAsXLSX(): void {
+    this.excelExportService.exportAsExcelFile(this.customers, 'customers');
+  }
 
   ngOnInit(): void {
     this.loadCustomers();

@@ -5,6 +5,7 @@ import { CategoryService } from '../services/category.service';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CategoryDialogComponent } from '../category-dialog/category-dialog.component';
+import { ExcelExportService } from '../../shared/services/excel-export.service';
 
 @Component({
   selector: 'app-categories',
@@ -18,7 +19,15 @@ export class CategoriesComponent implements OnInit {
   allCategories: Category[] = [];
   p: number = 1;
 
-  constructor(public dialog: MatDialog, private categoryService: CategoryService) {}
+  constructor(
+    public dialog: MatDialog,
+    private categoryService: CategoryService,
+    private excelExportService: ExcelExportService
+  ) {}
+
+  exportAsXLSX(): void {
+    this.excelExportService.exportAsExcelFile(this.categories, 'categories');
+  }
 
   ngOnInit() {
     this.loadCategories();
