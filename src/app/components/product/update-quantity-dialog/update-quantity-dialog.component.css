@@ -1,23 +1,20 @@
-.size-container {
+.sizes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.size-field {
+  width: 100%;
+}
+
+.custom-size-row {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 16px;
   margin-bottom: 16px;
 }
 
-.size-input {
-  flex: 1 1 calc(33.333% - 16px);
-  min-width: 120px;
-}
-
-mat-form-field {
-  width: 100%;
-}
-
-mat-dialog-actions {
-  padding-top: 16px;
-}
-
-button {
-  margin-left: 8px;
+.custom-size-row mat-form-field {
+  flex-grow: 1;
 }

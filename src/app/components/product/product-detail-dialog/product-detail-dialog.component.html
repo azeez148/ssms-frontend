@@ -1,65 +1,65 @@
-<div class="modal-header">
-  <h4 class="modal-title">{{ data.product.name }}</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
-</div>
-<div class="modal-body">
+<h1 mat-dialog-title>{{ data.product.name }}</h1>
+
+<div mat-dialog-content>
   <!-- View Mode -->
-  <div *ngIf="!editMode">
-    <div *ngIf="data.product.imageUrl">
+  <div *ngIf="!editMode" class="view-mode">
+    <div *ngIf="data.product.imageUrl" class="image-container">
       <img [src]="data.product.imageUrl" alt="{{ data.product.name }}" class="product-image">
     </div>
-    <p><strong>Category:</strong> {{ data.product.category.name }}</p>
+    <div class="details-grid">
+      <p><strong>Category:</strong> {{ data.product.category.name }}</p>
+      <p><strong>Unit Price:</strong> {{ data.product.unitPrice | currency:'INR' }}</p>
+      <p><strong>Selling Price:</strong> {{ data.product.sellingPrice | currency:'INR' }}</p>
+      <p><strong>Discounted Price:</strong> {{ data.product.discountedPrice | currency:'INR' }}</p>
+      <p><strong>Active:</strong> {{ data.product.isActive ? 'Yes' : 'No' }}</p>
+      <p><strong>Can be Listed:</strong> {{ data.product.canListed ? 'Yes' : 'No' }}</p>
+    </div>
     <p><strong>Description:</strong> {{ data.product.description }}</p>
     <p><strong>Sizes:</strong>
       <span *ngFor="let size of data.product.sizeMap; let last = last">
         {{ size.size }}:{{ size.quantity }}<span *ngIf="!last">, </span>
       </span>
-    <p><strong>Unit Price:</strong> {{ data.product.unitPrice | currency:'INR' }}</p>
-    <p><strong>Selling Price:</strong> {{ data.product.sellingPrice | currency:'INR' }}</p>
-    <p><strong>Discounted Price:</strong> {{ data.product.discountedPrice | currency:'INR' }}</p>
-    <p><strong>Active:</strong> {{ data.product.isActive ? 'Yes' : 'No' }}</p>
-    <p><strong>Can be Listed:</strong> {{ data.product.canListed ? 'Yes' : 'No' }}</p>
+    </p>
   </div>
 
   <!-- Edit Mode -->
-  <div *ngIf="editMode">
-    <form [formGroup]="editForm">
-      <div class="mb-3">
-        <label for="category" class="form-label">Category</label>
-        <input type="text" id="category" class="form-control" formControlName="category">
-      </div>
-      <div class="mb-3">
-        <label for="unitPrice" class="form-label">Unit Price</label>
-        <input type="number" id="unitPrice" class="form-control" formControlName="unitPrice">
-      </div>
-      <div class="mb-3">
-        <label for="sellingPrice" class="form-label">Selling Price</label>
-        <input type="number" id="sellingPrice" class="form-control" formControlName="sellingPrice">
-      </div>
-      <div class="mb-3">
-        <label for="isActive" class="form-label">Active</label>
-        <select id="isActive" class="form-select" formControlName="isActive">
-          <option [value]="true">Yes</option>
-          <option [value]="false">No</option>
-        </select>
-      </div>
-      <div class="mb-3">
-        <label for="canListed" class="form-label">Can be Listed</label>
-        <select id="canListed" class="form-select" formControlName="canListed">
-          <option [value]="true">Yes</option>
-          <option [value]="false">No</option>
-        </select>
-      </div>
-    </form>
+  <div *ngIf="editMode" [formGroup]="editForm">
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <input matInput formControlName="category">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Unit Price</mat-label>
+      <input matInput type="number" formControlName="unitPrice">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Selling Price</mat-label>
+      <input matInput type="number" formControlName="sellingPrice">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Active</mat-label>
+      <mat-select formControlName="isActive">
+        <mat-option [value]="true">Yes</mat-option>
+        <mat-option [value]="false">No</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Can be Listed</mat-label>
+      <mat-select formControlName="canListed">
+        <mat-option [value]="true">Yes</option>
+        <mat-option [value]="false">No</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 </div>
-<div class="modal-footer">
-  <div *ngIf="!editMode">
-    <button class="btn btn-primary" (click)="toggleEditMode()">Edit</button>
-    <button class="btn btn-secondary" (click)="onClose()">Close</button>
-  </div>
-  <div *ngIf="editMode">
-    <button class="btn btn-success" (click)="onUpdate()">Save</button>
-    <button class="btn btn-warning" (click)="toggleEditMode()">Cancel</button>
-  </div>
+
+<div mat-dialog-actions>
+  <ng-container *ngIf="!editMode">
+    <button mat-raised-button color="primary" (click)="toggleEditMode()">Edit</button>
+    <button mat-button (click)="onClose()">Close</button>
+  </ng-container>
+  <ng-container *ngIf="editMode">
+    <button mat-raised-button color="primary" (click)="onUpdate()" [disabled]="editForm.invalid">Save</button>
+    <button mat-button (click)="toggleEditMode()">Cancel</button>
+  </ng-container>
 </div>

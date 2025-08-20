@@ -1,29 +1,27 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-update-image-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatButtonModule
+  ],
   templateUrl: './update-image-dialog.component.html',
   styleUrls: ['./update-image-dialog.component.css']
 })
 export class UpdateImageDialogComponent {
-  imageForm: FormGroup;
   selectedImage: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
 
   constructor(
-    private fb: FormBuilder,
     public dialogRef: MatDialogRef<UpdateImageDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    this.imageForm = this.fb.group({
-      image: [null]
-    });
-  }
+  ) {}
 
   onImageChange(event: any): void {
     const file = event.target.files[0];
