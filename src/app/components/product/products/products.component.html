@@ -47,7 +47,7 @@
           <td>{{element.sellingPrice | currency:'INR'}}</td>
           <td>{{element.discountedPrice | currency:'INR'}}</td>
           <td>
-            <span *ngIf="element.offerId" class="badge btn-success">Offer</span>
+            <span *ngIf="element.offerId" class="badge btn-success" [ngClass]="{'bg-success': true}">Offer</span>
           </td>
           <td><button class="btn btn-sm btn-secondary" (click)="openUpdateQuantityDialog(element)">Update Quantity</button></td>
           <td><button class="btn btn-sm btn-secondary" (click)="openUpdateImageDialog(element)">Update Image</button></td>
