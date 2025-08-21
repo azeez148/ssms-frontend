@@ -25,7 +25,6 @@
         <tr>
           <th>ID</th>
           <th>Name</th>
-          <th>Description</th>
           <th>Category</th>
           <th>Unit Price</th>
           <th>Selling Price</th>
@@ -41,7 +40,6 @@
         <tr *ngFor="let element of products | paginate: { itemsPerPage: 10, currentPage: p }">
           <td>{{element.id}}</td>
           <td>{{element.name}}</td>
-          <td>{{element.description}}</td>
           <td>{{element.category.name}}</td>
           <td>{{element.unitPrice | currency:'INR'}}</td>
           <td>{{element.sellingPrice | currency:'INR'}}</td>

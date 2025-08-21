@@ -1,25 +1,31 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { Product } from '../data/product-model';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-update-quantity-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule
+  ],
   templateUrl: './update-quantity-dialog.component.html',
   styleUrls: ['./update-quantity-dialog.component.css']
 })
-export class UpdateQuantityDialogComponent {
-
-  quantities: any = {
-    sizes: [],
-    customSizes: []
-  };
-  newSizeName: string = '';
-  newSizeQuantity: number = 0;
-
+export class UpdateQuantityDialogComponent implements OnInit {
+  quantityForm: FormGroup;
+  standardSizes: string[] = [];
   sizeConfig: any = {
     "Jersey": ["S", "M", "L", "XL", "XXL"],
     "5s Jersey": ["S", "M", "L", "XL", "XXL"],
@@ -59,57 +65,75 @@ export class UpdateQuantityDialogComponent {
   };
 
   constructor(
+    private fb: FormBuilder,
     public dialogRef: MatDialogRef<UpdateQuantityDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: { product: Product }
   ) {
-    this.initializeQuantities(data.product);
+    this.quantityForm = this.fb.group({
+      standardSizes: this.fb.group({}),
+      customSizes: this.fb.array([])
+    });
   }
 
-  initializeQuantities(product: Product) {
-    this.quantities = {
-      sizes: [],
-      customSizes: []
-    };
+  ngOnInit(): void {
+    this.initializeQuantities(this.data.product);
+  }
 
-    const getQuantity = (sizeToFind: string | number): number => {
-      const match = product.sizeMap.find(s => s.size === sizeToFind.toString());
-      return match ? match.quantity : 0;
-    };
-
+  initializeQuantities(product: Product): void {
+    const standardSizesGroup = this.quantityForm.get('standardSizes') as FormGroup;
+    const customSizesArray = this.quantityForm.get('customSizes') as FormArray;
     const categoryName = product.category.name;
+
     if (this.sizeConfig[categoryName]) {
-      this.quantities.sizes = this.sizeConfig[categoryName];
-      this.quantities.sizes.forEach((size: string) => {
-        this.quantities[size] = getQuantity(size);
+      this.standardSizes = this.sizeConfig[categoryName];
+      this.standardSizes.forEach(size => {
+        const existingSize = product.sizeMap.find(s => s.size === size);
+        standardSizesGroup.addControl(size, this.fb.control(existingSize ? existingSize.quantity : 0, Validators.min(0)));
       });
     }
+
+    const standardSizeNames = new Set(this.standardSizes);
+    product.sizeMap.forEach(size => {
+      if (!standardSizeNames.has(size.size)) {
+        customSizesArray.push(this.fb.group({
+          size: [size.size, Validators.required],
+          quantity: [size.quantity, Validators.min(0)]
+        }));
+      }
+    });
+  }
+
+  get customSizes(): FormArray {
+    return this.quantityForm.get('customSizes') as FormArray;
   }
 
   addCustomSize(): void {
-    if (this.newSizeName && !this.quantities.customSizes.some((s: any) => s.size === this.newSizeName)) {
-      this.quantities.customSizes.push({ size: this.newSizeName, quantity: this.newSizeQuantity });
-      this.newSizeName = '';
-      this.newSizeQuantity = 0;
-    }
+    this.customSizes.push(this.fb.group({
+      size: ['', Validators.required],
+      quantity: [0, [Validators.required, Validators.min(0)]]
+    }));
+  }
+
+  removeCustomSize(index: number): void {
+    this.customSizes.removeAt(index);
   }
 
   onSave(): void {
-    const sizeMap: any = {};
+    if (this.quantityForm.valid) {
+      const formValue = this.quantityForm.value;
+      const sizeMap: { [key: string]: number } = { ...formValue.standardSizes };
 
-    // Standard sizes
-    for (let size of this.quantities.sizes) {
-      sizeMap[size] = this.quantities[size] !== undefined ? this.quantities[size] : 0;
+      formValue.customSizes.forEach((customSize: { size: string; quantity: number }) => {
+        if (customSize.size) {
+          sizeMap[customSize.size] = customSize.quantity;
+        }
+      });
+
+      this.dialogRef.close({
+        productId: this.data.product.id,
+        sizeMap: sizeMap
+      });
     }
-
-    // Custom sizes
-    for (let customSize of this.quantities.customSizes) {
-      sizeMap[customSize.size] = customSize.quantity !== undefined ? customSize.quantity : 0;
-    }
-
-    this.dialogRef.close({
-      productId: this.data.product.id,
-      sizeMap: sizeMap
-    });
   }
 
   onCancel(): void {
