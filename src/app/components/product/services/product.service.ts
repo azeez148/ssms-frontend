@@ -3,6 +3,7 @@ import { map, Observable, of, tap } from 'rxjs';
 import { Product } from '../data/product-model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environment';
+import { toSnakeCase } from '../../shared/services/case-converter';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class ProductService {
   constructor(private http: HttpClient) {}
 
   addProduct(product: Product): Observable<Product> {
-    return this.http.post<Product>(`${this.apiUrl}/addProduct`, product).pipe(
+    const snakeCaseProduct = toSnakeCase(product);
+    return this.http.post<Product>(`${this.apiUrl}/addProduct`, snakeCaseProduct).pipe(
       tap((newProduct: Product) => {
         this.getProducts().subscribe();  // Call getProducts on tap
       })
@@ -22,7 +24,8 @@ export class ProductService {
   }
 
   updateProduct(product: Product): Observable<Product> {
-    return this.http.post<Product>(`${this.apiUrl}/updateProduct`, product).pipe(
+    const snakeCaseProduct = toSnakeCase(product);
+    return this.http.post<Product>(`${this.apiUrl}/updateProduct`, snakeCaseProduct).pipe(
       tap((updatedProduct: Product) => {
         this.getProducts().subscribe();  // Call getProducts on tap
       })
