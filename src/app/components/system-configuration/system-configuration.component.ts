@@ -58,4 +58,22 @@ export class SystemConfigurationComponent {
       }
     }
   }
+
+  runSqlFix(): void {
+    const passkey = prompt('Enter passkey to run SQL fix:');
+    if (passkey) {
+      if (confirm('Are you sure you want to run the SQL fix?')) {
+        this.systemConfigurationService.runSqlFix(passkey).subscribe({
+          next: (response) => {
+            console.log(response);
+            alert(response.message);
+          },
+          error: (error) => {
+            console.error(error);
+            alert(`Error: ${error.message}`);
+          },
+        });
+      }
+    }
+  }
 }

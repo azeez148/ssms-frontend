@@ -39,4 +39,12 @@ export class SystemConfigurationService {
       })
     );
   }
+
+  runSqlFix(pass_key: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/run-sql-fix`, { pass_key }).pipe(
+      tap(() => {
+        console.log('SQL fix run successfully');
+      })
+    );
+  }
 }
